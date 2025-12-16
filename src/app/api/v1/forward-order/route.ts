@@ -25,3 +25,26 @@ export async function POST(request: Request) {
     return NextResponse.json({ message: 'Error forwarding order', error: (error as Error).message }, { status: 500 });
   }
 }
+
+export async function GET(request: Request) {
+    // Example: GET /api/v1/forward-order?orderId=123
+    // In a real app, you would fetch the status of a forwarded order.
+    const { searchParams } = new URL(request.url)
+    const orderId = searchParams.get('orderId')
+    console.log(`GET request received for forwarding status of order: ${orderId}`);
+    return NextResponse.json({ message: `Status for order ${orderId} would be fetched here.` });
+}
+
+export async function PUT(request: Request) {
+    // Example: Update the details of an order that has been forwarded.
+    const payload = await request.json();
+    console.log('PUT request received to update a forwarded order:', payload);
+    return NextResponse.json({ message: 'Forwarded order updated successfully (simulated).' });
+}
+
+export async function DELETE(request: Request) {
+    // Example: Cancel a forwarded order.
+    const { orderId } = await request.json();
+    console.log(`DELETE request received to cancel forwarded order: ${orderId}`);
+    return NextResponse.json({ message: `Forwarded order ${orderId} cancelled successfully (simulated).` });
+}

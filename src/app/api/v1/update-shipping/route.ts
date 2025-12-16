@@ -50,3 +50,29 @@ export async function POST(request: Request) {
     return NextResponse.json({ message: 'Error processing shipping update', error: (error as Error).message }, { status: 500 });
   }
 }
+
+
+export async function GET(request: Request) {
+    // Example: GET /api/v1/update-shipping?orderId=123
+    // In a real app, you would fetch the current shipping status for an order.
+    const { searchParams } = new URL(request.url)
+    const orderId = searchParams.get('orderId')
+    console.log(`GET request received for shipping status of order: ${orderId}`);
+    return NextResponse.json({ message: `Shipping status for order ${orderId} would be fetched here.` });
+}
+
+export async function PUT(request: Request) {
+    // This is arguably a more "correct" verb for this route than POST,
+    // as updating shipping info is often an idempotent action.
+    const payload = await request.json();
+    console.log('PUT request received to update shipping:', payload);
+    // You could reuse the POST logic here.
+    return NextResponse.json({ message: 'Shipping information updated successfully via PUT (simulated).' });
+}
+
+export async function DELETE(request: Request) {
+    // Example: Delete or invalidate a shipping label/tracking number.
+    const { orderId } = await request.json();
+    console.log(`DELETE request received to remove shipping info for order: ${orderId}`);
+    return NextResponse.json({ message: `Shipping info for order ${orderId} removed successfully (simulated).` });
+}
