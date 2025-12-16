@@ -14,6 +14,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Button } from '@/components/ui/button';
 import { Edit, PlusCircle, Trash2 } from 'lucide-react';
 import { useState } from 'react';
+import Link from 'next/link';
 
 const variationsData = [
   { id: 'var_001', productId: 'prod_004', sku: 'SCRF-WL-RD-M', attributes: [ { name: 'color', value: 'Red' }, { name: 'size', value: 'Medium' } ], stock: 25, priceModifier: 0 },
@@ -32,9 +33,11 @@ export default function VariationsPage() {
     <main className="flex-1 p-6 md:p-8">
       <div className="flex items-center justify-between mb-8">
         <h1 className="font-headline text-3xl font-bold tracking-tight">Variations & SKUs</h1>
-        <Button>
-          <PlusCircle className="mr-2 h-4 w-4" />
-          Add Variation
+        <Button asChild>
+          <Link href="/admin/products/new">
+            <PlusCircle className="mr-2 h-4 w-4" />
+            Add Variation
+          </Link>
         </Button>
       </div>
       <Card>
@@ -62,7 +65,7 @@ export default function VariationsPage() {
                   <TableCell>
                     <div className="flex flex-wrap gap-1">
                       {variation.attributes.map((attr) => (
-                        <Badge key={attr.name} variant="secondary">
+                        <Badge key={`${attr.name}-${attr.value}`} variant="secondary">
                           {attr.name}: {attr.value}
                         </Badge>
                       ))}
@@ -97,5 +100,3 @@ export default function VariationsPage() {
     </main>
   );
 }
-
-    
