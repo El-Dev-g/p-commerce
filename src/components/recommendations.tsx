@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
 import { useEffect, useState, useTransition } from 'react';
 import { getProductRecommendations } from '@/ai/flows/get-product-recommendations';
 import { useCart } from '@/context/cart-context';
-import { products } from '@/lib/products';
+import { getProducts } from '@/lib/products';
 import type { Product } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -21,13 +21,16 @@ export function Recommendations() {
     if (cartItems.length > 0) {
       startTransition(async () => {
         try {
+          // First, get all available products from the "API"
+          const allProducts = await getProducts();
+          
           const cartItemIds = cartItems.map(item => item.product.id);
           const result = await getProductRecommendations({ cartItems: cartItemIds, numberOfRecommendations: 2 });
           
           const recommendedProducts = result.productRecommendations
-            .map(id => products.find(p => p.id === id))
+            .map(id => allProducts.find(p => p.id === id))
             .filter((p): p is Product => p !== undefined)
-            .filter(p => !cartItemIds.includes(p.id));
+            .filter(p => !cartItemIds.includes(p.id)); // Ensure we don't recommend items already in the cart
             
           setRecommendations(recommendedProducts);
         } catch (error) {
@@ -43,7 +46,7 @@ export function Recommendations() {
       setRecommendations([]);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [cartItems.length]);
+  }, [cartItems.length]); // Rerun when the number of items in cart changes
 
   if (cartItems.length === 0) {
     return null;
