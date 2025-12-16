@@ -78,7 +78,6 @@ export default function CheckoutPage() {
     console.log('Processing payment...');
 
     // After successful payment, forward the order to the dropshipping supplier.
-    // This is a call to a backend API endpoint.
     try {
       const response = await fetch('/api/v1/forward-order', {
         method: 'POST',
@@ -99,12 +98,20 @@ export default function CheckoutPage() {
     }
 
     // And send a WhatsApp confirmation
-    // For example:
-    // fetch('/api/send-whatsapp', {
-    //   method: 'POST',
-    //   body: JSON.stringify({ to: order.customer.phone, orderId: order.id }),
-    // });
-    console.log('Triggering WhatsApp confirmation...');
+    try {
+       await fetch('/api/v1/send-whatsapp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          to: order.customer.phone,
+          orderId: order.id,
+          customerName: order.customer.firstName,
+        }),
+      });
+      console.log('WhatsApp confirmation triggered successfully');
+    } catch (error) {
+        console.error("Failed to trigger WhatsApp message", error);
+    }
 
     // For this prototype, we'll store the order in localStorage.
     localStorage.setItem('lastOrder', JSON.stringify(order));
