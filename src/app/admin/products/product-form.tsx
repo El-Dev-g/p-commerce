@@ -3,7 +3,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useForm, useFieldArray } from 'react-hook-form';
+import { useForm, useFieldArray, Control } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import type { Product } from '@/lib/types';
@@ -24,7 +24,7 @@ import { Separator } from '@/components/ui/separator';
 
 const variationSchema = z.object({
   id: z.string().optional(),
-  attributes: z.array(z.object({ name: z.string().min(1), value: z.string().min(1) })).min(1),
+  attributes: z.array(z.object({ name: z.string().min(1, 'Attribute name cannot be empty'), value: z.string().min(1, 'Attribute value cannot be empty') })).min(1),
   sku: z.string().optional(),
   stock: z.coerce.number().int().min(0),
   priceModifier: z.coerce.number().default(0),
@@ -43,6 +43,36 @@ const productSchema = z.object({
 });
 
 type ProductFormData = z.infer<typeof productSchema>;
+
+function VariationAttributes({ control, variationIndex }: { control: Control<ProductFormData>, variationIndex: number }) {
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: `variations.${variationIndex}.attributes`,
+  });
+
+  return (
+    <div className="space-y-3">
+      {fields.map((field, attrIndex) => (
+        <div key={field.id} className="grid grid-cols-11 gap-2 items-center">
+          <div className="col-span-5">
+            <Label className="sr-only">Attribute Name</Label>
+            <Input {...control.register(`variations.${variationIndex}.attributes.${attrIndex}.name`)} placeholder="e.g. Color" />
+          </div>
+          <div className="col-span-5">
+            <Label className="sr-only">Attribute Value</Label>
+            <Input {...control.register(`variations.${variationIndex}.attributes.${attrIndex}.value`)} placeholder="e.g. Blue" />
+          </div>
+          <Button type="button" variant="ghost" size="icon" className="col-span-1 text-destructive" onClick={() => remove(attrIndex)}>
+            <Trash2 className="h-4 w-4" />
+          </Button>
+        </div>
+      ))}
+      <Button type="button" variant="outline" size="sm" onClick={() => append({ name: '', value: '' })}>
+        <PlusCircle className="mr-2 h-4 w-4" />Add Attribute
+      </Button>
+    </div>
+  );
+}
 
 export function ProductForm({ product }: { product?: Product }) {
   const router = useRouter();
@@ -141,19 +171,6 @@ export function ProductForm({ product }: { product?: Product }) {
     setIsSaving(false);
     router.push('/admin/products');
   };
-  
-  const addAttribute = (variationIndex: number) => {
-    const variations = form.getValues('variations') || [];
-    const newAttributes = [...(variations[variationIndex].attributes || []), { name: '', value: '' }];
-    form.setValue(`variations.${variationIndex}.attributes`, newAttributes);
-  };
-
-  const removeAttribute = (variationIndex: number, attributeIndex: number) => {
-    const variations = form.getValues('variations') || [];
-    const newAttributes = variations[variationIndex].attributes.filter((_, i) => i !== attributeIndex);
-    form.setValue(`variations.${variationIndex}.attributes`, newAttributes);
-  };
-
 
   return (
     <Form {...form}>
@@ -244,23 +261,8 @@ export function ProductForm({ product }: { product?: Product }) {
               {fields.map((field, index) => (
                 <div key={field.id} className="p-4 border rounded-md mb-4 space-y-4 relative">
                   <h4 className="font-semibold">Variation #{index + 1}</h4>
-
-                   {field.attributes.map((attr, attrIndex) => (
-                    <div key={attrIndex} className="grid grid-cols-11 gap-2 items-center">
-                        <div className="col-span-5">
-                            <Label className="sr-only">Attribute Name</Label>
-                            <Input {...form.register(`variations.${index}.attributes.${attrIndex}.name`)} placeholder="e.g. Color" />
-                        </div>
-                        <div className="col-span-5">
-                            <Label className="sr-only">Attribute Value</Label>
-                            <Input {...form.register(`variations.${index}.attributes.${attrIndex}.value`)} placeholder="e.g. Blue" />
-                        </div>
-                        <Button type="button" variant="ghost" size="icon" className="col-span-1 text-destructive" onClick={() => removeAttribute(index, attrIndex)} >
-                            <Trash2 className="h-4 w-4" />
-                        </Button>
-                    </div>
-                  ))}
-                   <Button type="button" variant="outline" size="sm" onClick={() => addAttribute(index)}><PlusCircle className="mr-2 h-4 w-4" />Add Attribute</Button>
+                  
+                  <VariationAttributes control={form.control} variationIndex={index} />
 
                   <Separator />
 
@@ -303,8 +305,8 @@ export function ProductForm({ product }: { product?: Product }) {
                     />
                   </div>
 
-                  <Button type="button" variant="destructive" className="absolute top-2 right-2" onClick={() => remove(index)}>
-                    Remove Variation
+                  <Button type="button" variant="destructive" size="sm" className="absolute top-2 right-2" onClick={() => remove(index)}>
+                    Remove
                   </Button>
                 </div>
               ))}
@@ -407,5 +409,3 @@ export function ProductForm({ product }: { product?: Product }) {
     </Form>
   );
 }
-
-    

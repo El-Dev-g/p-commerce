@@ -44,5 +44,3 @@ export type Order = {
   trackingNumber?: string;
   carrier?: string;
 };
-
-  
