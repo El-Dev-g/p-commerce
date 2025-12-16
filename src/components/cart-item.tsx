@@ -28,7 +28,7 @@ export function CartItem({ item }: CartItemProps) {
 
   return (
     <div className="flex items-start gap-4">
-      <div className="relative h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border">
+      <div className="relative h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border bg-background">
         <Image
           src={item.product.image.src}
           alt={item.product.image.alt}

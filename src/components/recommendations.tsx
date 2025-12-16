@@ -22,7 +22,7 @@ export function Recommendations() {
       startTransition(async () => {
         try {
           const cartItemIds = cartItems.map(item => item.product.id);
-          const result = await getProductRecommendations({ cartItems: cartItemIds, numberOfRecommendations: 3 });
+          const result = await getProductRecommendations({ cartItems: cartItemIds, numberOfRecommendations: 2 });
           
           const recommendedProducts = result.productRecommendations
             .map(id => products.find(p => p.id === id))
@@ -61,7 +61,7 @@ export function Recommendations() {
       {!isPending && recommendations.length > 0 && (
         <div className="grid grid-cols-1 gap-4">
           {recommendations.map(product => (
-            <Card key={product.id} className="overflow-hidden">
+            <Card key={product.id} className="overflow-hidden bg-secondary">
               <CardContent className="flex items-center gap-4 p-3">
                 <div className="relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-md">
                   <Image src={product.image.src} alt={product.image.alt} fill className="object-cover" />
