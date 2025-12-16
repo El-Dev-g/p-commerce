@@ -12,6 +12,7 @@ import {
 } from '@/components/ui/sheet';
 import { useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
+import { ModeToggle } from './mode-toggle';
 
 export function Header() {
   const { cartItems } = useCart();
@@ -41,7 +42,8 @@ export function Header() {
           <span className="font-headline text-2xl font-bold text-primary">Curated Finds</span>
         </Link>
         
-        <nav className="flex items-center">
+        <nav className="flex items-center gap-2">
+          <ModeToggle />
           <Sheet>
             <SheetTrigger asChild>
               <Button variant="ghost" className="relative h-10 w-10 p-0">
