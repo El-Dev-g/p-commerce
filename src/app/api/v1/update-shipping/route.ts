@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 
 export async function POST(request: Request) {
   try {
-    const { orderId, trackingNumber, carrier } = await request.json();
+    const { orderId, trackingNumber, carrier, customer } = await request.json();
 
     if (!orderId || !trackingNumber) {
       return NextResponse.json({ message: 'Missing orderId or trackingNumber' }, { status: 400 });
@@ -11,8 +11,7 @@ export async function POST(request: Request) {
     // In a real-world scenario, you would:
     // 1. Find the order in your database using the orderId.
     // 2. Save the trackingNumber and carrier to the order.
-    // 3. Potentially trigger another WhatsApp message to the customer
-    //    with their tracking information.
+    // 3. Trigger a WhatsApp message to the customer with their tracking info.
 
     console.log('--- Shipping update received ---');
     console.log(`Order ID: ${orderId}`);
@@ -20,8 +19,28 @@ export async function POST(request: Request) {
     console.log(`Carrier: ${carrier || 'Not specified'}`);
     console.log('---------------------------------');
 
-    // You could also trigger a WhatsApp message here, similar to the confirmation
-    // await fetch(`${request.nextUrl.origin}/api/v1/send-whatsapp`, { ... });
+    // Trigger a WhatsApp message with the tracking update.
+    // In a real app, you'd need the customer's phone number from your database.
+    // For this prototype, we'll assume it's passed in the request.
+    if (customer && customer.phone) {
+        try {
+            await fetch(`${new URL(request.url).origin}/api/v1/send-whatsapp`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    to: customer.phone,
+                    type: 'shipping_update',
+                    orderId: orderId,
+                    trackingNumber: trackingNumber,
+                    carrier: carrier,
+                }),
+            });
+            console.log("WhatsApp tracking update triggered successfully.");
+        } catch (error) {
+            console.error("Failed to trigger WhatsApp tracking message:", error);
+            // Non-blocking error, so we don't return an error response here.
+        }
+    }
 
 
     return NextResponse.json({ message: 'Tracking information updated successfully' }, { status: 200 });

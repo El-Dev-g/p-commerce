@@ -104,6 +104,7 @@ export default function CheckoutPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           to: order.customer.phone,
+          type: 'order_confirmation',
           orderId: order.id,
           customerName: order.customer.firstName,
         }),
