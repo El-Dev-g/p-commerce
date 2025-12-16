@@ -4,3 +4,4 @@ config();
 import '@/ai/flows/generate-product-titles.ts';
 import '@/ai/flows/get-product-recommendations.ts';
 import '@/ai/flows/generate-product-descriptions.ts';
+import '@/ai/flows/whatsapp-chat-flow.ts';
