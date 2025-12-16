@@ -56,7 +56,7 @@ export default function CheckoutPage() {
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit(values: z.infer<typeof formSchema>) {
     const order = {
       id: `ord_${new Date().getTime()}`,
       customer: {
@@ -78,13 +78,25 @@ export default function CheckoutPage() {
     console.log('Processing payment...');
 
     // After successful payment, forward the order to the dropshipping supplier.
-    // This would typically be a call to a backend API endpoint.
-    // For example:
-    // fetch('/api/forward-order', {
-    //   method: 'POST',
-    //   body: JSON.stringify(order),
-    // });
-    console.log('Forwarding order to supplier:', order);
+    // This is a call to a backend API endpoint.
+    try {
+      const response = await fetch('/api/v1/forward-order', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(order),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to forward order to supplier');
+      }
+
+      console.log('Order forwarded to supplier successfully');
+    } catch (error) {
+      console.error(error);
+      // Optionally, handle the error in the UI
+    }
 
     // And send a WhatsApp confirmation
     // For example:
