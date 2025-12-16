@@ -21,6 +21,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import Image from 'next/image';
+import { Loader2 } from 'lucide-react';
 
 const formSchema = z
   .object({
@@ -164,6 +165,8 @@ export default function CheckoutPage() {
 
     // In a real app, you would process payment here.
     console.log('Processing payment...');
+    await new Promise(resolve => setTimeout(resolve, 1000));
+
 
     // After successful payment, forward the order to the dropshipping supplier.
     try {
@@ -538,9 +541,14 @@ export default function CheckoutPage() {
                         cartItems.length === 0 || form.formState.isSubmitting
                       }
                     >
-                      {form.formState.isSubmitting
-                        ? 'Placing Order...'
-                        : 'Place Order'}
+                      {form.formState.isSubmitting ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          Placing Order...
+                        </>
+                      ) : (
+                        'Place Order'
+                      )}
                     </Button>
                   </CardContent>
                 </Card>

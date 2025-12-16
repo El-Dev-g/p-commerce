@@ -1,6 +1,7 @@
 
 'use client';
 
+import { useState } from 'react';
 import { Footer } from '@/components/footer';
 import { Header } from '@/components/header';
 import { Button } from '@/components/ui/button';
@@ -8,17 +9,26 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
+import { Loader2 } from 'lucide-react';
 
 export default function RefundRequestPage() {
   const { toast } = useToast();
   const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    setIsLoading(true);
+
     // In a real app, you would send this data to your backend.
     const formData = new FormData(event.currentTarget);
     const data = Object.fromEntries(formData.entries());
     console.log('Refund Request Submitted:', data);
+
+    // Simulate network delay
+    await new Promise(resolve => setTimeout(resolve, 1500));
+
+    setIsLoading(false);
 
     toast({
       title: 'Request Submitted',
@@ -52,6 +62,7 @@ export default function RefundRequestPage() {
                 placeholder="Order ID (e.g., ord_123456789)"
                 className="bg-background"
                 required
+                disabled={isLoading}
               />
               <Input
                 name="email"
@@ -59,6 +70,7 @@ export default function RefundRequestPage() {
                 placeholder="Email address used for the order"
                 className="bg-background"
                 required
+                disabled={isLoading}
               />
               <Textarea
                 name="reason"
@@ -66,9 +78,17 @@ export default function RefundRequestPage() {
                 rows={6}
                 className="bg-background"
                 required
+                disabled={isLoading}
               />
-              <Button type="submit" size="lg" className="w-full">
-                Submit Request
+              <Button type="submit" size="lg" className="w-full" disabled={isLoading}>
+                 {isLoading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Submitting...
+                  </>
+                ) : (
+                  'Submit Request'
+                )}
               </Button>
             </form>
           </div>

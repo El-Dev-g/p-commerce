@@ -1,11 +1,36 @@
+'use client';
+
+import { useState } from 'react';
 import { Footer } from '@/components/footer';
 import { Header } from '@/components/header';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Mail, Phone, MapPin } from 'lucide-react';
+import { Mail, Phone, MapPin, Loader2 } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
 
 export default function ContactPage() {
+  const [isLoading, setIsLoading] = useState(false);
+  const { toast } = useToast();
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setIsLoading(true);
+
+    // In a real app, you'd send this data to a backend API
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    
+    setIsLoading(false);
+    toast({
+        title: "Message Sent!",
+        description: "Thanks for reaching out. We'll get back to you shortly."
+    });
+
+    // Optionally reset the form
+    (event.target as HTMLFormElement).reset();
+  };
+
+
   return (
     <div className="flex min-h-screen flex-col bg-background">
       <Header />
@@ -42,16 +67,23 @@ export default function ContactPage() {
                 </div>
             </div>
 
-            <form className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-                    <Input placeholder="First Name" className="bg-background" />
-                    <Input placeholder="Last Name" className="bg-background" />
+                    <Input name="firstName" placeholder="First Name" className="bg-background" required />
+                    <Input name="lastName" placeholder="Last Name" className="bg-background" required/>
                 </div>
-              <Input type="email" placeholder="Email" className="bg-background" />
-              <Input placeholder="Subject" className="bg-background" />
-              <Textarea placeholder="Your message" rows={6} className="bg-background" />
-              <Button type="submit" size="lg" className="w-full">
-                Send Message
+              <Input name="email" type="email" placeholder="Email" className="bg-background" required />
+              <Input name="subject" placeholder="Subject" className="bg-background" required />
+              <Textarea name="message" placeholder="Your message" rows={6} className="bg-background" required />
+              <Button type="submit" size="lg" className="w-full" disabled={isLoading}>
+                 {isLoading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Sending...
+                  </>
+                ) : (
+                  'Send Message'
+                )}
               </Button>
             </form>
           </div>
