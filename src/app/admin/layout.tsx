@@ -13,7 +13,7 @@ import {
   SidebarTrigger,
   SidebarInset
 } from '@/components/ui/sidebar';
-import { LayoutDashboard, Package, ShoppingCart, Settings, Sparkles, Newspaper } from 'lucide-react';
+import { LayoutDashboard, Package, ShoppingCart, Settings, Sparkles, Newspaper, Undo2 } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import { ModeToggle } from '@/components/mode-toggle';
 
@@ -79,6 +79,18 @@ export default function AdminLayout({
                 <Link href="/admin/orders">
                   <ShoppingCart />
                   <span>Orders</span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+             <SidebarMenuItem>
+              <SidebarMenuButton
+                asChild
+                isActive={isActive('/admin/refunds')}
+                tooltip="Refunds"
+              >
+                <Link href="/admin/refunds">
+                  <Undo2 />
+                  <span>Refunds</span>
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
