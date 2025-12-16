@@ -1,13 +1,12 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
-import { CartProvider } from '@/context/cart-context';
 import { cn } from '@/lib/utils';
 import { ThemeProvider } from '@/components/theme-provider';
 
 export const metadata: Metadata = {
-  title: 'Curated Finds',
-  description: 'An online store with AI-powered recommendations.',
+  title: 'Curated Finds Admin',
+  description: 'Admin dashboard for Curated Finds.',
 };
 
 export default function RootLayout({
@@ -30,10 +29,8 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <CartProvider>
-            {children}
-            <Toaster />
-          </CartProvider>
+          {children}
+          <Toaster />
         </ThemeProvider>
       </body>
     </html>
