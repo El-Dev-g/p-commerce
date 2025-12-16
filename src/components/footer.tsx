@@ -1,11 +1,11 @@
 
-import { Sparkles } from 'lucide-react';
+import { Sparkles, Twitter, Facebook, Instagram, Linkedin } from 'lucide-react';
 import Link from 'next/link';
 
 export function Footer() {
   return (
     <footer className="border-t border-border/40 bg-background">
-      <div className="container grid grid-cols-1 gap-8 py-12 md:grid-cols-3">
+      <div className="container grid grid-cols-1 gap-8 py-12 md:grid-cols-4">
         <div className="flex flex-col items-start gap-4">
           <Link href="/" className="flex items-center gap-2">
             <Sparkles className="h-6 w-6 text-primary" />
@@ -15,32 +15,56 @@ export function Footer() {
             Discover unique, handcrafted items from artisans around the world.
           </p>
         </div>
-        <div className="grid grid-cols-2 gap-8 md:col-span-2 md:grid-cols-3">
+        <div className="grid grid-cols-2 gap-8 md:col-span-3 md:grid-cols-3">
           <div>
             <h3 className="mb-4 font-headline font-semibold">Quick Links</h3>
             <ul className="space-y-2">
               <li><Link href="/" className="text-sm text-muted-foreground hover:text-primary">Home</Link></li>
+              <li><Link href="/shop" className="text-sm text-muted-foreground hover:text-primary">Shop</Link></li>
               <li><Link href="/about" className="text-sm text-muted-foreground hover:text-primary">About Us</Link></li>
               <li><Link href="/contact" className="text-sm text-muted-foreground hover:text-primary">Contact</Link></li>
-              <li><Link href="/faq" className="text-sm text-muted-foreground hover:text-primary">FAQ</Link></li>
-              <li><Link href="/shipping-returns" className="text-sm text-muted-foreground hover:text-primary">Shipping & Returns</Link></li>
             </ul>
           </div>
           <div>
             <h3 className="mb-4 font-headline font-semibold">Customer Service</h3>
             <ul className="space-y-2">
+              <li><Link href="/faq" className="text-sm text-muted-foreground hover:text-primary">FAQ</Link></li>
               <li><Link href="/track-order" className="text-sm text-muted-foreground hover:text-primary">Track Order</Link></li>
+              <li><Link href="/shipping-returns" className="text-sm text-muted-foreground hover:text-primary">Shipping & Returns</Link></li>
               <li><Link href="/refund-policy" className="text-sm text-muted-foreground hover:text-primary">Refund Policy</Link></li>
-              <li><Link href="/refund-request" className="text-sm text-muted-foreground hover:text-primary">Request a Refund</Link></li>
-              <li><Link href="/privacy-policy" className="text-sm text-muted-foreground hover:text-primary">Privacy Policy</Link></li>
-              <li><Link href="/terms-of-service" className="text-sm text-muted-foreground hover:text-primary">Terms of Service</Link></li>
             </ul>
+          </div>
+          <div>
+            <h3 className="mb-4 font-headline font-semibold">Follow Us</h3>
+            <div className="flex items-center gap-4">
+                <Link href="#" className="text-muted-foreground hover:text-primary">
+                    <Twitter className="h-5 w-5" />
+                    <span className="sr-only">Twitter</span>
+                </Link>
+                <Link href="#" className="text-muted-foreground hover:text-primary">
+                    <Facebook className="h-5 w-5" />
+                    <span className="sr-only">Facebook</span>
+                </Link>
+                <Link href="#" className="text-muted-foreground hover:text-primary">
+                    <Instagram className="h-5 w-5" />
+                    <span className="sr-only">Instagram</span>
+                </Link>
+                <Link href="#" className="text-muted-foreground hover:text-primary">
+                    <Linkedin className="h-5 w-5" />
+                    <span className="sr-only">LinkedIn</span>
+                </Link>
+            </div>
           </div>
         </div>
       </div>
       <div className="border-t border-border/40">
-        <div className="container flex items-center justify-center py-4">
-          <p className="text-sm text-muted-foreground">
+        <div className="container flex flex-col items-center justify-between gap-4 py-4 sm:flex-row">
+           <div className="grid grid-cols-2 gap-x-8 gap-y-2 text-center sm:flex sm:gap-4 sm:text-left">
+             <Link href="/privacy-policy" className="text-xs text-muted-foreground hover:text-primary">Privacy Policy</Link>
+             <Link href="/terms-of-service" className="text-xs text-muted-foreground hover:text-primary">Terms of Service</Link>
+             <Link href="/refund-request" className="text-xs text-muted-foreground hover:text-primary">Request a Refund</Link>
+           </div>
+          <p className="text-xs text-muted-foreground">
             &copy; {new Date().getFullYear()} Curated Finds. All Rights Reserved.
           </p>
         </div>
