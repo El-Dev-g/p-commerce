@@ -14,7 +14,7 @@ import {
   SidebarInset,
   useSidebar
 } from '@/components/ui/sidebar';
-import { LayoutDashboard, Package, ShoppingCart, Settings, Sparkles, Newspaper, Undo2, GitBranch, TrendingUp, MessageSquare, Store } from 'lucide-react';
+import { LayoutDashboard, Package, ShoppingCart, Settings, Sparkles, Newspaper, Undo2, GitBranch, TrendingUp, MessageSquare, Store, Users as UsersIcon } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import { ModeToggle } from '@/components/mode-toggle';
 
@@ -27,7 +27,9 @@ function AdminSidebar() {
   };
   
   const handleLinkClick = () => {
-    setOpenMobile(false);
+    if(setOpenMobile) {
+      setOpenMobile(false);
+    }
   }
 
   return (
@@ -122,6 +124,19 @@ function AdminSidebar() {
               <Link href="/admin/orders">
                 <ShoppingCart />
                 <span>Orders</span>
+              </Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+           <SidebarMenuItem>
+            <SidebarMenuButton
+              asChild
+              isActive={isActive('/admin/customers')}
+              tooltip="Customers"
+              onClick={handleLinkClick}
+            >
+              <Link href="/admin/customers">
+                <UsersIcon />
+                <span>Customers</span>
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>

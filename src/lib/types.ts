@@ -10,6 +10,7 @@ export type ProductVariation = {
 export type Product = {
   id: string;
   name: string;
+  nameB?: string; // For A/B testing
   description: string;
   price: number;
   category: string;

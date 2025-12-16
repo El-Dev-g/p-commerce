@@ -32,6 +32,7 @@ const variationSchema = z.object({
 
 const productSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters." }),
+  nameB: z.string().optional(),
   description: z.string().min(10, { message: "Description must be at least 10 characters." }),
   price: z.coerce.number().positive({ message: "Price must be a positive number." }),
   category: z.string().min(1, { message: "Please select a category." }),
@@ -107,9 +108,11 @@ export function ProductForm({ product }: { product?: Product }) {
     resolver: zodResolver(productSchema),
     defaultValues: product ? {
       ...product,
+      nameB: product.nameB || '',
       variations: product.variations || [],
     } : {
       name: '',
+      nameB: '',
       description: '',
       price: 0,
       category: '',
@@ -209,10 +212,25 @@ export function ProductForm({ product }: { product?: Product }) {
                   name="name"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Product Name</FormLabel>
+                      <FormLabel>Product Title (A)</FormLabel>
                       <FormControl>
                         <Input placeholder="e.g. Artisan Ceramic Mug" {...field} />
                       </FormControl>
+                      <FormDescription>This is the primary title for A/B testing.</FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                 <FormField
+                  control={form.control}
+                  name="nameB"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Product Title (B)</FormLabel>
+                      <FormControl>
+                        <Input placeholder="e.g. Handcrafted Clay Mug" {...field} />
+                      </FormControl>
+                      <FormDescription>Optional: a second title for A/B testing.</FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -434,5 +452,3 @@ export function ProductForm({ product }: { product?: Product }) {
     </Form>
   );
 }
-
-    
