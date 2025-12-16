@@ -14,7 +14,7 @@ import {
   SidebarInset,
   useSidebar
 } from '@/components/ui/sidebar';
-import { LayoutDashboard, Package, ShoppingCart, Settings, Sparkles, Newspaper, Undo2, GitBranch, TrendingUp } from 'lucide-react';
+import { LayoutDashboard, Package, ShoppingCart, Settings, Sparkles, Newspaper, Undo2, GitBranch, TrendingUp, MessageSquare } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import { ModeToggle } from '@/components/mode-toggle';
 
@@ -70,6 +70,19 @@ function AdminSidebar() {
               <Link href="/admin/analytics">
                 <TrendingUp />
                 <span>Analytics</span>
+              </Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              asChild
+              isActive={isActive('/admin/chat')}
+              tooltip="Chat"
+              onClick={handleLinkClick}
+            >
+              <Link href="/admin/chat">
+                <MessageSquare />
+                <span>Chat</span>
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
