@@ -3,7 +3,13 @@
 
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Slider } from '@/components/ui/slider';
 import { Separator } from '@/components/ui/separator';
 
@@ -62,18 +68,19 @@ export function ProductSidebar({
           <h3 className="font-headline text-2xl font-semibold mb-4">
             Categories
           </h3>
-          <RadioGroup value={selectedCategory} onValueChange={onCategoryChange}>
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="all" id="all" />
-              <Label htmlFor="all">All</Label>
-            </div>
-            {categories.map((category) => (
-              <div key={category} className="flex items-center space-x-2">
-                <RadioGroupItem value={category} id={category} />
-                <Label htmlFor={category}>{category}</Label>
-              </div>
-            ))}
-          </RadioGroup>
+          <Select onValueChange={onCategoryChange} value={selectedCategory}>
+            <SelectTrigger>
+              <SelectValue placeholder="Select a category" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All</SelectItem>
+              {categories.map((category) => (
+                <SelectItem key={category} value={category}>
+                  {category}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
       </div>
     </aside>
