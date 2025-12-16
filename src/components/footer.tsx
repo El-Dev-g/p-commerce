@@ -38,10 +38,9 @@ export function Footer() {
       </div>
       <div className="border-t border-border/40">
         <div className="container flex flex-col items-center justify-between gap-4 py-4 sm:flex-row">
-           <div className="grid grid-cols-2 gap-x-8 gap-y-2 text-center sm:flex sm:gap-4 sm:text-left">
+           <div className="flex gap-4">
              <Link href="/privacy-policy" className="text-xs text-muted-foreground hover:text-primary">Privacy Policy</Link>
              <Link href="/terms-of-service" className="text-xs text-muted-foreground hover:text-primary">Terms of Service</Link>
-             <Link href="/refund-request" className="text-xs text-muted-foreground hover:text-primary">Request a Refund</Link>
            </div>
           <p className="text-xs text-muted-foreground">
             &copy; {new Date().getFullYear()} Curated Finds. All Rights Reserved.
