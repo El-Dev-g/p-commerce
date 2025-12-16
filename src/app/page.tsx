@@ -4,6 +4,7 @@ import { ProductGrid } from '@/components/product-grid';
 import { Button } from '@/components/ui/button';
 import { ArrowRight } from 'lucide-react';
 import Image from 'next/image';
+import Link from 'next/link';
 
 export default function Home() {
   return (
@@ -26,8 +27,10 @@ export default function Home() {
             <p className="mt-4 max-w-lg text-lg text-primary-foreground/80">
               Discover unique, handcrafted items from artisans around the world.
             </p>
-            <Button size="lg" className="mt-6">
-              Shop The Collection <ArrowRight className="ml-2 h-5 w-5" />
+            <Button size="lg" className="mt-6" asChild>
+              <Link href="/shop">
+                Shop The Collection <ArrowRight className="ml-2 h-5 w-5" />
+              </Link>
             </Button>
           </div>
         </section>
