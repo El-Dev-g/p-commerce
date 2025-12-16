@@ -1,3 +1,4 @@
+'use client';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { DollarSign, Package, Users, CreditCard } from 'lucide-react';
