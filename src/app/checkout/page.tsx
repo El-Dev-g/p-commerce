@@ -75,6 +75,25 @@ export default function CheckoutPage() {
     };
 
     // In a real app, you would process payment here.
+    console.log('Processing payment...');
+
+    // After successful payment, forward the order to the dropshipping supplier.
+    // This would typically be a call to a backend API endpoint.
+    // For example:
+    // fetch('/api/forward-order', {
+    //   method: 'POST',
+    //   body: JSON.stringify(order),
+    // });
+    console.log('Forwarding order to supplier:', order);
+
+    // And send a WhatsApp confirmation
+    // For example:
+    // fetch('/api/send-whatsapp', {
+    //   method: 'POST',
+    //   body: JSON.stringify({ to: order.customer.phone, orderId: order.id }),
+    // });
+    console.log('Triggering WhatsApp confirmation...');
+
     // For this prototype, we'll store the order in localStorage.
     localStorage.setItem('lastOrder', JSON.stringify(order));
 
