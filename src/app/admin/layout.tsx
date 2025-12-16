@@ -14,7 +14,7 @@ import {
   SidebarInset,
   useSidebar
 } from '@/components/ui/sidebar';
-import { LayoutDashboard, Package, ShoppingCart, Settings, Sparkles, Newspaper, Undo2, GitBranch, TrendingUp, MessageSquare } from 'lucide-react';
+import { LayoutDashboard, Package, ShoppingCart, Settings, Sparkles, Newspaper, Undo2, GitBranch, TrendingUp, MessageSquare, Store } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import { ModeToggle } from '@/components/mode-toggle';
 
@@ -161,6 +161,19 @@ function AdminSidebar() {
               <Link href="/admin/settings">
                 <Settings />
                 <span>Settings</span>
+              </Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              asChild
+              isActive={isActive('/admin/app-store')}
+              tooltip="App Store"
+              onClick={handleLinkClick}
+            >
+              <Link href="/admin/app-store">
+                <Store />
+                <span>App Store</span>
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
