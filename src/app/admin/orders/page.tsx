@@ -13,7 +13,7 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Eye, FileDown, Truck } from 'lucide-react';
+import { Eye, FileDown, PlusCircle, Truck } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -56,10 +56,16 @@ export default function OrdersPage() {
      <main className="flex-1 p-6 md:p-8">
       <div className="flex items-center justify-between mb-8">
         <h1 className="font-headline text-3xl font-bold tracking-tight">Orders</h1>
-        <Button>
-          <FileDown className="mr-2 h-4 w-4" />
-          Export
-        </Button>
+        <div className="flex gap-2">
+            <Button>
+                <PlusCircle className="mr-2 h-4 w-4" />
+                Add Order
+            </Button>
+            <Button variant="outline">
+              <FileDown className="mr-2 h-4 w-4" />
+              Export
+            </Button>
+        </div>
       </div>
       <Card>
         <CardHeader>
