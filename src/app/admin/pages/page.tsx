@@ -16,12 +16,14 @@ import { Textarea } from '@/components/ui/textarea';
 import { Sparkles, Loader2 } from 'lucide-react';
 import { generatePageContent } from '@/ai/flows/generate-page-content';
 import { toast } from '@/hooks/use-toast';
+import { pagesData } from '@/lib/pages';
 
 export default function PagesManagementPage() {
     const [isLoading, setIsLoading] = useState(false);
     const [topic, setTopic] = useState('');
     const [keywords, setKeywords] = useState('');
     const [activeAccordion, setActiveAccordion] = useState<string | null>(null);
+    const [pageContents, setPageContents] = useState(pagesData);
 
     const handleGenerateContent = async (setValue: (value: string) => void) => {
         if (!topic) {
@@ -78,7 +80,7 @@ export default function PagesManagementPage() {
                             <Textarea
                                 id="about-mission"
                                 placeholder="Describe your company's mission..."
-                                defaultValue="To bring thoughtfully curated, high-quality goods to customers who appreciate authenticity and craftsmanship. We believe in products with a story."
+                                defaultValue={pageContents.find(p => p.slug === 'about-us')?.content.mission}
                                 className="min-h-[120px]"
                             />
                             </div>
@@ -87,7 +89,7 @@ export default function PagesManagementPage() {
                             <Textarea
                                 id="about-story"
                                 placeholder="Tell your company's story..."
-                                defaultValue="Founded in a small workshop with a big dream, Curated Finds has grown from a passion project into a beloved brand. Our journey is one of dedication to quality and a deep respect for the artisans we work with. We travel the world to find unique items that you won't find anywhere else."
+                                defaultValue={pageContents.find(p => p.slug === 'about-us')?.content.story}
                                 className="min-h-[200px]"
                             />
                             </div>
@@ -102,18 +104,18 @@ export default function PagesManagementPage() {
                             <Textarea
                                 id="contact-intro"
                                 placeholder="Enter the text for your contact page..."
-                                defaultValue="We'd love to hear from you! Whether you have a question about our products, need assistance with an order, or just want to say hello, feel free to reach out."
+                                defaultValue={pageContents.find(p => p.slug === 'contact-us')?.content.intro}
                                 className="min-h-[100px]"
                             />
                             </div>
                             <div className="grid md:grid-cols-2 gap-4">
                                 <div className="space-y-2">
                                     <Label htmlFor="contact-email">Contact Email</Label>
-                                    <Input id="contact-email" defaultValue="support@curatedfinds.com" />
+                                    <Input id="contact-email" defaultValue={pageContents.find(p => p.slug === 'contact-us')?.content.email} />
                                 </div>
                                 <div className="space-y-2">
                                     <Label htmlFor="contact-phone">Phone Number</Label>
-                                    <Input id="contact-phone" defaultValue="+1 (555) 123-4567" />
+                                    <Input id="contact-phone" defaultValue={pageContents.find(p => p.slug === 'contact-us')?.content.phone} />
                                 </div>
                             </div>
                             <Button variant="outline">Save Contact Us</Button>
@@ -126,7 +128,7 @@ export default function PagesManagementPage() {
                             id="privacy-policy-textarea"
                             placeholder="Enter your privacy policy text here..."
                             className="min-h-[400px]"
-                            defaultValue="Your privacy is important to us. It is Curated Finds' policy to respect your privacy regarding any information we may collect from you across our website... (Full text would go here)"
+                            defaultValue={pageContents.find(p => p.slug === 'privacy-policy')?.content.policy}
                             />
                             <Button variant="outline">Save Privacy Policy</Button>
                         </AccordionContent>
@@ -138,7 +140,7 @@ export default function PagesManagementPage() {
                             id="terms-of-service-textarea"
                             placeholder="Enter your terms of service text here..."
                             className="min-h-[400px]"
-                            defaultValue="By accessing the website at https://curatedfinds.com, you are agreeing to be bound by these terms of service, all applicable laws and regulations... (Full text would go here)"
+                            defaultValue={pageContents.find(p => p.slug === 'terms-of-service')?.content.terms}
                             />
                             <Button variant="outline">Save Terms of Service</Button>
                         </AccordionContent>
@@ -183,15 +185,19 @@ export default function PagesManagementPage() {
                             <Button
                                 className="w-full"
                                 onClick={() => {
-                                    const textareaId = activeAccordion ? `${activeAccordion}-textarea` : 'about-us-mission';
-                                    const textarea = document.getElementById(textareaId) as HTMLTextAreaElement | null;
+                                    const textareaIdMap: Record<string, string> = {
+                                        'privacy-policy': 'privacy-policy-textarea',
+                                        'terms-of-service': 'terms-of-service-textarea',
+                                        'contact-us': 'contact-intro',
+                                        'about-us': 'about-mission',
+                                    };
+                                    const textareaId = activeAccordion ? textareaIdMap[activeAccordion] : null;
+                                    const textarea = textareaId ? document.getElementById(textareaId) as HTMLTextAreaElement | null : null;
+                                    
                                     if (textarea) {
                                       handleGenerateContent((value) => {
-                                        if (textarea) textarea.value = value;
+                                        textarea.value = value;
                                       });
-                                    } else if (activeAccordion === 'about-us') {
-                                        const mission = document.getElementById('about-mission') as HTMLTextAreaElement | null;
-                                        if(mission) handleGenerateContent(value => mission.value = value)
                                     }
                                 }}
                                 disabled={isLoading || !activeAccordion}
