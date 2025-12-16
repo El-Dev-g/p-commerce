@@ -2,6 +2,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -34,8 +35,10 @@ const productSchema = z.object({
 type ProductFormData = z.infer<typeof productSchema>;
 
 export function ProductForm({ product }: { product?: Product }) {
+  const router = useRouter();
   const [isDescLoading, setIsDescLoading] = useState(false);
   const [isTitleLoading, setIsTitleLoading] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const [keywords, setKeywords] = useState('');
   const [suggestedTitles, setSuggestedTitles] = useState<string[]>([]);
 
@@ -110,13 +113,19 @@ export function ProductForm({ product }: { product?: Product }) {
     }
   };
 
-  const onSubmit = (data: ProductFormData) => {
+  const onSubmit = async (data: ProductFormData) => {
+    setIsSaving(true);
     console.log('Form submitted:', data);
+    // Here you would typically call an API to save the product
+    await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate API call
+    
     toast({
       title: 'Product Saved',
       description: `${data.name} has been successfully saved.`,
     });
-    // Here you would typically call an API to save the product
+    
+    setIsSaving(false);
+    router.push('/admin/products');
   };
 
   return (
@@ -197,7 +206,10 @@ export function ProductForm({ product }: { product?: Product }) {
                     )}
                   />
                 </div>
-                 <Button type="submit">Save Product</Button>
+                 <Button type="submit" disabled={isSaving}>
+                  {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                  {isSaving ? 'Saving...' : 'Save Product'}
+                 </Button>
               </form>
             </Form>
           </CardContent>
