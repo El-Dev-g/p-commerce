@@ -8,6 +8,7 @@ import { CartItem } from '@/components/cart-item';
 import { Recommendations } from '@/components/recommendations';
 import { ShoppingBag } from 'lucide-react';
 import { SheetHeader, SheetTitle, SheetFooter } from '@/components/ui/sheet';
+import Link from 'next/link';
 
 export function Cart() {
   const { cartItems, getCartTotal, clearCart } = useCart();
@@ -38,8 +39,8 @@ export function Cart() {
                 Shipping and taxes calculated at checkout.
               </p>
               <div className="w-full pt-2">
-                <Button size="lg" className="w-full">
-                  Checkout
+                <Button size="lg" className="w-full" asChild>
+                  <Link href="/checkout">Checkout</Link>
                 </Button>
               </div>
               <div className="flex justify-center text-center text-sm">
