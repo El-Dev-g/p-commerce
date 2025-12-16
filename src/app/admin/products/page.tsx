@@ -17,7 +17,7 @@ import { Input } from '@/components/ui/input';
 import { Edit, PlusCircle, Trash2, Search, Loader2 } from 'lucide-react';
 import { getProducts, products as allProducts } from '@/lib/products';
 import Link from 'next/link';
-import { useEffect, useState, use } from 'react';
+import { useEffect, useState } from 'react';
 import type { Product } from '@/lib/types';
 import { useDebounce } from '@/hooks/use-debounce';
 import { searchProducts } from '@/ai/flows/search-products';
@@ -76,7 +76,7 @@ export default function ProductsPage() {
   const [products, setProducts] = useState<Product[]>(allProducts);
   const [searchQuery, setSearchQuery] = useState('');
   const debouncedSearchQuery = useDebounce(searchQuery, 300);
-  const [isSearching, setIsSearching] useState(false);
+  const [isSearching, setIsSearching] = useState(false);
 
   useEffect(() => {
     const performSearch = async () => {
