@@ -1,10 +1,46 @@
+'use client';
+
+import { useState, useEffect, useMemo } from 'react';
 import { Footer } from '@/components/footer';
 import { Header } from '@/components/header';
 import { ProductGrid } from '@/components/product-grid';
-import { getProducts } from '@/lib/products';
+import { ProductSidebar } from '@/components/product-sidebar';
+import { getProducts, categories as allCategories } from '@/lib/products';
+import type { Product } from '@/lib/types';
+import { useDebounce } from '@/hooks/use-debounce';
+import { Skeleton } from '@/components/ui/skeleton';
 
-export default async function ShopPage() {
-  const products = await getProducts();
+export default function ShopPage() {
+  const [allProducts, setAllProducts] = useState<Product[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [priceRange, setPriceRange] = useState<number[]>([0, 150]);
+  const [selectedCategory, setSelectedCategory] = useState('all');
+
+  const debouncedSearchTerm = useDebounce(searchTerm, 300);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      setIsLoading(true);
+      const products = await getProducts();
+      setAllProducts(products);
+      setIsLoading(false);
+    };
+    fetchProducts();
+  }, []);
+
+  const filteredProducts = useMemo(() => {
+    return allProducts.filter((product) => {
+      const matchesSearch = product.name
+        .toLowerCase()
+        .includes(debouncedSearchTerm.toLowerCase());
+      const matchesPrice =
+        product.price >= priceRange[0] && product.price <= priceRange[1];
+      const matchesCategory =
+        selectedCategory === 'all' || product.category === selectedCategory;
+      return matchesSearch && matchesPrice && matchesCategory;
+    });
+  }, [allProducts, debouncedSearchTerm, priceRange, selectedCategory]);
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
@@ -16,10 +52,40 @@ export default async function ShopPage() {
               All Products
             </h1>
             <p className="mx-auto mt-3 max-w-xl text-lg text-muted-foreground">
-              Explore our full collection of handcrafted goods from around the world.
+              Explore our full collection of handcrafted goods from around the
+              world.
             </p>
           </div>
-          <ProductGrid products={products} />
+          <div className="flex flex-col gap-12 md:flex-row">
+            <ProductSidebar
+              categories={allCategories}
+              onSearchChange={setSearchTerm}
+              onPriceChange={setPriceRange}
+              onCategoryChange={setSelectedCategory}
+              priceRange={priceRange}
+              selectedCategory={selectedCategory}
+            />
+            <div className="flex-1">
+              {isLoading ? (
+                <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+                  {Array.from({ length: 8 }).map((_, i) => (
+                    <div key={i} className="space-y-2">
+                      <Skeleton className="h-80 w-full" />
+                      <Skeleton className="h-6 w-3/4" />
+                      <Skeleton className="h-6 w-1/4" />
+                    </div>
+                  ))}
+                </div>
+              ) : filteredProducts.length > 0 ? (
+                <ProductGrid products={filteredProducts} />
+              ) : (
+                <div className="flex h-full flex-col items-center justify-center text-center">
+                    <h3 className='font-headline text-2xl font-semibold'>No Products Found</h3>
+                    <p className='text-muted-foreground mt-2'>Try adjusting your search or filters.</p>
+                </div>
+              )}
+            </div>
+          </div>
         </section>
       </main>
       <Footer />

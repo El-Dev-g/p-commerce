@@ -24,6 +24,7 @@ export const products: Product[] = [
     name: 'Vintage Camera',
     description: 'Capture moments with this classic film camera. A piece of history that still tells beautiful stories. Perfect for enthusiasts and collectors.',
     price: 125.00,
+    category: 'Electronics',
     image: getImage('vintage-camera'),
   },
   {
@@ -31,6 +32,7 @@ export const products: Product[] = [
     name: 'Leather Journal',
     description: 'Handcrafted with genuine leather, this journal is your perfect companion for thoughts, sketches, and dreams. Comes with a linen-cotton pouch.',
     price: 45.00,
+    category: 'Stationery',
     image: getImage('leather-journal'),
   },
   {
@@ -38,6 +40,7 @@ export const products: Product[] = [
     name: 'Artisan Ceramic Mug',
     description: 'Enjoy your morning coffee or tea in this beautifully crafted ceramic mug. Each piece is unique, with a speckled glaze finish.',
     price: 28.00,
+    category: 'Home Goods',
     image: getImage('ceramic-mug'),
   },
   {
@@ -45,6 +48,7 @@ export const products: Product[] = [
     name: 'Cozy Woolen Scarf',
     description: 'Stay warm and stylish with this hand-knitted scarf, made from 100% merino wool. Soft, breathable, and ethically sourced.',
     price: 65.00,
+    category: 'Apparel',
     image: getImage('woolen-scarf'),
   },
   {
@@ -52,6 +56,7 @@ export const products: Product[] = [
     name: 'Antique Brass Compass',
     description: 'A functional and decorative pocket compass, a reminder of the age of exploration. Makes a great gift for the adventurer in your life.',
     price: 55.00,
+    category: 'Collectibles',
     image: getImage('brass-compass'),
   },
   {
@@ -59,6 +64,7 @@ export const products: Product[] = [
     name: 'Minimalist Succulent Pot',
     description: 'Bring a touch of green to your space with this chic succulent in a geometric pot. Easy to care for and perfect for any room.',
     price: 22.00,
+    category: 'Home Goods',
     image: getImage('potted-succulent'),
   },
     {
@@ -66,6 +72,7 @@ export const products: Product[] = [
     name: 'Classic Fountain Pen',
     description: 'Experience the joy of writing with this elegant fountain pen. Features a smooth gold nib and a balanced, comfortable grip.',
     price: 85.00,
+    category: 'Stationery',
     image: getImage('fountain-pen'),
   },
   {
@@ -73,6 +80,7 @@ export const products: Product[] = [
     name: 'Wooden Hourglass',
     description: 'A 30-minute sand timer that adds a touch of classic elegance to your desk or shelf. Crafted from fine wood with pristine white sand.',
     price: 40.00,
+    category: 'Home Decor',
     image: getImage('hourglass'),
   },
 ];
@@ -94,3 +102,5 @@ export async function getProducts(): Promise<Product[]> {
 
   return Promise.resolve(products);
 }
+
+export const categories = [...new Set(products.map(p => p.category))];
