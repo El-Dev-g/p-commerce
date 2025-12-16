@@ -16,13 +16,13 @@ import { Edit, PlusCircle, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 
 const variationsData = [
-  { id: 'var_001', productId: 'prod_004', sku: 'SCRF-WL-RD-M', attributes: { color: 'Red', size: 'Medium' }, stock: 25, priceModifier: 0 },
-  { id: 'var_002', productId: 'prod_004', sku: 'SCRF-WL-BL-M', attributes: { color: 'Blue', size: 'Medium' }, stock: 15, priceModifier: 0 },
-  { id: 'var_003', productId: 'prod_003', sku: 'MUG-CRM-WHT-OS', attributes: { color: 'White' }, stock: 50, priceModifier: 0 },
-  { id: 'var_004', productId: 'prod_003', sku: 'MUG-CRM-BLK-OS', attributes: { color: 'Black' }, stock: 40, priceModifier: 2.50 },
-  { id: 'var_005', productId: 'prod_009', sku: 'TOTE-CNV-NAT-LG', attributes: { color: 'Natural', size: 'Large' }, stock: 100, priceModifier: 0 },
-  { id: 'var_006', productId: 'prod_002', sku: 'JRNL-LTH-BRN-SM', attributes: { color: 'Brown', size: 'Small' }, stock: 30, priceModifier: -5.00 },
-  { id: 'var_007', productId: 'prod_002', sku: 'JRNL-LTH-BRN-LG', attributes: { color: 'Brown', size: 'Large' }, stock: 20, priceModifier: 5.00 },
+  { id: 'var_001', productId: 'prod_004', sku: 'SCRF-WL-RD-M', attributes: [ { name: 'color', value: 'Red' }, { name: 'size', value: 'Medium' } ], stock: 25, priceModifier: 0 },
+  { id: 'var_002', productId: 'prod_004', sku: 'SCRF-WL-BL-M', attributes: [ { name: 'color', value: 'Blue' }, { name: 'size', value: 'Medium' } ], stock: 15, priceModifier: 0 },
+  { id: 'var_003', productId: 'prod_003', sku: 'MUG-CRM-WHT-OS', attributes: [ { name: 'color', value: 'White' } ], stock: 50, priceModifier: 0 },
+  { id: 'var_004', productId: 'prod_003', sku: 'MUG-CRM-BLK-OS', attributes: [ { name: 'color', value: 'Black' } ], stock: 40, priceModifier: 2.50 },
+  { id: 'var_005', productId: 'prod_009', sku: 'TOTE-CNV-NAT-LG', attributes: [ { name: 'color', value: 'Natural' }, { name: 'size', value: 'Large' } ], stock: 100, priceModifier: 0 },
+  { id: 'var_006', productId: 'prod_002', sku: 'JRNL-LTH-BRN-SM', attributes: [ { name: 'color', value: 'Brown' }, { name: 'size', value: 'Small' } ], stock: 30, priceModifier: -5.00 },
+  { id: 'var_007', productId: 'prod_002', sku: 'JRNL-LTH-BRN-LG', attributes: [ { name: 'color', value: 'Brown' }, { name: 'size', value: 'Large' } ], stock: 20, priceModifier: 5.00 },
 ];
 
 export default function VariationsPage() {
@@ -61,9 +61,9 @@ export default function VariationsPage() {
                   <TableCell>{variation.productId}</TableCell>
                   <TableCell>
                     <div className="flex flex-wrap gap-1">
-                      {Object.entries(variation.attributes).map(([key, value]) => (
-                        <Badge key={key} variant="secondary">
-                          {key}: {value}
+                      {variation.attributes.map((attr) => (
+                        <Badge key={attr.name} variant="secondary">
+                          {attr.name}: {attr.value}
                         </Badge>
                       ))}
                     </div>
@@ -97,3 +97,5 @@ export default function VariationsPage() {
     </main>
   );
 }
+
+    

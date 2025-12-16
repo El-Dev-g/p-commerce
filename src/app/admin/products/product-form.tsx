@@ -44,7 +44,7 @@ const productSchema = z.object({
 
 type ProductFormData = z.infer<typeof productSchema>;
 
-function VariationAttributes({ control, variationIndex }: { control: Control<ProductFormData>, variationIndex: number }) {
+function VariationAttributes({ control, variationIndex, form }: { control: Control<ProductFormData>, variationIndex: number, form: any }) {
   const { fields, append, remove } = useFieldArray({
     control,
     name: `variations.${variationIndex}.attributes`,
@@ -52,15 +52,36 @@ function VariationAttributes({ control, variationIndex }: { control: Control<Pro
 
   return (
     <div className="space-y-3">
+      <Label>Attributes</Label>
       {fields.map((field, attrIndex) => (
-        <div key={field.id} className="grid grid-cols-11 gap-2 items-center">
+        <div key={field.id} className="grid grid-cols-11 gap-2 items-start">
           <div className="col-span-5">
-            <Label className="sr-only">Attribute Name</Label>
-            <Input {...control.register(`variations.${variationIndex}.attributes.${attrIndex}.name`)} placeholder="e.g. Color" />
+            <FormField
+              control={control}
+              name={`variations.${variationIndex}.attributes.${attrIndex}.name`}
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <Input {...field} placeholder="e.g. Color" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
           </div>
           <div className="col-span-5">
-            <Label className="sr-only">Attribute Value</Label>
-            <Input {...control.register(`variations.${variationIndex}.attributes.${attrIndex}.value`)} placeholder="e.g. Blue" />
+             <FormField
+              control={control}
+              name={`variations.${variationIndex}.attributes.${attrIndex}.value`}
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <Input {...field} placeholder="e.g. Blue" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
           </div>
           <Button type="button" variant="ghost" size="icon" className="col-span-1 text-destructive" onClick={() => remove(attrIndex)}>
             <Trash2 className="h-4 w-4" />
@@ -170,6 +191,7 @@ export function ProductForm({ product }: { product?: Product }) {
     
     setIsSaving(false);
     router.push('/admin/products');
+    router.refresh();
   };
 
   return (
@@ -258,66 +280,69 @@ export function ProductForm({ product }: { product?: Product }) {
               <CardDescription>Manage product variations, SKUs, and stock.</CardDescription>
             </CardHeader>
             <CardContent>
-              {fields.map((field, index) => (
-                <div key={field.id} className="p-4 border rounded-md mb-4 space-y-4 relative">
-                  <h4 className="font-semibold">Variation #{index + 1}</h4>
-                  
-                  <VariationAttributes control={form.control} variationIndex={index} />
+              <div className="space-y-4">
+                {fields.map((field, index) => (
+                  <div key={field.id} className="p-4 border rounded-md mb-4 space-y-4 relative">
+                    <h4 className="font-semibold">Variation #{index + 1}</h4>
+                    
+                    <VariationAttributes control={form.control} variationIndex={index} form={form} />
 
-                  <Separator />
+                    <Separator />
 
-                  <div className="grid md:grid-cols-3 gap-4">
-                    <FormField
-                      control={form.control}
-                      name={`variations.${index}.sku`}
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>SKU</FormLabel>
-                          <FormControl>
-                            <Input placeholder="e.g. MUG-BLU-LG" {...field} />
-                          </FormControl>
-                        </FormItem>
-                      )}
-                    />
-                     <FormField
-                      control={form.control}
-                      name={`variations.${index}.stock`}
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Stock</FormLabel>
-                          <FormControl>
-                            <Input type="number" placeholder="e.g. 50" {...field} />
-                          </FormControl>
-                        </FormItem>
-                      )}
-                    />
-                     <FormField
-                      control={form.control}
-                      name={`variations.${index}.priceModifier`}
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Price Modifier</FormLabel>
-                          <FormControl>
-                            <Input type="number" placeholder="e.g. 5 or -2.5" {...field} />
-                          </FormControl>
-                        </FormItem>
-                      )}
-                    />
+                    <div className="grid md:grid-cols-3 gap-4">
+                      <FormField
+                        control={form.control}
+                        name={`variations.${index}.sku`}
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>SKU</FormLabel>
+                            <FormControl>
+                              <Input placeholder="e.g. MUG-BLU-LG" {...field} />
+                            </FormControl>
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name={`variations.${index}.stock`}
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Stock</FormLabel>
+                            <FormControl>
+                              <Input type="number" placeholder="e.g. 50" {...field} />
+                            </FormControl>
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name={`variations.${index}.priceModifier`}
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Price Modifier</FormLabel>
+                            <FormControl>
+                              <Input type="number" placeholder="e.g. 5 or -2.5" {...field} />
+                            </FormControl>
+                            <FormDescription>+/- from base price.</FormDescription>
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+
+                    <Button type="button" variant="destructive" size="sm" className="absolute top-2 right-2" onClick={() => remove(index)}>
+                      Remove
+                    </Button>
                   </div>
-
-                  <Button type="button" variant="destructive" size="sm" className="absolute top-2 right-2" onClick={() => remove(index)}>
-                    Remove
-                  </Button>
-                </div>
-              ))}
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => append({ attributes: [{ name: '', value: '' }], sku: '', stock: 0, priceModifier: 0 })}
-              >
-                <PlusCircle className="mr-2 h-4 w-4" />
-                Add Variation
-              </Button>
+                ))}
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => append({ attributes: [{ name: '', value: '' }], sku: '', stock: 0, priceModifier: 0 })}
+                >
+                  <PlusCircle className="mr-2 h-4 w-4" />
+                  Add Variation
+                </Button>
+              </div>
             </CardContent>
           </Card>
         </div>
@@ -348,58 +373,58 @@ export function ProductForm({ product }: { product?: Product }) {
             </CardHeader>
             <CardContent className="space-y-6">
                 <div className="space-y-2">
-                <Label>Generate Description</Label>
-                <Input
-                    placeholder="Enter keywords (e.g. handmade, rustic)"
-                    value={keywords}
-                    onChange={(e) => setKeywords(e.target.value)}
-                />
-                <Button
-                    variant="outline"
-                    className="w-full"
-                    onClick={handleGenerateDescription}
-                    disabled={isDescLoading}
-                >
-                    {isDescLoading ? (
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    ) : (
-                    <Sparkles className="mr-2 h-4 w-4" />
-                    )}
-                    Generate
-                </Button>
+                  <Label>Generate Description</Label>
+                  <Input
+                      placeholder="Enter keywords (e.g. handmade, rustic)"
+                      value={keywords}
+                      onChange={(e) => setKeywords(e.target.value)}
+                  />
+                  <Button
+                      variant="outline"
+                      className="w-full"
+                      onClick={handleGenerateDescription}
+                      disabled={isDescLoading}
+                  >
+                      {isDescLoading ? (
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      ) : (
+                      <Sparkles className="mr-2 h-4 w-4" />
+                      )}
+                      Generate
+                  </Button>
                 </div>
                 <div className="space-y-2">
-                <Label>Suggest Titles</Label>
-                <Button
-                    variant="outline"
-                    className="w-full"
-                    onClick={handleGenerateTitles}
-                    disabled={isTitleLoading}
-                >
-                    {isTitleLoading ? (
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    ) : (
-                    <Sparkles className="mr-2 h-4 w-4" />
-                    )}
-                    Suggest Titles
-                </Button>
-                {suggestedTitles.length > 0 && (
-                    <div className="mt-4 space-y-2">
-                        <p className="text-sm font-medium text-muted-foreground">Click a title to use it:</p>
-                        <div className="flex flex-col gap-2">
-                        {suggestedTitles.map((title, index) => (
-                            <Button
-                            key={index}
-                            variant="link"
-                            className="p-0 h-auto justify-start text-left"
-                            onClick={() => form.setValue('name', title)}
-                            >
-                            {title}
-                            </Button>
-                        ))}
-                        </div>
-                    </div>
-                )}
+                  <Label>Suggest Titles</Label>
+                  <Button
+                      variant="outline"
+                      className="w-full"
+                      onClick={handleGenerateTitles}
+                      disabled={isTitleLoading}
+                  >
+                      {isTitleLoading ? (
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      ) : (
+                      <Sparkles className="mr-2 h-4 w-4" />
+                      )}
+                      Suggest Titles
+                  </Button>
+                  {suggestedTitles.length > 0 && (
+                      <div className="mt-4 space-y-2">
+                          <p className="text-sm font-medium text-muted-foreground">Click a title to use it:</p>
+                          <div className="flex flex-col gap-2">
+                          {suggestedTitles.map((title, index) => (
+                              <Button
+                              key={index}
+                              variant="link"
+                              className="p-0 h-auto justify-start text-left"
+                              onClick={() => form.setValue('name', title)}
+                              >
+                              {title}
+                              </Button>
+                          ))}
+                          </div>
+                      </div>
+                  )}
                 </div>
             </CardContent>
             </Card>
@@ -409,3 +434,5 @@ export function ProductForm({ product }: { product?: Product }) {
     </Form>
   );
 }
+
+    
