@@ -1,11 +1,11 @@
 
-import { Sparkles, Twitter, Facebook, Instagram, Linkedin } from 'lucide-react';
+import { Sparkles } from 'lucide-react';
 import Link from 'next/link';
 
 export function Footer() {
   return (
     <footer className="border-t border-border/40 bg-background">
-      <div className="container grid grid-cols-1 gap-8 py-12 md:grid-cols-4">
+      <div className="container grid grid-cols-1 gap-8 py-12 md:grid-cols-3">
         <div className="flex flex-col items-start gap-4">
           <Link href="/" className="flex items-center gap-2">
             <Sparkles className="h-6 w-6 text-primary" />
@@ -15,7 +15,7 @@ export function Footer() {
             Discover unique, handcrafted items from artisans around the world.
           </p>
         </div>
-        <div className="grid grid-cols-2 gap-8 md:col-span-3 md:grid-cols-3">
+        <div className="grid grid-cols-2 gap-8 md:col-span-2">
           <div>
             <h3 className="mb-4 font-headline font-semibold">Quick Links</h3>
             <ul className="space-y-2">
@@ -33,27 +33,6 @@ export function Footer() {
               <li><Link href="/shipping-returns" className="text-sm text-muted-foreground hover:text-primary">Shipping & Returns</Link></li>
               <li><Link href="/refund-policy" className="text-sm text-muted-foreground hover:text-primary">Refund Policy</Link></li>
             </ul>
-          </div>
-          <div>
-            <h3 className="mb-4 font-headline font-semibold">Follow Us</h3>
-            <div className="flex items-center gap-4">
-                <Link href="#" className="text-muted-foreground hover:text-primary">
-                    <Twitter className="h-5 w-5" />
-                    <span className="sr-only">Twitter</span>
-                </Link>
-                <Link href="#" className="text-muted-foreground hover:text-primary">
-                    <Facebook className="h-5 w-5" />
-                    <span className="sr-only">Facebook</span>
-                </Link>
-                <Link href="#" className="text-muted-foreground hover:text-primary">
-                    <Instagram className="h-5 w-5" />
-                    <span className="sr-only">Instagram</span>
-                </Link>
-                <Link href="#" className="text-muted-foreground hover:text-primary">
-                    <Linkedin className="h-5 w-5" />
-                    <span className="sr-only">LinkedIn</span>
-                </Link>
-            </div>
           </div>
         </div>
       </div>
