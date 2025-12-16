@@ -2,6 +2,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { MessageSquare, ShoppingCart, Settings, Trash2 } from 'lucide-react';
@@ -68,9 +69,11 @@ export default function AppStorePage() {
                     <CardFooter className="flex justify-end gap-2 bg-muted/50 p-4 rounded-b-lg">
                        {isInstalled ? (
                         <>
-                            <Button variant="outline">
-                                <Settings className="mr-2 h-4 w-4" />
-                                Manage
+                            <Button variant="outline" asChild>
+                                <Link href="/admin/settings">
+                                    <Settings className="mr-2 h-4 w-4" />
+                                    Manage
+                                </Link>
                             </Button>
                             <Button variant="destructive" onClick={() => handleUninstall(app.id)}>
                                 <Trash2 className="mr-2 h-4 w-4" />
