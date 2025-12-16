@@ -67,7 +67,7 @@ export const products: Product[] = [
     category: 'Home Goods',
     image: getImage('potted-succulent'),
   },
-    {
+  {
     id: 'prod_007',
     name: 'Classic Fountain Pen',
     description: 'Experience the joy of writing with this elegant fountain pen. Features a smooth gold nib and a balanced, comfortable grip.',
@@ -82,6 +82,38 @@ export const products: Product[] = [
     price: 40.00,
     category: 'Home Decor',
     image: getImage('hourglass'),
+  },
+  {
+    id: 'prod_009',
+    name: 'Canvas Tote Bag',
+    description: 'A durable and stylish canvas tote bag, perfect for carrying your daily essentials. Features a minimalist print.',
+    price: 32.00,
+    category: 'Apparel',
+    image: getImage('canvas-tote'),
+  },
+  {
+    id: 'prod_010',
+    name: 'Beeswax Candles',
+    description: 'A set of three hand-rolled beeswax candles. They burn cleanly with a subtle, natural honey scent.',
+    price: 25.00,
+    category: 'Home Decor',
+    image: getImage('beeswax-candles'),
+  },
+  {
+    id: 'prod_011',
+    name: 'Linen Tea Towels',
+    description: 'A set of two highly absorbent and soft linen tea towels. Perfect for any kitchen, they get softer with every wash.',
+    price: 38.00,
+    category: 'Home Goods',
+    image: getImage('linen-towels'),
+  },
+  {
+    id: 'prod_012',
+    name: 'Wooden Desk Organizer',
+    description: 'Keep your workspace tidy with this elegant wooden desk organizer. Multiple compartments for pens, notes, and other small items.',
+    price: 58.00,
+    category: 'Stationery',
+    image: getImage('desk-organizer'),
   },
 ];
 

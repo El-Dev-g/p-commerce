@@ -90,8 +90,8 @@ export function ProductSidebar({
           <div className="space-y-4">
             <Slider
               min={0}
-              max={150}
-              step={5}
+              max={200}
+              step={10}
               value={priceRange}
               onValueChange={onPriceChange}
             />

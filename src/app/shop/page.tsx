@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect, useMemo, useTransition } from 'react';
@@ -11,22 +12,30 @@ import { useDebounce } from '@/hooks/use-debounce';
 import { Skeleton } from '@/components/ui/skeleton';
 import { searchProducts } from '@/ai/flows/search-products';
 import { useToast } from '@/hooks/use-toast';
+import { Button } from '@/components/ui/button';
+import { Loader2 } from 'lucide-react';
+
+const PRODUCTS_PER_PAGE = 8;
 
 export default function ShopPage() {
   const [allProducts, setAllProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isAiSearching, startAiSearchTransition] = useTransition();
+  const [isLoadingMore, startLoadingMoreTransition] = useTransition();
 
   const [searchTerm, setSearchTerm] = useState('');
   const [useAiSearch, setUseAiSearch] = useState(false);
-  const [aiSearchResultIds, setAiSearchResultIds] = useState<string[] | null>(null);
+  const [aiSearchResultIds, setAiSearchResultIds] = useState<string[] | null>(
+    null
+  );
 
-  const [priceRange, setPriceRange] = useState<number[]>([0, 150]);
+  const [priceRange, setPriceRange] = useState<number[]>([0, 200]);
   const [selectedCategory, setSelectedCategory] = useState('all');
+  
+  const [visibleProductCount, setVisibleProductCount] = useState(PRODUCTS_PER_PAGE);
 
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
   const { toast } = useToast();
-
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -42,33 +51,37 @@ export default function ShopPage() {
     if (useAiSearch && debouncedSearchTerm) {
       startAiSearchTransition(async () => {
         try {
-          const result = await searchProducts(debouncedSearchTerm, allProducts);
+          const result = await searchProducts(
+            debouncedSearchTerm,
+            allProducts
+          );
           setAiSearchResultIds(result.productIds);
         } catch (error) {
-          console.error("AI Search Failed:", error);
+          console.error('AI Search Failed:', error);
           toast({
-            variant: "destructive",
-            title: "AI Search Error",
-            description: "There was a problem with the AI search. Please try again.",
+            variant: 'destructive',
+            title: 'AI Search Error',
+            description: 'There was a problem with the AI search. Please try again.',
           });
           setAiSearchResultIds([]); // Reset to avoid showing stale results
         }
       });
     } else {
-        setAiSearchResultIds(null); // Clear AI results if not using AI search
+      setAiSearchResultIds(null); // Clear AI results if not using AI search
     }
   }, [useAiSearch, debouncedSearchTerm, allProducts, toast]);
-
 
   const filteredProducts = useMemo(() => {
     let productsToFilter = allProducts;
 
     if (useAiSearch && aiSearchResultIds) {
-        productsToFilter = allProducts.filter(p => aiSearchResultIds.includes(p.id));
+      productsToFilter = allProducts.filter((p) =>
+        aiSearchResultIds.includes(p.id)
+      );
     } else if (!useAiSearch && debouncedSearchTerm) {
-        productsToFilter = allProducts.filter(product => 
-            product.name.toLowerCase().includes(debouncedSearchTerm.toLowerCase())
-        );
+      productsToFilter = allProducts.filter((product) =>
+        product.name.toLowerCase().includes(debouncedSearchTerm.toLowerCase())
+      );
     }
 
     return productsToFilter.filter((product) => {
@@ -78,8 +91,31 @@ export default function ShopPage() {
         selectedCategory === 'all' || product.category === selectedCategory;
       return matchesPrice && matchesCategory;
     });
-  }, [allProducts, debouncedSearchTerm, priceRange, selectedCategory, useAiSearch, aiSearchResultIds]);
+  }, [
+    allProducts,
+    debouncedSearchTerm,
+    priceRange,
+    selectedCategory,
+    useAiSearch,
+    aiSearchResultIds,
+  ]);
 
+  const visibleProducts = useMemo(() => {
+    return filteredProducts.slice(0, visibleProductCount);
+  }, [filteredProducts, visibleProductCount]);
+  
+  // Reset visible count when filters change
+  useEffect(() => {
+    setVisibleProductCount(PRODUCTS_PER_PAGE);
+  }, [filteredProducts]);
+
+  const handleLoadMore = () => {
+    startLoadingMoreTransition(() => {
+        setVisibleProductCount(prevCount => prevCount + PRODUCTS_PER_PAGE);
+    });
+  }
+
+  const canLoadMore = visibleProductCount < filteredProducts.length;
   const isSearching = isLoading || isAiSearching;
 
   return (
@@ -120,11 +156,29 @@ export default function ShopPage() {
                   ))}
                 </div>
               ) : filteredProducts.length > 0 ? (
-                <ProductGrid products={filteredProducts} />
+                <>
+                <ProductGrid products={visibleProducts} />
+                {canLoadMore && (
+                    <div className="mt-12 flex justify-center">
+                        <Button onClick={handleLoadMore} disabled={isLoadingMore} size="lg">
+                            {isLoadingMore ? (
+                                <>
+                                    <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                                    Loading...
+                                </>
+                            ) : "Load More"}
+                        </Button>
+                    </div>
+                )}
+                </>
               ) : (
                 <div className="flex h-full flex-col items-center justify-center text-center">
-                    <h3 className='font-headline text-2xl font-semibold'>No Products Found</h3>
-                    <p className='text-muted-foreground mt-2'>Try adjusting your search or filters.</p>
+                  <h3 className="font-headline text-2xl font-semibold">
+                    No Products Found
+                  </h3>
+                  <p className="mt-2 text-muted-foreground">
+                    Try adjusting your search or filters.
+                  </p>
                 </div>
               )}
             </div>
