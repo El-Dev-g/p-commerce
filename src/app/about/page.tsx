@@ -1,7 +1,10 @@
+
 import { Footer } from '@/components/footer';
 import { Header } from '@/components/header';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Github, Linkedin, Twitter } from 'lucide-react';
+import Link from 'next/link';
 
 export default function AboutPage() {
   return (
@@ -54,6 +57,17 @@ export default function AboutPage() {
                   <CardTitle className="text-xl">Jane Doe</CardTitle>
                   <p className="text-primary/80">Founder & CEO</p>
                   <p className="mt-2 text-sm text-muted-foreground">Jane travels the world to find the most unique products and build relationships with our artisan partners.</p>
+                  <div className="mt-4 flex justify-center gap-4">
+                    <Link href="#" className="text-gray-500 hover:text-gray-900 dark:hover:text-gray-300">
+                      <Twitter className="h-5 w-5" />
+                    </Link>
+                    <Link href="#" className="text-blue-600 hover:text-blue-800 dark:hover:text-blue-400">
+                      <Linkedin className="h-5 w-5" />
+                    </Link>
+                    <Link href="#" className="text-gray-800 hover:text-black dark:hover:text-gray-300">
+                      <Github className="h-5 w-5" />
+                    </Link>
+                  </div>
                 </CardContent>
               </Card>
               <Card className="bg-card">
@@ -67,6 +81,17 @@ export default function AboutPage() {
                   <CardTitle className="text-xl">John Smith</CardTitle>
                   <p className="text-primary/80">Head of Curation</p>
                    <p className="mt-2 text-sm text-muted-foreground">John has an eye for detail and ensures every product meets our high standards of quality and design.</p>
+                   <div className="mt-4 flex justify-center gap-4">
+                    <Link href="#" className="text-gray-500 hover:text-gray-900 dark:hover:text-gray-300">
+                      <Twitter className="h-5 w-5" />
+                    </Link>
+                    <Link href="#" className="text-blue-600 hover:text-blue-800 dark:hover:text-blue-400">
+                      <Linkedin className="h-5 w-5" />
+                    </Link>
+                    <Link href="#" className="text-gray-800 hover:text-black dark:hover:text-gray-300">
+                      <Github className="h-5 w-5" />
+                    </Link>
+                  </div>
                 </CardContent>
               </Card>
               <Card className="bg-card">
@@ -80,6 +105,17 @@ export default function AboutPage() {
                   <CardTitle className="text-xl">Emily White</CardTitle>
                   <p className="text-primary/80">Community Manager</p>
                    <p className="mt-2 text-sm text-muted-foreground">Emily connects with our community, sharing the stories behind our products and artisans.</p>
+                   <div className="mt-4 flex justify-center gap-4">
+                    <Link href="#" className="text-gray-500 hover:text-gray-900 dark:hover:text-gray-300">
+                      <Twitter className="h-5 w-5" />
+                    </Link>
+                    <Link href="#" className="text-blue-600 hover:text-blue-800 dark:hover:text-blue-400">
+                      <Linkedin className="h-5 w-5" />
+                    </Link>
+                    <Link href="#" className="text-gray-800 hover:text-black dark:hover:text-gray-300">
+                      <Github className="h-5 w-5" />
+                    </Link>
+                  </div>
                 </CardContent>
               </Card>
             </div>
