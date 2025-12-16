@@ -29,6 +29,7 @@ export function Footer() {
           <div>
             <h3 className="mb-4 font-headline font-semibold">Customer Service</h3>
             <ul className="space-y-2">
+              <li><Link href="/track-order" className="text-sm text-muted-foreground hover:text-primary">Track Order</Link></li>
               <li><Link href="/refund-policy" className="text-sm text-muted-foreground hover:text-primary">Refund Policy</Link></li>
               <li><Link href="/refund-request" className="text-sm text-muted-foreground hover:text-primary">Request a Refund</Link></li>
               <li><Link href="/privacy-policy" className="text-sm text-muted-foreground hover:text-primary">Privacy Policy</Link></li>
