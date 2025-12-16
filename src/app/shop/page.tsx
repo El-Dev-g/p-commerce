@@ -1,8 +1,11 @@
 import { Footer } from '@/components/footer';
 import { Header } from '@/components/header';
 import { ProductGrid } from '@/components/product-grid';
+import { getProducts } from '@/lib/products';
 
-export default function ShopPage() {
+export default async function ShopPage() {
+  const products = await getProducts();
+
   return (
     <div className="flex min-h-screen flex-col bg-background">
       <Header />
@@ -16,7 +19,7 @@ export default function ShopPage() {
               Explore our full collection of handcrafted goods from around the world.
             </p>
           </div>
-          <ProductGrid />
+          <ProductGrid products={products} />
         </section>
       </main>
       <Footer />

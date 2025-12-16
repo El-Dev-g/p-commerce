@@ -2,11 +2,15 @@ import { Footer } from '@/components/footer';
 import { Header } from '@/components/header';
 import { ProductGrid } from '@/components/product-grid';
 import { Button } from '@/components/ui/button';
+import { getProducts } from '@/lib/products';
 import { ArrowRight } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 
-export default function Home() {
+export default async function Home() {
+  const allProducts = await getProducts();
+  const featuredProducts = allProducts.slice(0, 4);
+
   return (
     <div className="flex min-h-screen flex-col bg-background">
       <Header />
@@ -44,7 +48,7 @@ export default function Home() {
               A curated selection of our favorite items, just for you.
             </p>
           </div>
-          <ProductGrid />
+          <ProductGrid products={featuredProducts} />
         </section>
       </main>
       <Footer />

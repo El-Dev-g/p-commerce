@@ -76,3 +76,21 @@ export const products: Product[] = [
     image: getImage('hourglass'),
   },
 ];
+
+
+// In a real application, this function would fetch data from your dropshipping supplier's API.
+export async function getProducts(): Promise<Product[]> {
+  // Simulate a network delay
+  await new Promise(resolve => setTimeout(resolve, 500));
+  
+  // To use a real API, you would replace this with a fetch call:
+  // const response = await fetch('https://api.your-supplier.com/products', {
+  //   headers: {
+  //     'Authorization': `Bearer ${process.env.SUPPLIER_API_KEY}`
+  //   }
+  // });
+  // const data = await response.json();
+  // return data.products;
+
+  return Promise.resolve(products);
+}
