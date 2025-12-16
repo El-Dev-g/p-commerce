@@ -19,21 +19,100 @@ import {
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import Image from 'next/image';
 
-const formSchema = z.object({
-  firstName: z.string().min(2, { message: 'First name is required.' }),
-  lastName: z.string().min(2, { message: 'Last name is required.' }),
-  address: z.string().min(5, { message: 'Address is required.' }),
-  city: z.string().min(2, { message: 'City is required.' }),
-  state: z.string().min(2, { message: 'State is required.' }),
-  zip: z.string().min(5, { message: 'ZIP code is required.' }),
-  email: z.string().email({ message: 'Please enter a valid email.' }),
-  phone: z.string().min(10, { message: 'Please enter a valid phone number.' }),
-  cardNumber: z.string().regex(/^\d{16}$/, 'Invalid card number'),
-  expiryDate: z.string().regex(/^(0[1-9]|1[0-2])\s*\/\s*\d{2}$/, 'Invalid expiry date (MM / YY)'),
-  cvc: z.string().regex(/^\d{3,4}$/, 'Invalid CVC'),
-});
+const formSchema = z
+  .object({
+    firstName: z.string().min(2, { message: 'First name is required.' }),
+    lastName: z.string().min(2, { message: 'Last name is required.' }),
+    address: z.string().min(5, { message: 'Address is required.' }),
+    city: z.string().min(2, { message: 'City is required.' }),
+    state: z.string().min(2, { message: 'State is required.' }),
+    zip: z.string().min(5, { message: 'ZIP code is required.' }),
+    email: z.string().email({ message: 'Please enter a valid email.' }),
+    phone: z.string().min(10, { message: 'Please enter a valid phone number.' }),
+    paymentMethod: z.enum(['card', 'bank'], {
+      required_error: 'You need to select a payment method.',
+    }),
+    cardNumber: z.string().optional(),
+    expiryDate: z.string().optional(),
+    cvc: z.string().optional(),
+    accountHolderName: z.string().optional(),
+    accountNumber: z.string().optional(),
+    routingNumber: z.string().optional(),
+  })
+  .refine(
+    (data) => {
+      if (data.paymentMethod === 'card') {
+        return (
+          !!data.cardNumber?.match(/^\d{16}$/) &&
+          !!data.expiryDate?.match(/^(0[1-9]|1[0-2])\s*\/\s*\d{2}$/) &&
+          !!data.cvc?.match(/^\d{3,4}$/)
+        );
+      }
+      return true;
+    },
+    {
+      message: 'Please fill in all credit card details.',
+      path: ['cardNumber'], // You can associate the error with a specific field if you want
+    }
+  )
+    .refine(
+    (data) => {
+      if (data.paymentMethod === 'card' && !data.cardNumber?.match(/^\d{16}$/)) {
+        return false;
+      }
+      return true;
+    },
+    {
+      message: 'Invalid card number',
+      path: ['cardNumber'],
+    }
+  )
+   .refine(
+    (data) => {
+      if (data.paymentMethod === 'card' && !data.expiryDate?.match(/^(0[1-9]|1[0-2])\s*\/\s*\d{2}$/)) {
+        return false;
+      }
+      return true;
+    },
+    {
+      message: 'Invalid expiry date (MM / YY)',
+      path: ['expiryDate'],
+    }
+  )
+   .refine(
+    (data) => {
+      if (data.paymentMethod === 'card' && !data.cvc?.match(/^\d{3,4}$/)) {
+        return false;
+      }
+      return true;
+    },
+    {
+      message: 'Invalid CVC',
+      path: ['cvc'],
+    }
+  )
+  .refine(
+    (data) => {
+      if (data.paymentMethod === 'bank') {
+        return (
+          !!data.accountHolderName &&
+          data.accountHolderName.length > 2 &&
+          !!data.accountNumber &&
+          data.accountNumber.length > 5 &&
+          !!data.routingNumber &&
+          data.routingNumber.length > 5
+        );
+      }
+      return true;
+    },
+    {
+      message: 'Please fill in all bank transfer details.',
+      path: ['accountHolderName'], // Associate error with the first field in the group
+    }
+  );
 
 export default function CheckoutPage() {
   const { cartItems, getCartTotal, clearCart } = useCart();
@@ -50,11 +129,17 @@ export default function CheckoutPage() {
       zip: '',
       email: '',
       phone: '',
+      paymentMethod: 'card',
       cardNumber: '',
       expiryDate: '',
       cvc: '',
+      accountHolderName: '',
+      accountNumber: '',
+      routingNumber: '',
     },
   });
+
+  const paymentMethod = form.watch('paymentMethod');
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     const order = {
@@ -72,6 +157,7 @@ export default function CheckoutPage() {
       items: cartItems,
       total: getCartTotal(),
       orderDate: new Date().toISOString(),
+      paymentMethod: values.paymentMethod,
     };
 
     // In a real app, you would process payment here.
@@ -99,7 +185,7 @@ export default function CheckoutPage() {
 
     // And send a WhatsApp confirmation
     try {
-       await fetch('/api/v1/send-whatsapp', {
+      await fetch('/api/v1/send-whatsapp', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -111,7 +197,7 @@ export default function CheckoutPage() {
       });
       console.log('WhatsApp confirmation triggered successfully');
     } catch (error) {
-        console.error("Failed to trigger WhatsApp message", error);
+      console.error('Failed to trigger WhatsApp message', error);
     }
 
     // For this prototype, we'll store the order in localStorage.
@@ -224,14 +310,18 @@ export default function CheckoutPage() {
                         )}
                       />
                     </div>
-                     <FormField
+                    <FormField
                       control={form.control}
                       name="email"
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Email</FormLabel>
                           <FormControl>
-                            <Input type="email" placeholder="you@example.com" {...field} />
+                            <Input
+                              type="email"
+                              placeholder="you@example.com"
+                              {...field}
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -244,7 +334,11 @@ export default function CheckoutPage() {
                         <FormItem>
                           <FormLabel>Phone Number</FormLabel>
                           <FormControl>
-                            <Input type="tel" placeholder="(123) 456-7890" {...field} />
+                            <Input
+                              type="tel"
+                              placeholder="(123) 456-7890"
+                              {...field}
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -259,22 +353,62 @@ export default function CheckoutPage() {
                   <h2 className="font-headline text-2xl font-semibold">
                     Payment Details
                   </h2>
-                   <div className="mt-6 space-y-6">
-                      <FormField
-                        control={form.control}
-                        name="cardNumber"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Card Number</FormLabel>
-                            <FormControl>
-                              <Input placeholder="**** **** **** 1234" {...field} />
-                            </FormControl>
-                             <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-                         <FormField
+                  <div className="mt-6 space-y-6">
+                    <FormField
+                      control={form.control}
+                      name="paymentMethod"
+                      render={({ field }) => (
+                        <FormItem className="space-y-3">
+                          <FormLabel>Payment Method</FormLabel>
+                          <FormControl>
+                            <RadioGroup
+                              onValueChange={field.onChange}
+                              defaultValue={field.value}
+                              className="flex flex-col space-y-1"
+                            >
+                              <FormItem className="flex items-center space-x-3 space-y-0">
+                                <FormControl>
+                                  <RadioGroupItem value="card" />
+                                </FormControl>
+                                <FormLabel className="font-normal">
+                                  Credit Card
+                                </FormLabel>
+                              </FormItem>
+                              <FormItem className="flex items-center space-x-3 space-y-0">
+                                <FormControl>
+                                  <RadioGroupItem value="bank" />
+                                </FormControl>
+                                <FormLabel className="font-normal">
+                                  Bank Transfer
+                                </FormLabel>
+                              </FormItem>
+                            </RadioGroup>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    {paymentMethod === 'card' && (
+                      <div className="space-y-6">
+                        <FormField
+                          control={form.control}
+                          name="cardNumber"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Card Number</FormLabel>
+                              <FormControl>
+                                <Input
+                                  placeholder="**** **** **** 1234"
+                                  {...field}
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                          <FormField
                             control={form.control}
                             name="expiryDate"
                             render={({ field }) => (
@@ -300,8 +434,54 @@ export default function CheckoutPage() {
                               </FormItem>
                             )}
                           />
+                        </div>
                       </div>
-                   </div>
+                    )}
+
+                    {paymentMethod === 'bank' && (
+                      <div className="space-y-6">
+                        <FormField
+                          control={form.control}
+                          name="accountHolderName"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Account Holder Name</FormLabel>
+                              <FormControl>
+                                <Input placeholder="John Doe" {...field} />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={form.control}
+                          name="accountNumber"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Account Number</FormLabel>
+                              <FormControl>
+                                <Input placeholder="123456789" {...field} />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={form.control}
+                          name="routingNumber"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Routing Number</FormLabel>
+                              <FormControl>
+                                <Input placeholder="111000025" {...field} />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
 
@@ -313,7 +493,10 @@ export default function CheckoutPage() {
                   <CardContent className="space-y-4">
                     {cartItems.length > 0 ? (
                       cartItems.map((item) => (
-                        <div key={item.product.id} className="flex items-center justify-between">
+                        <div
+                          key={item.product.id}
+                          className="flex items-center justify-between"
+                        >
                           <div className="flex items-center gap-4">
                             <div className="relative h-16 w-16 overflow-hidden rounded-md border">
                               <Image
@@ -325,7 +508,9 @@ export default function CheckoutPage() {
                             </div>
                             <div>
                               <p className="font-medium">{item.product.name}</p>
-                              <p className="text-sm text-muted-foreground">Qty: {item.quantity}</p>
+                              <p className="text-sm text-muted-foreground">
+                                Qty: {item.quantity}
+                              </p>
                             </div>
                           </div>
                           <p className="font-medium">
@@ -334,7 +519,9 @@ export default function CheckoutPage() {
                         </div>
                       ))
                     ) : (
-                      <p className="text-muted-foreground">Your cart is empty.</p>
+                      <p className="text-muted-foreground">
+                        Your cart is empty.
+                      </p>
                     )}
                     <Separator />
                     <div className="flex justify-between font-bold">
@@ -345,9 +532,13 @@ export default function CheckoutPage() {
                       type="submit"
                       size="lg"
                       className="w-full"
-                      disabled={cartItems.length === 0 || form.formState.isSubmitting}
+                      disabled={
+                        cartItems.length === 0 || form.formState.isSubmitting
+                      }
                     >
-                      {form.formState.isSubmitting ? 'Placing Order...' : 'Place Order'}
+                      {form.formState.isSubmitting
+                        ? 'Placing Order...'
+                        : 'Place Order'}
                     </Button>
                   </CardContent>
                 </Card>
