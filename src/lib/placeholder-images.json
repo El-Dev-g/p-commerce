@@ -1,3 +1,52 @@
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "vintage-camera",
+      "description": "A vintage film camera on a wooden table.",
+      "imageUrl": "https://images.unsplash.com/photo-1492671357725-4c36ca51d815?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8dmludGFnZSUyMGNhbWVyYXxlbnwwfHx8fDE3NjU4NTkwNzF8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "vintage camera"
+    },
+    {
+      "id": "leather-journal",
+      "description": "A handcrafted leather journal with a pen.",
+      "imageUrl": "https://images.unsplash.com/photo-1672415981198-93e5c3c5df7d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHxsZWF0aGVyJTIwam91cm5hbHxlbnwwfHx8fDE3NjU4MzI0OTZ8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "leather journal"
+    },
+    {
+      "id": "ceramic-mug",
+      "description": "A minimalist ceramic mug.",
+      "imageUrl": "https://images.unsplash.com/photo-1536936812504-0e77dc3f0b40?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxjZXJhbWljJTIwbXVnfGVufDB8fHx8MTc2NTg2NTI5MHww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "ceramic mug"
+    },
+    {
+      "id": "woolen-scarf",
+      "description": "A cozy hand-knitted woolen scarf.",
+      "imageUrl": "https://images.unsplash.com/photo-1604843206973-fe1e58bf974e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHx3b29sZW4lMjBzY2FyZnxlbnwwfHx8fDE3NjU4MTQ1MDV8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "woolen scarf"
+    },
+    {
+      "id": "brass-compass",
+      "description": "An antique brass pocket compass.",
+      "imageUrl": "https://images.unsplash.com/photo-1655706443789-7682c46bcb8b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxicmFzcyUyMGNvbXBhc3N8ZW58MHx8fHwxNzY1ODY1MjkxfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "brass compass"
+    },
+    {
+      "id": "potted-succulent",
+      "description": "A small potted succulent in a stylish pot.",
+      "imageUrl": "https://images.unsplash.com/photo-1485955900006-10f4d324d411?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxwb3R0ZWQlMjBwbGFudHxlbnwwfHx8fDE3NjU3ODA2NDF8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "potted plant"
+    },
+    {
+      "id": "fountain-pen",
+      "description": "An elegant fountain pen with a gold nib.",
+      "imageUrl": "https://images.unsplash.com/photo-1509652839609-d94a8ad572db?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxmb3VudGFpbiUyMHBlbnxlbnwwfHx8fDE3NjU4NjUyOTF8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "fountain pen"
+    },
+    {
+      "id": "hourglass",
+      "description": "A classic wooden hourglass with white sand.",
+      "imageUrl": "https://images.unsplash.com/photo-1731441655148-8dc80d45fed4?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxob3VyZ2xhc3MlMjBzYW5kfGVufDB8fHx8MTc2NTg2NTI5MHww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "hourglass sand"
+    }
+  ]
 }
