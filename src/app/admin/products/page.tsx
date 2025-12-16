@@ -13,6 +13,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Button } from '@/components/ui/button';
 import { Edit, PlusCircle, Trash2 } from 'lucide-react';
 import { getProducts } from '@/lib/products';
+import Link from 'next/link';
 
 export default async function ProductsPage() {
   const products = await getProducts();
@@ -20,9 +21,11 @@ export default async function ProductsPage() {
      <main className="flex-1 p-6 md:p-8">
       <div className="flex items-center justify-between mb-8">
         <h1 className="font-headline text-3xl font-bold tracking-tight">Products</h1>
-        <Button>
-          <PlusCircle className="mr-2 h-4 w-4" />
-          Add Product
+        <Button asChild>
+          <Link href="/admin/products/new">
+            <PlusCircle className="mr-2 h-4 w-4" />
+            Add Product
+          </Link>
         </Button>
       </div>
       <Card>
@@ -60,9 +63,11 @@ export default async function ProductsPage() {
                   <TableCell className="text-right">${product.price.toFixed(2)}</TableCell>
                   <TableCell className="text-center">
                     <div className="flex justify-center gap-2">
-                      <Button variant="ghost" size="icon">
-                        <Edit className="h-4 w-4" />
-                        <span className="sr-only">Edit product</span>
+                      <Button variant="ghost" size="icon" asChild>
+                        <Link href={`/admin/products/edit/${product.id}`}>
+                            <Edit className="h-4 w-4" />
+                            <span className="sr-only">Edit product</span>
+                        </Link>
                       </Button>
                       <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive">
                         <Trash2 className="h-4 w-4" />
