@@ -3,7 +3,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useForm } from 'react-hook-form';
+import { useForm, useFieldArray } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import type { Product } from '@/lib/types';
@@ -18,8 +18,17 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
-import { Sparkles, Loader2 } from 'lucide-react';
+import { Sparkles, Loader2, Trash2, PlusCircle } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
+import { Separator } from '@/components/ui/separator';
+
+const variationSchema = z.object({
+  id: z.string().optional(),
+  attributes: z.array(z.object({ name: z.string().min(1), value: z.string().min(1) })).min(1),
+  sku: z.string().optional(),
+  stock: z.coerce.number().int().min(0),
+  priceModifier: z.coerce.number().default(0),
+});
 
 const productSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters." }),
@@ -30,6 +39,7 @@ const productSchema = z.object({
     src: z.string().url(),
     alt: z.string(),
   }).optional(),
+  variations: z.array(variationSchema).optional(),
 });
 
 type ProductFormData = z.infer<typeof productSchema>;
@@ -45,16 +55,20 @@ export function ProductForm({ product }: { product?: Product }) {
   const form = useForm<ProductFormData>({
     resolver: zodResolver(productSchema),
     defaultValues: product ? {
-      name: product.name,
-      description: product.description,
-      price: product.price,
-      category: product.category,
+      ...product,
+      variations: product.variations || [],
     } : {
       name: '',
       description: '',
       price: 0,
       category: '',
+      variations: [],
     },
+  });
+
+  const { fields, append, remove } = useFieldArray({
+    control: form.control,
+    name: "variations",
   });
 
   const handleGenerateDescription = async () => {
@@ -127,18 +141,30 @@ export function ProductForm({ product }: { product?: Product }) {
     setIsSaving(false);
     router.push('/admin/products');
   };
+  
+  const addAttribute = (variationIndex: number) => {
+    const variations = form.getValues('variations') || [];
+    const newAttributes = [...(variations[variationIndex].attributes || []), { name: '', value: '' }];
+    form.setValue(`variations.${variationIndex}.attributes`, newAttributes);
+  };
+
+  const removeAttribute = (variationIndex: number, attributeIndex: number) => {
+    const variations = form.getValues('variations') || [];
+    const newAttributes = variations[variationIndex].attributes.filter((_, i) => i !== attributeIndex);
+    form.setValue(`variations.${variationIndex}.attributes`, newAttributes);
+  };
+
 
   return (
-    <div className="grid gap-8 lg:grid-cols-3">
-      <div className="lg:col-span-2">
-        <Card>
-          <CardHeader>
-            <CardTitle>Product Details</CardTitle>
-            <CardDescription>Fill out the information for your new product.</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-8 lg:grid-cols-3">
+        <div className="lg:col-span-2 space-y-8">
+          <Card>
+            <CardHeader>
+              <CardTitle>Product Details</CardTitle>
+              <CardDescription>Fill out the information for your new product.</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
                 <FormField
                   control={form.control}
                   name="name"
@@ -175,10 +201,11 @@ export function ProductForm({ product }: { product?: Product }) {
                     name="price"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Price</FormLabel>
+                        <FormLabel>Base Price</FormLabel>
                         <FormControl>
                           <Input type="number" placeholder="e.g. 28.00" {...field} />
                         </FormControl>
+                         <FormDescription>This is the base price. Variations can modify this.</FormDescription>
                         <FormMessage />
                       </FormItem>
                     )}
@@ -206,86 +233,179 @@ export function ProductForm({ product }: { product?: Product }) {
                     )}
                   />
                 </div>
-                 <Button type="submit" disabled={isSaving}>
-                  {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                  {isSaving ? 'Saving...' : 'Save Product'}
-                 </Button>
-              </form>
-            </Form>
-          </CardContent>
-        </Card>
-      </div>
-      <div className="lg:col-span-1">
-        <Card>
-          <CardHeader>
-            <CardTitle>
-                <div className="flex items-center gap-2">
-                    <Sparkles className="h-5 w-5 text-primary" />
-                    AI Content Tools
-                </div>
-            </CardTitle>
-            <CardDescription>
-              Use AI to help you write compelling content.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="space-y-2">
-              <Label>Generate Description</Label>
-              <Input
-                placeholder="Enter keywords (e.g. handmade, rustic)"
-                value={keywords}
-                onChange={(e) => setKeywords(e.target.value)}
-              />
-              <Button
-                variant="outline"
-                className="w-full"
-                onClick={handleGenerateDescription}
-                disabled={isDescLoading}
-              >
-                {isDescLoading ? (
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                ) : (
-                  <Sparkles className="mr-2 h-4 w-4" />
-                )}
-                Generate
-              </Button>
-            </div>
-            <div className="space-y-2">
-              <Label>Suggest Titles</Label>
-               <Button
-                variant="outline"
-                className="w-full"
-                onClick={handleGenerateTitles}
-                disabled={isTitleLoading}
-              >
-                {isTitleLoading ? (
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                ) : (
-                  <Sparkles className="mr-2 h-4 w-4" />
-                )}
-                Suggest Titles
-              </Button>
-               {suggestedTitles.length > 0 && (
-                <div className="mt-4 space-y-2">
-                    <p className="text-sm font-medium text-muted-foreground">Click a title to use it:</p>
-                    <div className="flex flex-col gap-2">
-                    {suggestedTitles.map((title, index) => (
-                        <Button
-                        key={index}
-                        variant="link"
-                        className="p-0 h-auto justify-start text-left"
-                        onClick={() => form.setValue('name', title)}
-                        >
-                        {title}
+            </CardContent>
+          </Card>
+           <Card>
+            <CardHeader>
+              <CardTitle>Inventory &amp; Variations</CardTitle>
+              <CardDescription>Manage product variations, SKUs, and stock.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              {fields.map((field, index) => (
+                <div key={field.id} className="p-4 border rounded-md mb-4 space-y-4 relative">
+                  <h4 className="font-semibold">Variation #{index + 1}</h4>
+
+                   {field.attributes.map((attr, attrIndex) => (
+                    <div key={attrIndex} className="grid grid-cols-11 gap-2 items-center">
+                        <div className="col-span-5">
+                            <Label className="sr-only">Attribute Name</Label>
+                            <Input {...form.register(`variations.${index}.attributes.${attrIndex}.name`)} placeholder="e.g. Color" />
+                        </div>
+                        <div className="col-span-5">
+                            <Label className="sr-only">Attribute Value</Label>
+                            <Input {...form.register(`variations.${index}.attributes.${attrIndex}.value`)} placeholder="e.g. Blue" />
+                        </div>
+                        <Button type="button" variant="ghost" size="icon" className="col-span-1 text-destructive" onClick={() => removeAttribute(index, attrIndex)} >
+                            <Trash2 className="h-4 w-4" />
                         </Button>
-                    ))}
                     </div>
+                  ))}
+                   <Button type="button" variant="outline" size="sm" onClick={() => addAttribute(index)}><PlusCircle className="mr-2 h-4 w-4" />Add Attribute</Button>
+
+                  <Separator />
+
+                  <div className="grid md:grid-cols-3 gap-4">
+                    <FormField
+                      control={form.control}
+                      name={`variations.${index}.sku`}
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>SKU</FormLabel>
+                          <FormControl>
+                            <Input placeholder="e.g. MUG-BLU-LG" {...field} />
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
+                     <FormField
+                      control={form.control}
+                      name={`variations.${index}.stock`}
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Stock</FormLabel>
+                          <FormControl>
+                            <Input type="number" placeholder="e.g. 50" {...field} />
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
+                     <FormField
+                      control={form.control}
+                      name={`variations.${index}.priceModifier`}
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Price Modifier</FormLabel>
+                          <FormControl>
+                            <Input type="number" placeholder="e.g. 5 or -2.5" {...field} />
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+
+                  <Button type="button" variant="destructive" className="absolute top-2 right-2" onClick={() => remove(index)}>
+                    Remove Variation
+                  </Button>
                 </div>
-              )}
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-    </div>
+              ))}
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => append({ attributes: [{ name: '', value: '' }], sku: '', stock: 0, priceModifier: 0 })}
+              >
+                <PlusCircle className="mr-2 h-4 w-4" />
+                Add Variation
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+        <div className="lg:col-span-1">
+          <div className="space-y-8 sticky top-8">
+            <Card>
+                <CardHeader>
+                    <CardTitle>Save Product</CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <Button type="submit" disabled={isSaving} className="w-full">
+                    {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                    {isSaving ? 'Saving...' : 'Save Product'}
+                    </Button>
+                </CardContent>
+            </Card>
+            <Card>
+            <CardHeader>
+                <CardTitle>
+                    <div className="flex items-center gap-2">
+                        <Sparkles className="h-5 w-5 text-primary" />
+                        AI Content Tools
+                    </div>
+                </CardTitle>
+                <CardDescription>
+                Use AI to help you write compelling content.
+                </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+                <div className="space-y-2">
+                <Label>Generate Description</Label>
+                <Input
+                    placeholder="Enter keywords (e.g. handmade, rustic)"
+                    value={keywords}
+                    onChange={(e) => setKeywords(e.target.value)}
+                />
+                <Button
+                    variant="outline"
+                    className="w-full"
+                    onClick={handleGenerateDescription}
+                    disabled={isDescLoading}
+                >
+                    {isDescLoading ? (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    ) : (
+                    <Sparkles className="mr-2 h-4 w-4" />
+                    )}
+                    Generate
+                </Button>
+                </div>
+                <div className="space-y-2">
+                <Label>Suggest Titles</Label>
+                <Button
+                    variant="outline"
+                    className="w-full"
+                    onClick={handleGenerateTitles}
+                    disabled={isTitleLoading}
+                >
+                    {isTitleLoading ? (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    ) : (
+                    <Sparkles className="mr-2 h-4 w-4" />
+                    )}
+                    Suggest Titles
+                </Button>
+                {suggestedTitles.length > 0 && (
+                    <div className="mt-4 space-y-2">
+                        <p className="text-sm font-medium text-muted-foreground">Click a title to use it:</p>
+                        <div className="flex flex-col gap-2">
+                        {suggestedTitles.map((title, index) => (
+                            <Button
+                            key={index}
+                            variant="link"
+                            className="p-0 h-auto justify-start text-left"
+                            onClick={() => form.setValue('name', title)}
+                            >
+                            {title}
+                            </Button>
+                        ))}
+                        </div>
+                    </div>
+                )}
+                </div>
+            </CardContent>
+            </Card>
+          </div>
+        </div>
+      </form>
+    </Form>
   );
 }
+
+    

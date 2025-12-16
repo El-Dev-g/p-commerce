@@ -1,3 +1,12 @@
+
+export type ProductVariation = {
+  id?: string;
+  attributes: { name: string; value: string }[];
+  sku?: string;
+  stock: number;
+  priceModifier?: number;
+};
+
 export type Product = {
   id: string;
   name: string;
@@ -9,6 +18,7 @@ export type Product = {
     alt: string;
     'data-ai-hint': string;
   };
+  variations?: ProductVariation[];
 };
 
 export type CartItem = {
@@ -34,3 +44,5 @@ export type Order = {
   trackingNumber?: string;
   carrier?: string;
 };
+
+  
