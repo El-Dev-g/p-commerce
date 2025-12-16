@@ -1,3 +1,4 @@
+
 import { Sparkles } from 'lucide-react';
 import Link from 'next/link';
 
@@ -29,6 +30,7 @@ export function Footer() {
               <li><Link href="/faq" className="text-sm text-muted-foreground hover:text-primary">FAQ</Link></li>
               <li><Link href="/shipping-returns" className="text-sm text-muted-foreground hover:text-primary">Shipping & Returns</Link></li>
               <li><Link href="/refund-policy" className="text-sm text-muted-foreground hover:text-primary">Refund Policy</Link></li>
+              <li><Link href="/refund-request" className="text-sm text-muted-foreground hover:text-primary">Request a Refund</Link></li>
               <li><Link href="/privacy-policy" className="text-sm text-muted-foreground hover:text-primary">Privacy Policy</Link></li>
               <li><Link href="/terms-of-service" className="text-sm text-muted-foreground hover:text-primary">Terms of Service</Link></li>
             </ul>
