@@ -20,7 +20,7 @@ export function Footer() {
             <h3 className="mb-4 font-headline font-semibold">Quick Links</h3>
             <ul className="space-y-2">
               <li><Link href="/" className="text-sm text-muted-foreground hover:text-primary">Home</Link></li>
-              <li><Link href="/shop" className="text-sm text-muted-foreground hover:text-primary">Shop</Link></li>
+              <li><Link href="/refund-request" className="text-sm text-muted-foreground hover:text-primary">Request Refund</Link></li>
               <li><Link href="/about" className="text-sm text-muted-foreground hover:text-primary">About Us</Link></li>
               <li><Link href="/contact" className="text-sm text-muted-foreground hover:text-primary">Contact</Link></li>
             </ul>
