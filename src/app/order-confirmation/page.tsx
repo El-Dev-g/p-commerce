@@ -48,7 +48,7 @@ export default function OrderConfirmationPage() {
                     Thank You for Your Order!
                 </h1>
                 <p className="mt-4 text-lg text-muted-foreground">
-                    Your order has been placed successfully. A confirmation email has been sent to {customer.email}.
+                    Your order has been placed successfully. A confirmation email has been sent to {customer.email} and a WhatsApp message to {customer.phone}.
                 </p>
                 <p className="mt-2 text-sm text-muted-foreground">Order ID: {id}</p>
             </div>
