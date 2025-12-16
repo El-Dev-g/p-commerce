@@ -31,4 +31,6 @@ export type Order = {
   items: CartItem[];
   total: number;
   orderDate: string;
+  trackingNumber?: string;
+  carrier?: string;
 };

@@ -92,9 +92,10 @@ export default function TrackOrderPage() {
                   <CardDescription>Order ID: {order.id}</CardDescription>
                 </CardHeader>
                 <CardContent>
-                    <p className='text-muted-foreground mb-6'>Your order has shipped. A confirmation with tracking details has also been sent via WhatsApp. For this prototype, a simulated tracking number is shown below.</p>
-                    <div className="mb-6 rounded-md border bg-secondary p-4 text-center font-mono text-lg tracking-widest">
-                        1Z999AA10123456789
+                    <p className='text-muted-foreground mb-6'>Your order has shipped. A confirmation with tracking details has also been sent via WhatsApp.</p>
+                    <div className="mb-6 rounded-md border bg-secondary p-4">
+                        <p className="text-sm font-semibold text-muted-foreground">Tracking Information</p>
+                        <p className="font-mono text-lg tracking-widest">{order.carrier}: {order.trackingNumber}</p>
                     </div>
                     <Separator className="my-6" />
                     <h3 className='font-headline text-xl font-semibold mb-4'>Order Summary</h3>

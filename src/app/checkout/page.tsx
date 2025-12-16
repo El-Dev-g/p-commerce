@@ -158,6 +158,8 @@ export default function CheckoutPage() {
       total: getCartTotal(),
       orderDate: new Date().toISOString(),
       paymentMethod: values.paymentMethod,
+      trackingNumber: '1Z999AA10123456789', // Simulated tracking number
+      carrier: 'UPS', // Simulated carrier
     };
 
     // In a real app, you would process payment here.
