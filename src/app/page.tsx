@@ -14,7 +14,6 @@ export default function HomePage() {
   return (
     <div className="flex h-screen flex-col items-center justify-center gap-4 bg-background">
       <Loader2 className="h-8 w-8 animate-spin text-primary" />
-      <p className="text-muted-foreground">Redirecting to login...</p>
     </div>
   );
 }
