@@ -27,7 +27,6 @@ export default function LoginPage() {
     // Mock login logic
     toast({
       title: "Login Successful",
-      description: "Redirecting to your dashboard...",
     });
     // In a real app, you'd handle auth here.
     // For now, just redirect to the dashboard.

@@ -27,7 +27,6 @@ export default function SignupPage() {
         // Mock signup logic
         toast({
             title: "Account Created",
-            description: "You have successfully signed up. Redirecting...",
         });
         // In a real app, you'd handle user creation here.
         // For now, just redirect to the dashboard.
