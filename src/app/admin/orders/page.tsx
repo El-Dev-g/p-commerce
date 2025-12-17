@@ -13,7 +13,7 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Eye, FileDown, PlusCircle, Truck, AlertTriangle } from 'lucide-react';
+import { Eye, FileDown, PlusCircle, Truck, AlertTriangle, Ban } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -23,6 +23,17 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { toast } from '@/hooks/use-toast';
@@ -91,6 +102,18 @@ export default function OrdersPage() {
     }
   };
 
+  const handleCancelOrder = (orderId: string) => {
+    setOrders(prevOrders =>
+        prevOrders.map(order =>
+            order.id === orderId ? { ...order, status: 'Cancelled' } : order
+        )
+    );
+    toast({
+        title: "Order Cancelled",
+        description: `Order ${orderId} has been successfully cancelled.`,
+    });
+  };
+
   return (
      <main className="flex-1 p-6 md:p-8">
       <div className="flex items-center justify-between mb-8">
@@ -151,7 +174,7 @@ export default function OrdersPage() {
                   </TableCell>
                   <TableCell className="text-right">{order.total}</TableCell>
                   <TableCell className="text-center">
-                    <OrderDetailsDialog order={order} onSave={handleSaveTracking} />
+                    <OrderDetailsDialog order={order} onSave={handleSaveTracking} onCancel={handleCancelOrder} />
                   </TableCell>
                 </TableRow>
               ))}
@@ -163,7 +186,7 @@ export default function OrdersPage() {
   );
 }
 
-function OrderDetailsDialog({ order, onSave }: { order: Order; onSave: (orderId: string, trackingNumber: string) => void }) {
+function OrderDetailsDialog({ order, onSave, onCancel }: { order: Order; onSave: (orderId: string, trackingNumber: string) => void; onCancel: (orderId: string) => void; }) {
   const [trackingNumber, setTrackingNumber] = React.useState(order.trackingNumber);
   const [isOpen, setIsOpen] = React.useState(false);
   const [isSaving, setIsSaving] = React.useState(false);
@@ -174,6 +197,13 @@ function OrderDetailsDialog({ order, onSave }: { order: Order; onSave: (orderId:
     setIsSaving(false);
     setIsOpen(false);
   };
+
+  const handleCancel = () => {
+    onCancel(order.id);
+    setIsOpen(false);
+  }
+
+  const isCancelable = order.status !== 'Delivered' && order.status !== 'Cancelled';
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -219,13 +249,41 @@ function OrderDetailsDialog({ order, onSave }: { order: Order; onSave: (orderId:
               />
             </div>
         </div>
-        <DialogFooter>
-          <Button type="button" variant="secondary" onClick={() => setIsOpen(false)}>
-            Cancel
-          </Button>
-          <Button type="submit" onClick={handleSave} disabled={isSaving}>
-            {isSaving ? 'Saving...' : 'Save & Notify'}
-          </Button>
+        <DialogFooter className="sm:justify-between">
+          <div>
+            {isCancelable && (
+                <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                        <Button type="button" variant="destructive">
+                           <Ban className="mr-2 h-4 w-4" />
+                           Cancel Order
+                        </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                        <AlertDialogHeader>
+                        <AlertDialogTitle>Are you sure you want to cancel this order?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            This action cannot be undone. The order status will be permanently set to "Cancelled".
+                        </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                        <AlertDialogCancel>Close</AlertDialogCancel>
+                        <AlertDialogAction onClick={handleCancel} className="bg-destructive text-destructive-foreground">
+                            Yes, Cancel Order
+                        </AlertDialogAction>
+                        </AlertDialogFooter>
+                    </AlertDialogContent>
+                </AlertDialog>
+            )}
+          </div>
+          <div className="flex gap-2">
+            <Button type="button" variant="secondary" onClick={() => setIsOpen(false)}>
+                Close
+            </Button>
+            <Button type="submit" onClick={handleSave} disabled={isSaving}>
+                {isSaving ? 'Saving...' : 'Save & Notify'}
+            </Button>
+          </div>
         </DialogFooter>
       </DialogContent>
     </Dialog>
