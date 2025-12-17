@@ -1,11 +1,7 @@
 
 import { NextResponse } from 'next/server';
+import { getOrders, updateOrderStatus } from '@/app/admin/orders/actions';
 
-// This is mock data. In a real app, you'd fetch this from a database.
-const mockOrders = [
-    { id: 'ORD001', customer: 'Liam Johnson', total: 250.00, status: 'Delivered' },
-    { id: 'ORD002', customer: 'Olivia Smith', total: 150.75, status: 'Shipped' },
-];
 
 /**
  * GET /api/v1/orders/{id}
@@ -17,7 +13,8 @@ export async function GET(
 ) {
   try {
     const orderId = params.id;
-    const order = mockOrders.find((o) => o.id === orderId);
+    const orders = await getOrders();
+    const order = orders.find((o) => o.id === orderId);
 
     if (!order) {
       return NextResponse.json({ message: 'Order not found' }, { status: 404 });
@@ -52,6 +49,12 @@ export async function DELETE(
     console.log('--- Order Cancellation Request ---');
     console.log(`Order ID to cancel: ${orderId}`);
     console.log('---------------------------------');
+
+    const result = await updateOrderStatus(orderId, 'Cancelled');
+
+    if (!result.success) {
+      return NextResponse.json({ message: result.message || 'Error cancelling order' }, { status: 404 });
+    }
 
     // For this prototype, we'll just simulate a successful cancellation.
     return NextResponse.json({ 

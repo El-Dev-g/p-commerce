@@ -10,7 +10,6 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Eye, FileDown, PlusCircle, Truck, AlertTriangle, Ban } from 'lucide-react';
@@ -32,60 +31,29 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { toast } from '@/hooks/use-toast';
-
-const ordersData = [
-    { id: 'ORD001', customer: 'Liam Johnson', date: '2023-11-23', status: 'Delivered', total: '$250.00', trackingNumber: '1Z999AA10123456784', tags: ['High-Value'], fraudRisk: 'low' },
-    { id: 'ORD002', customer: 'Olivia Smith', date: '2023-11-22', status: 'Shipped', total: '$150.75', trackingNumber: '1Z999AA10123456785', tags: ['Apparel'], fraudRisk: 'low' },
-    { id: 'ORD003', customer: 'Noah Williams', date: '2023-11-21', status: 'Delivered', total: '$350.00', trackingNumber: '1Z999AA10123456786', tags: ['High-Value', 'Fragile'], fraudRisk: 'low' },
-    { id: 'ORD004', customer: 'Emma Brown', date: '2023-11-20', status: 'Processing', total: '$450.50', trackingNumber: '', tags: ['High-Value'], fraudRisk: 'high' },
-    { id: 'ORD005', customer: 'James Jones', date: '2023-11-19', status: 'Delivered', total: '$550.00', trackingNumber: '1Z9A9A9A0192783421', tags: ['High-Value', 'Gift'], fraudRisk: 'low' },
-    { id: 'ORD006', customer: 'Sophia Garcia', date: '2023-11-18', status: 'Cancelled', total: '$50.25', trackingNumber: '', tags: ['Home Goods'], fraudRisk: 'low' },
-    { id: 'ORD007', customer: 'Isabella Miller', date: '2023-11-17', status: 'Delivered', total: '$100.00', trackingNumber: '1Z999AA10123456789', tags: ['Stationery'], fraudRisk: 'low' },
-    { id: 'ORD008', customer: 'Mason Davis', date: '2023-11-16', status: 'Shipped', total: '$120.80', trackingNumber: '1Z999AA10123456790', tags: [], fraudRisk: 'medium' },
-    { id: 'ORD009', customer: 'Ava Rodriguez', date: '2023-11-15', status: 'Delivered', total: '$275.00', trackingNumber: '1Z999AA10123456791', tags: ['High-Value'], fraudRisk: 'low' },
-    { id: 'ORD010', customer: 'Ethan Martinez', date: '2023-11-14', status: 'Processing', total: '$80.90', trackingNumber: '', tags: [], fraudRisk: 'low' },
-];
-
-type Order = typeof ordersData[0];
-
-async function updateShipping(orderId: string, trackingNumber: string, customerPhone: string) {
-    // Simulate API call to our backend
-    const response = await fetch('/api/v1/update-shipping', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-            orderId,
-            trackingNumber,
-            carrier: 'Auto-Detect', // Carrier detection could be another AI feature!
-            customer: { phone: customerPhone }, // Assuming a customer phone number for notifications
-        }),
-    });
-
-    if (!response.ok) {
-        throw new Error('Failed to update shipping information.');
-    }
-
-    return response.json();
-}
-
+import type { Order, OrderStatus } from './actions';
+import { getOrders, updateOrderStatus, updateShippingInfo } from './actions';
+import { OrderStatusBadge } from './order-status-badge';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 export default function OrdersPage() {
-  const [orders, setOrders] = React.useState(ordersData);
+  const [orders, setOrders] = React.useState<Order[]>([]);
+
+  React.useEffect(() => {
+    getOrders().then(setOrders);
+  }, []);
+
 
   const handleSaveTracking = async (orderId: string, trackingNumber: string) => {
     try {
-        await updateShipping(orderId, trackingNumber, '+15551234567'); // Using a dummy phone number
+        await updateShippingInfo(orderId, trackingNumber, '+15551234567'); // Using a dummy phone number
         
-        setOrders(prevOrders =>
-            prevOrders.map(order =>
-                order.id === orderId ? { ...order, trackingNumber, status: trackingNumber ? 'Shipped' : order.status } : order
-            )
-        );
+        // Data is revalidated by server action, just need to fetch it again
+        getOrders().then(setOrders);
 
         toast({
             title: "Shipping Updated",
@@ -97,21 +65,31 @@ export default function OrdersPage() {
         toast({
             variant: "destructive",
             title: "Update Failed",
-            description: "Could not send shipping notification. Please try again.",
+            description: "Could not update shipping. Please try again.",
         });
     }
   };
 
-  const handleCancelOrder = (orderId: string) => {
-    setOrders(prevOrders =>
-        prevOrders.map(order =>
-            order.id === orderId ? { ...order, status: 'Cancelled' } : order
-        )
-    );
-    toast({
-        title: "Order Cancelled",
-        description: `Order ${orderId} has been successfully cancelled.`,
-    });
+  const handleStatusUpdate = async (orderId: string, status: OrderStatus) => {
+     try {
+        await updateOrderStatus(orderId, status);
+        getOrders().then(setOrders);
+        toast({
+            title: "Order Status Updated",
+            description: `Order ${orderId} has been updated to "${status}".`,
+        });
+     } catch (error) {
+         console.error(error);
+         toast({
+            variant: "destructive",
+            title: "Update Failed",
+            description: "Could not update order status. Please try again.",
+        });
+     }
+  }
+
+  const handleCancelOrder = async (orderId: string) => {
+    await handleStatusUpdate(orderId, 'Cancelled');
   };
 
   return (
@@ -157,15 +135,7 @@ export default function OrdersPage() {
                   <TableCell>{order.customer}</TableCell>
                   <TableCell>{order.date}</TableCell>
                   <TableCell>
-                    <Badge 
-                      variant={
-                        order.status === 'Delivered' ? 'default' : 
-                        order.status === 'Cancelled' ? 'destructive' : 
-                        'secondary'
-                      }
-                    >
-                      {order.status}
-                    </Badge>
+                    <OrderStatusBadge status={order.status} />
                   </TableCell>
                   <TableCell>
                     <div className="flex flex-wrap gap-1">
@@ -174,7 +144,7 @@ export default function OrdersPage() {
                   </TableCell>
                   <TableCell className="text-right">{order.total}</TableCell>
                   <TableCell className="text-center">
-                    <OrderDetailsDialog order={order} onSave={handleSaveTracking} onCancel={handleCancelOrder} />
+                    <OrderDetailsDialog order={order} onSaveTracking={handleSaveTracking} onCancel={handleCancelOrder} onStatusUpdate={handleStatusUpdate} />
                   </TableCell>
                 </TableRow>
               ))}
@@ -186,14 +156,30 @@ export default function OrdersPage() {
   );
 }
 
-function OrderDetailsDialog({ order, onSave, onCancel }: { order: Order; onSave: (orderId: string, trackingNumber: string) => void; onCancel: (orderId: string) => void; }) {
+function OrderDetailsDialog({ 
+    order, 
+    onSaveTracking, 
+    onCancel,
+    onStatusUpdate
+}: { 
+    order: Order; 
+    onSaveTracking: (orderId: string, trackingNumber: string) => void; 
+    onCancel: (orderId: string) => void;
+    onStatusUpdate: (orderId: string, status: OrderStatus) => void;
+}) {
   const [trackingNumber, setTrackingNumber] = React.useState(order.trackingNumber);
+  const [currentStatus, setCurrentStatus] = React.useState<OrderStatus>(order.status as OrderStatus);
   const [isOpen, setIsOpen] = React.useState(false);
   const [isSaving, setIsSaving] = React.useState(false);
 
   const handleSave = async () => {
     setIsSaving(true);
-    await onSave(order.id, trackingNumber);
+    if (trackingNumber !== order.trackingNumber) {
+        await onSaveTracking(order.id, trackingNumber);
+    }
+    if (currentStatus !== order.status) {
+        await onStatusUpdate(order.id, currentStatus);
+    }
     setIsSaving(false);
     setIsOpen(false);
   };
@@ -204,6 +190,7 @@ function OrderDetailsDialog({ order, onSave, onCancel }: { order: Order; onSave:
   }
 
   const isCancelable = order.status !== 'Delivered' && order.status !== 'Cancelled';
+  const orderStatuses: OrderStatus[] = ['Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled'];
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -217,7 +204,7 @@ function OrderDetailsDialog({ order, onSave, onCancel }: { order: Order; onSave:
         <DialogHeader>
           <DialogTitle>Order {order.id}</DialogTitle>
           <DialogDescription>
-            View details and update tracking for this order.
+            View details, update status, and add tracking for this order.
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-4 py-4">
@@ -233,7 +220,23 @@ function OrderDetailsDialog({ order, onSave, onCancel }: { order: Order; onSave:
             <p><strong>Customer:</strong> {order.customer}</p>
             <p><strong>Date:</strong> {order.date}</p>
             <p><strong>Total:</strong> {order.total}</p>
-            <p><strong>Status:</strong> {order.status}</p>
+            
+            <div className="space-y-2">
+              <Label htmlFor="order-status">Order Status</Label>
+              <Select value={currentStatus} onValueChange={(value: OrderStatus) => setCurrentStatus(value)}>
+                  <SelectTrigger id="order-status">
+                      <SelectValue placeholder="Select a status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {orderStatuses.map(status => (
+                        <SelectItem key={status} value={status} disabled={status === 'Cancelled'}>
+                           {status}
+                        </SelectItem>
+                    ))}
+                  </SelectContent>
+              </Select>
+            </div>
+
             <div className="space-y-2">
               <Label htmlFor="tracking-number">
                 <div className="flex items-center gap-2">
