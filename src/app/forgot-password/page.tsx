@@ -1,4 +1,3 @@
-
 'use client';
 
 import { Button } from "@/components/ui/button";
@@ -15,17 +14,21 @@ import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Sparkles } from "lucide-react";
+import { toast } from "@/hooks/use-toast";
 
-export default function LoginPage() {
+export default function ForgotPasswordPage() {
   const router = useRouter();
 
-  const handleLogin = (event: React.FormEvent) => {
+  const handleSendResetLink = (event: React.FormEvent) => {
     event.preventDefault();
-    // Mock login logic
-    console.log("Logging in...");
-    // In a real app, you'd handle auth here.
-    // For now, just redirect to the dashboard.
-    router.push("/admin/dashboard");
+    // Mock logic
+    console.log("Sending password reset link...");
+    toast({
+      title: "Password Reset Link Sent",
+      description: "If an account exists with that email, a reset link has been sent.",
+    });
+    // In a real app, you'd handle sending the email here.
+    router.push("/login");
   };
 
   return (
@@ -38,36 +41,24 @@ export default function LoginPage() {
       </div>
       <Card className="w-full max-w-sm">
         <CardHeader>
-          <CardTitle className="text-2xl">Login</CardTitle>
+          <CardTitle className="text-2xl">Forgot Password</CardTitle>
           <CardDescription>
-            Enter your email below to login to your account.
+            Enter your email and we will send you a link to reset your password.
           </CardDescription>
         </CardHeader>
-        <form onSubmit={handleLogin}>
+        <form onSubmit={handleSendResetLink}>
           <CardContent className="grid gap-4">
             <div className="grid gap-2">
               <Label htmlFor="email">Email</Label>
               <Input id="email" type="email" placeholder="m@example.com" required />
             </div>
-            <div className="grid gap-2">
-                <div className="flex items-center">
-                    <Label htmlFor="password">Password</Label>
-                    <Link
-                        href="/forgot-password"
-                        className="ml-auto inline-block text-sm underline"
-                    >
-                        Forgot your password?
-                    </Link>
-                </div>
-              <Input id="password" type="password" required />
-            </div>
           </CardContent>
           <CardFooter className="flex flex-col gap-4">
-            <Button className="w-full" type="submit">Sign in</Button>
-             <div className="text-center text-sm">
-              Don&apos;t have an account?{' '}
-              <Link href="/signup" className="underline">
-                Sign up
+            <Button className="w-full" type="submit">Send Reset Link</Button>
+            <div className="text-center text-sm">
+              Remembered your password?{' '}
+              <Link href="/login" className="underline">
+                Back to Login
               </Link>
             </div>
           </CardFooter>
