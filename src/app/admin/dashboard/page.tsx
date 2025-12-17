@@ -69,9 +69,14 @@ const recentOrders = [
 
 
 export default function DashboardPage() {
+  const userName = "Jane Doe";
+
   return (
     <main className="flex-1 p-6 md:p-8">
-      <h1 className="font-headline text-3xl font-bold tracking-tight mb-8">Dashboard</h1>
+      <div className="mb-8">
+        <h1 className="font-headline text-3xl font-bold tracking-tight">Welcome back, {userName}!</h1>
+        <p className="text-muted-foreground">Here's a summary of your store's performance.</p>
+      </div>
       
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
         <Card>
