@@ -12,7 +12,9 @@ import {
   SidebarProvider,
   SidebarTrigger,
   SidebarInset,
-  useSidebar
+  useSidebar,
+  SidebarGroup,
+  SidebarGroupLabel
 } from '@/components/ui/sidebar';
 import { LayoutDashboard, Package, ShoppingCart, Settings, Sparkles, Newspaper, Undo2, GitBranch, TrendingUp, MessageSquare, Store, Users as UsersIcon, Tag, Building } from 'lucide-react';
 import { usePathname } from 'next/navigation';
@@ -182,16 +184,19 @@ function AdminSidebar() {
         </SidebarMenu>
       </SidebarContent>
        <SidebarContent>
-        <SidebarMenu>
-          <SidebarMenuItem>
-              <SidebarMenuButton asChild tooltip="Storefront">
-                <a href="http://localhost:9001" target="_blank" rel="noopener noreferrer">
-                  <Store />
-                  <span>Storefront</span>
-                </a>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-        </SidebarMenu>
+        <SidebarGroup>
+            <SidebarGroupLabel>Store</SidebarGroupLabel>
+            <SidebarMenu>
+                <SidebarMenuItem>
+                    <SidebarMenuButton asChild tooltip="Storefront">
+                        <a href="http://localhost:9001" target="_blank" rel="noopener noreferrer">
+                        <Store />
+                        <span>Storefront</span>
+                        </a>
+                    </SidebarMenuButton>
+                </SidebarMenuItem>
+            </SidebarMenu>
+        </SidebarGroup>
       </SidebarContent>
     </Sidebar>
   );
