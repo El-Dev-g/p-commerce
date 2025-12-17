@@ -2,6 +2,9 @@
 import { NextResponse } from 'next/server';
 import { products } from '@/lib/products';
 
+// This forces the route to be dynamic, making it publicly accessible.
+export const dynamic = 'force-dynamic';
+
 /**
  * GET /api/v1/products
  * Retrieves the list of all products for the storefront.
