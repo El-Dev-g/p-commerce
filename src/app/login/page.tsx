@@ -1,6 +1,7 @@
 
 'use client';
 
+import * as React from "react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -14,11 +15,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Sparkles } from "lucide-react";
+import { Sparkles, Eye, EyeOff } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 
 export default function LoginPage() {
   const router = useRouter();
+  const [showPassword, setShowPassword] = React.useState(false);
 
   const handleLogin = (event: React.FormEvent) => {
     event.preventDefault();
@@ -63,7 +65,16 @@ export default function LoginPage() {
                         Forgot your password?
                     </Link>
                 </div>
-              <Input id="password" type="password" required />
+                <div className="relative">
+                    <Input id="password" type={showPassword ? "text" : "password"} required />
+                    <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute inset-y-0 right-0 flex items-center pr-3 text-muted-foreground"
+                    >
+                        {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    </button>
+                </div>
             </div>
           </CardContent>
           <CardFooter className="flex flex-col gap-4">
