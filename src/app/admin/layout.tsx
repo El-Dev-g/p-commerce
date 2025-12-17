@@ -161,7 +161,7 @@ function AdminSidebar() {
               onClick={handleLinkClick}
             >
               <Link href="/admin/app-store">
-                <Store />
+                <GitBranch />
                 <span>Integrations</span>
               </Link>
             </SidebarMenuButton>
@@ -179,6 +179,18 @@ function AdminSidebar() {
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
+        </SidebarMenu>
+      </SidebarContent>
+       <SidebarContent>
+        <SidebarMenu>
+          <SidebarMenuItem>
+              <SidebarMenuButton asChild tooltip="Storefront">
+                <a href="http://localhost:9001" target="_blank" rel="noopener noreferrer">
+                  <Store />
+                  <span>Storefront</span>
+                </a>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
         </SidebarMenu>
       </SidebarContent>
     </Sidebar>
