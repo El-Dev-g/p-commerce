@@ -1,3 +1,4 @@
+
 'use client';
 
 import { Button } from "@/components/ui/button";
@@ -22,13 +23,12 @@ export default function ForgotPasswordPage() {
   const handleSendResetLink = (event: React.FormEvent) => {
     event.preventDefault();
     // Mock logic
-    console.log("Sending password reset link...");
     toast({
       title: "Password Reset Link Sent",
-      description: "If an account exists with that email, a reset link has been sent.",
+      description: "If an account exists, a reset link has been sent to your email.",
     });
     // In a real app, you'd handle sending the email here.
-    router.push("/login");
+    setTimeout(() => router.push("/login"), 1500);
   };
 
   return (

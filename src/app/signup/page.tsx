@@ -15,6 +15,7 @@ import { Label } from "@/components/ui/label";
 import { Sparkles } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { toast } from "@/hooks/use-toast";
 
 export default function SignupPage() {
     const router = useRouter();
@@ -22,10 +23,13 @@ export default function SignupPage() {
     const handleSignup = (event: React.FormEvent) => {
         event.preventDefault();
         // Mock signup logic
-        console.log("Creating account...");
+        toast({
+            title: "Account Created",
+            description: "You have successfully signed up. Redirecting...",
+        });
         // In a real app, you'd handle user creation here.
         // For now, just redirect to the dashboard.
-        router.push('/admin/dashboard');
+        setTimeout(() => router.push('/admin/dashboard'), 1000);
     }
 
   return (

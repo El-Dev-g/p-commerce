@@ -15,6 +15,7 @@ import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Sparkles } from "lucide-react";
+import { toast } from "@/hooks/use-toast";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -22,10 +23,13 @@ export default function LoginPage() {
   const handleLogin = (event: React.FormEvent) => {
     event.preventDefault();
     // Mock login logic
-    console.log("Logging in...");
+    toast({
+      title: "Login Successful",
+      description: "Redirecting to your dashboard...",
+    });
     // In a real app, you'd handle auth here.
     // For now, just redirect to the dashboard.
-    router.push("/admin/dashboard");
+    setTimeout(() => router.push("/admin/dashboard"), 1000);
   };
 
   return (
