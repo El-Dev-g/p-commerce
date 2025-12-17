@@ -77,7 +77,7 @@ export default function AnalyticsPage() {
   return (
     <main className="flex-1 p-6 md:p-8">
       <div className="flex items-center justify-between mb-8">
-        <h1 className="font-headline text-3xl font-bold tracking-tight">Analytics & Insights</h1>
+        <h1 className="font-headline text-3xl font-bold tracking-tight">Reports & Insights</h1>
       </div>
       
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 mb-8">

@@ -14,7 +14,7 @@ import {
   SidebarInset,
   useSidebar
 } from '@/components/ui/sidebar';
-import { LayoutDashboard, Package, ShoppingCart, Settings, Sparkles, Newspaper, Undo2, GitBranch, TrendingUp, MessageSquare, Store, Users as UsersIcon } from 'lucide-react';
+import { LayoutDashboard, Package, ShoppingCart, Settings, Sparkles, Newspaper, Undo2, GitBranch, TrendingUp, MessageSquare, Store, Users as UsersIcon, Tag, Building } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import { ModeToggle } from '@/components/mode-toggle';
 
@@ -53,64 +53,12 @@ function AdminSidebar() {
             <SidebarMenuButton
               asChild
               isActive={isActive('/admin/dashboard')}
-              tooltip="Dashboard"
+              tooltip="Home"
               onClick={handleLinkClick}
             >
               <Link href="/admin/dashboard">
                 <LayoutDashboard />
-                <span>Dashboard</span>
-              </Link>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-          <SidebarMenuItem>
-            <SidebarMenuButton
-              asChild
-              isActive={isActive('/admin/analytics')}
-              tooltip="Analytics"
-              onClick={handleLinkClick}
-            >
-              <Link href="/admin/analytics">
-                <TrendingUp />
-                <span>Analytics</span>
-              </Link>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-          <SidebarMenuItem>
-            <SidebarMenuButton
-              asChild
-              isActive={isActive('/admin/chat')}
-              tooltip="Chat"
-              onClick={handleLinkClick}
-            >
-              <Link href="/admin/chat">
-                <MessageSquare />
-                <span>Chat</span>
-              </Link>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-          <SidebarMenuItem>
-            <SidebarMenuButton
-              asChild
-              isActive={isActive('/admin/products')}
-              tooltip="Products"
-              onClick={handleLinkClick}
-            >
-              <Link href="/admin/products">
-                <Package />
-                <span>Products</span>
-              </Link>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-           <SidebarMenuItem>
-            <SidebarMenuButton
-              asChild
-              isActive={isActive('/admin/variations')}
-              tooltip="Variations"
-              onClick={handleLinkClick}
-            >
-              <Link href="/admin/variations">
-                <GitBranch />
-                <span>Variations</span>
+                <span>Home</span>
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
@@ -127,7 +75,46 @@ function AdminSidebar() {
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
-           <SidebarMenuItem>
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              asChild
+              isActive={isActive('/admin/refunds')}
+              tooltip="Returns"
+              onClick={handleLinkClick}
+            >
+              <Link href="/admin/refunds">
+                <Undo2 />
+                <span>Returns</span>
+              </Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              asChild
+              isActive={isActive('/admin/products')}
+              tooltip="Products"
+              onClick={handleLinkClick}
+            >
+              <Link href="/admin/products">
+                <Package />
+                <span>Products</span>
+              </Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              asChild
+              isActive={isActive('/admin/vendors')}
+              tooltip="Vendors"
+              onClick={handleLinkClick}
+            >
+              <Link href="/admin/vendors">
+                <Building />
+                <span>Vendors</span>
+              </Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+          <SidebarMenuItem>
             <SidebarMenuButton
               asChild
               isActive={isActive('/admin/customers')}
@@ -143,26 +130,39 @@ function AdminSidebar() {
            <SidebarMenuItem>
             <SidebarMenuButton
               asChild
-              isActive={isActive('/admin/refunds')}
-              tooltip="Refunds"
+              isActive={isActive('/admin/promotions')}
+              tooltip="Promotions"
               onClick={handleLinkClick}
             >
-              <Link href="/admin/refunds">
-                <Undo2 />
-                <span>Refunds</span>
+              <Link href="/admin/promotions">
+                <Tag />
+                <span>Promotions</span>
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
           <SidebarMenuItem>
             <SidebarMenuButton
               asChild
-              isActive={isActive('/admin/pages')}
-              tooltip="Pages"
+              isActive={isActive('/admin/analytics')}
+              tooltip="Reports"
               onClick={handleLinkClick}
             >
-              <Link href="/admin/pages">
-                <Newspaper />
-                <span>Pages</span>
+              <Link href="/admin/analytics">
+                <TrendingUp />
+                <span>Reports</span>
+              </Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              asChild
+              isActive={isActive('/admin/app-store')}
+              tooltip="Integrations"
+              onClick={handleLinkClick}
+            >
+              <Link href="/admin/app-store">
+                <Store />
+                <span>Integrations</span>
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
@@ -176,19 +176,6 @@ function AdminSidebar() {
               <Link href="/admin/settings">
                 <Settings />
                 <span>Settings</span>
-              </Link>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-          <SidebarMenuItem>
-            <SidebarMenuButton
-              asChild
-              isActive={isActive('/admin/app-store')}
-              tooltip="App Store"
-              onClick={handleLinkClick}
-            >
-              <Link href="/admin/app-store">
-                <Store />
-                <span>App Store</span>
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>

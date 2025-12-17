@@ -76,14 +76,14 @@ export default function RefundsPage() {
   return (
      <main className="flex-1 p-6 md:p-8">
       <div className="flex items-center justify-between mb-8">
-        <h1 className="font-headline text-3xl font-bold tracking-tight">Refund Requests</h1>
+        <h1 className="font-headline text-3xl font-bold tracking-tight">Returns</h1>
         <Button onClick={handleAnalyze} disabled={isLoading}>
             {isLoading ? (
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
             ) : (
                 <Sparkles className="mr-2 h-4 w-4" />
             )}
-            Analyze Refunds
+            Analyze Returns
         </Button>
       </div>
 
@@ -91,7 +91,7 @@ export default function RefundsPage() {
           <Card className="mb-8 bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800">
               <CardHeader>
                   <CardTitle className="flex items-center gap-2 text-blue-900 dark:text-blue-300">
-                    <BrainCircuit /> AI Refund Analysis
+                    <BrainCircuit /> AI Return Analysis
                   </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -117,8 +117,8 @@ export default function RefundsPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>All Refund Requests</CardTitle>
-          <CardDescription>View and process customer refund requests.</CardDescription>
+          <CardTitle>All Return Requests</CardTitle>
+          <CardDescription>View and process customer return requests.</CardDescription>
         </CardHeader>
         <CardContent>
           <Table>
@@ -198,7 +198,7 @@ function ConfirmationDialog({
         <AlertDialogHeader>
           <AlertDialogTitle>Are you sure you want to {action.toLowerCase()} this request?</AlertDialogTitle>
           <AlertDialogDescription>
-            This action cannot be undone. This will update the status of the refund request.
+            This action cannot be undone. This will update the status of the return request.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
