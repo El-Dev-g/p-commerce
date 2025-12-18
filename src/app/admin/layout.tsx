@@ -122,20 +122,18 @@ function AdminSidebar() {
           </SidebarMenuItem>
           <SidebarMenuItem>
             <Collapsible open={openCollapsibles['products']} onOpenChange={() => toggleCollapsible('products')}>
-                <SidebarMenuItem>
-                    <CollapsibleTrigger asChild>
-                        <SidebarMenuButton
-                            asChild
-                            isActive={isActive('/admin/products')}
-                            tooltip="Products"
-                        >
-                            <Link href="/admin/products">
-                                <Package />
-                                <span>Products</span>
-                            </Link>
-                        </SidebarMenuButton>
-                    </CollapsibleTrigger>
-                </SidebarMenuItem>
+                <CollapsibleTrigger asChild>
+                    <SidebarMenuButton
+                        asChild
+                        isActive={isActive('/admin/products')}
+                        tooltip="Products"
+                    >
+                        <Link href="/admin/products">
+                            <Package />
+                            <span>Products</span>
+                        </Link>
+                    </SidebarMenuButton>
+                </CollapsibleTrigger>
                 <CollapsibleContent>
                   <SidebarMenuSub>
                     <SidebarMenuSubItem>
