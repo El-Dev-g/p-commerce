@@ -38,7 +38,8 @@ import {
   PenSquare,
   ClipboardList,
   Palette,
-  Megaphone
+  Megaphone,
+  Mail
 } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import { ModeToggle } from '@/components/mode-toggle';
@@ -198,10 +199,18 @@ function AdminSidebar() {
                         </SidebarMenuSubButton>
                     </SidebarMenuSubItem>
                     <SidebarMenuSubItem>
-                        <SidebarMenuSubButton isActive={isActive('/admin/marketing/newsletter')} asChild>
+                        <SidebarMenuSubButton isActive={pathname.includes('/admin/marketing/newsletter')} asChild>
                             <Link href="/admin/marketing/newsletter">
                                 <Newspaper />
                                 <span>Newsletter</span>
+                            </Link>
+                        </SidebarMenuSubButton>
+                    </SidebarMenuSubItem>
+                    <SidebarMenuSubItem>
+                        <SidebarMenuSubButton isActive={isActive('/admin/marketing/newsletter/create')} asChild>
+                            <Link href="/admin/marketing/newsletter/create">
+                                <Mail />
+                                <span>Create Newsletter</span>
                             </Link>
                         </SidebarMenuSubButton>
                     </SidebarMenuSubItem>

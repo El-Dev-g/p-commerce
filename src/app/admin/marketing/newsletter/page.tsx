@@ -3,9 +3,10 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { FileDown } from 'lucide-react';
+import { FileDown, PlusCircle } from 'lucide-react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
+import Link from 'next/link';
 
 const subscribersData = [
   { id: 'sub_001', email: 'liam@example.com', date: '2024-07-28', status: 'Subscribed' },
@@ -20,10 +21,18 @@ export default function NewsletterPage() {
     <main className="flex-1 p-6 md:p-8">
       <div className="flex items-center justify-between mb-8">
         <h1 className="font-headline text-3xl font-bold tracking-tight">Newsletter Subscribers</h1>
-        <Button variant="outline">
-          <FileDown className="mr-2 h-4 w-4" />
-          Export
-        </Button>
+        <div className="flex gap-2">
+            <Button asChild>
+                <Link href="/admin/marketing/newsletter/create">
+                    <PlusCircle className="mr-2 h-4 w-4" />
+                    Create Newsletter
+                </Link>
+            </Button>
+            <Button variant="outline">
+                <FileDown className="mr-2 h-4 w-4" />
+                Export
+            </Button>
+        </div>
       </div>
       <Card>
         <CardHeader>
