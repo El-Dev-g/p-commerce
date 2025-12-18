@@ -8,11 +8,12 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { useCart } from '@/context/cart-context';
 import { toast } from '@/hooks/use-toast';
+import type { Product } from '@/lib/types';
 
 export default function StorefrontPage() {
   const { addToCart } = useCart();
 
-  const handleAddToCart = (product: typeof products[0]) => {
+  const handleAddToCart = (product: Product) => {
     addToCart(product);
     toast({
       title: 'Added to Cart',
@@ -38,7 +39,7 @@ export default function StorefrontPage() {
               <p className="max-w-[600px] text-muted-foreground md:text-xl">
                 Explore a world of hand-picked items that blend quality craftsmanship with timeless design.
               </p>
-              <Link href="#" className="inline-flex h-10 items-center justify-center rounded-md bg-primary px-8 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 w-fit">
+              <Link href="/storefront/catalog" className="inline-flex h-10 items-center justify-center rounded-md bg-primary px-8 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 w-fit">
                 Shop Now
               </Link>
             </div>
@@ -58,16 +59,20 @@ export default function StorefrontPage() {
                   {products.slice(0, 4).map(product => (
                       <Card key={product.id}>
                           <CardContent className="p-0">
-                              <Image 
-                                  src={product.image.src} 
-                                  alt={product.image.alt}
-                                  width={400}
-                                  height={300}
-                                  className="h-auto w-full rounded-t-lg object-cover aspect-[4/3]"
-                              />
+                               <Link href={`/storefront/products/${product.id}`}>
+                                <Image 
+                                    src={product.image.src} 
+                                    alt={product.image.alt}
+                                    width={400}
+                                    height={300}
+                                    className="h-auto w-full rounded-t-lg object-cover aspect-[4/3]"
+                                />
+                                </Link>
                           </CardContent>
                           <CardHeader className="p-4 flex-grow">
-                              <CardTitle className="text-lg">{product.name}</CardTitle>
+                              <Link href={`/storefront/products/${product.id}`}>
+                                <CardTitle className="text-lg hover:underline">{product.name}</CardTitle>
+                              </Link>
                               <p className="text-muted-foreground">${product.price.toFixed(2)}</p>
                           </CardHeader>
                           <div className="p-4 pt-0">

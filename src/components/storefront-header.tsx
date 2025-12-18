@@ -22,7 +22,7 @@ export function StorefrontHeader() {
           </Link>
           <nav className="hidden items-center gap-6 text-sm font-medium md:flex">
             <Link href="/storefront" className="hover:underline">Home</Link>
-            <Link href="#" className="hover:underline">Catalog</Link>
+            <Link href="/storefront/catalog" className="hover:underline">Catalog</Link>
             <Link href="#" className="hover:underline">About</Link>
             <Link href="#" className="hover:underline">Contact</Link>
           </nav>
