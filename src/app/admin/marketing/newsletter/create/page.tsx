@@ -2,6 +2,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -133,7 +134,18 @@ export default function CreateNewsletterPage() {
                              <div className="space-y-2">
                                 <Label>Body</Label>
                                 <div className="prose dark:prose-invert prose-sm max-w-none rounded-md border bg-muted p-4">
-                                     <ReactMarkdown>{generatedContent.body}</ReactMarkdown>
+                                     <ReactMarkdown
+                                        components={{
+                                            a: ({ node, ...props }) => {
+                                                if (props.href && props.href.startsWith('/')) {
+                                                    return <Link href={props.href} {...props} className="text-primary hover:underline" />;
+                                                }
+                                                return <a {...props} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline" />;
+                                            }
+                                        }}
+                                     >
+                                        {generatedContent.body}
+                                    </ReactMarkdown>
                                 </div>
                             </div>
                         </div>
