@@ -17,6 +17,8 @@ export default function StorefrontLayout({
             <div className="container mx-auto flex flex-col items-center justify-between gap-4 px-4 md:flex-row md:px-6">
                 <p className="text-sm text-muted-foreground">&copy; 2024 Curated Finds. All rights reserved.</p>
                 <nav className="flex flex-wrap justify-center gap-4 sm:gap-6">
+                    <Link href="/storefront/track-order" className="text-sm hover:underline">Track Order</Link>
+                    <Link href="/storefront/request-refund" className="text-sm hover:underline">Request Refund</Link>
                     <Link href="/storefront/pages/about-us" className="text-sm hover:underline">About Us</Link>
                     <Link href="/storefront/pages/contact-us" className="text-sm hover:underline">Contact Us</Link>
                     <Link href="/storefront/pages/faq" className="text-sm hover:underline">FAQ</Link>
