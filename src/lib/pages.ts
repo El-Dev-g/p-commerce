@@ -22,7 +22,7 @@ export const pagesData: Page[] = [
     content: {
       intro:
         "We'd love to hear from you! Whether you have a question about our products, need assistance with an order, or just want to say hello, feel free to reach out.",
-      email: 'support@curatedfinds.com',
+      email: 'hello@prigidcommerce.shop',
       phone: '+1 (555) 123-4567',
     },
   },
@@ -56,7 +56,7 @@ export const pagesData: Page[] = [
     title: 'Return Policy',
     content: {
       policy: 'We want you to love your purchase. If you are not completely satisfied, you may return your item(s) within 30 days of receipt for a full refund or exchange. Items must be unused and in their original condition and packaging.',
-      process: 'To initiate a return, please contact our support team at support@curatedfinds.com with your order number. We will provide you with instructions and a return shipping label.'
+      process: 'To initiate a return, please contact our support team at hello@prigidcommerce.shop with your order number. We will provide you with instructions and a return shipping label.'
     }
   },
   {
