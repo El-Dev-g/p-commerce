@@ -7,14 +7,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter }
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
 import { toast } from '@/hooks/use-toast';
 import { Loader2, Sparkles, Send, Mail } from 'lucide-react';
 import { products as allProducts } from '@/lib/products';
-import type { Product } from '@/lib/types';
 import { Checkbox } from '@/components/ui/checkbox';
 import { generateNewsletter } from '@/ai/flows/generate-newsletter';
 import ReactMarkdown from 'react-markdown';
+import { sendNewsletterAction } from './actions';
 
 export default function CreateNewsletterPage() {
   const [isGenerating, setIsGenerating] = useState(false);
@@ -61,13 +60,32 @@ export default function CreateNewsletterPage() {
   };
   
   const handleSend = async () => {
+    if (!generatedContent) {
+      toast({ variant: 'destructive', title: 'No content to send.' });
+      return;
+    }
       setIsSending(true);
-      // Simulate sending newsletter
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      toast({
-        title: 'Newsletter Sent!',
-        description: 'Your newsletter has been queued for delivery to all subscribers.',
-      });
+      try {
+        const result = await sendNewsletterAction(generatedContent);
+        if (result.success) {
+            toast({
+                title: 'Newsletter Sent!',
+                description: 'Your newsletter has been sent to all subscribers.',
+            });
+        } else {
+             toast({
+                variant: 'destructive',
+                title: 'Sending Failed',
+                description: result.error || 'An unknown error occurred.',
+            });
+        }
+      } catch (error) {
+         toast({
+            variant: 'destructive',
+            title: 'Sending Failed',
+            description: (error as Error).message,
+        });
+      }
       setIsSending(false);
   }
 
@@ -138,7 +156,9 @@ export default function CreateNewsletterPage() {
                                         components={{
                                             a: ({ node, ...props }) => {
                                                 if (props.href && props.href.startsWith('/')) {
-                                                    return <Link href={props.href} {...props} className="text-primary hover:underline" />;
+                                                    // In a real email, this would be a full URL
+                                                    const baseUrl = "https://your-store.com";
+                                                    return <a href={baseUrl + props.href} {...props} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline" />;
                                                 }
                                                 return <a {...props} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline" />;
                                             }
