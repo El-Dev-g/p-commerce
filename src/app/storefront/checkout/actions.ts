@@ -39,16 +39,24 @@ function generateConfirmationHtml(orderId: string, orderData: PlaceOrderInput): 
 
 
 export async function placeOrderAction(orderData: PlaceOrderInput) {
-    const resend = new Resend(process.env.RESEND_API_KEY);
     const fromEmail = process.env.RESEND_FROM_EMAIL;
+    const apiKey = process.env.RESEND_API_KEY;
+
+    // Explicitly check if the API key is missing or empty.
+    if (!apiKey) {
+        console.error("Resend API key is not set in environment variables.");
+        return { success: false, error: "The Resend API key is missing. Please add it to your .env.local file." };
+    }
+
+    if (!fromEmail) {
+        console.error("Resend 'from' email is not set in environment variables.");
+        return { success: false, error: "Server is not configured to send emails." };
+    }
+    
+    const resend = new Resend(apiKey);
     
     // Simulate creating an order ID
     const orderId = `ORD${Math.floor(Math.random() * 90000) + 10000}`;
-
-    if (!fromEmail || !process.env.RESEND_API_KEY) {
-        console.error("Resend API key or 'from' email is not set in environment variables.");
-        return { success: false, error: "Server is not configured to send emails." };
-    }
 
     try {
         // 1. Generate email content using a static template function
