@@ -36,7 +36,8 @@ import {
   Building,
   ExternalLink,
   PenSquare,
-  ClipboardList
+  ClipboardList,
+  Palette
 } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import { ModeToggle } from '@/components/mode-toggle';
@@ -256,6 +257,14 @@ function AdminSidebar() {
                             <span>View Live Site</span>
                           </a>
                         </SidebarMenuSubButton>
+                      </SidebarMenuSubItem>
+                       <SidebarMenuSubItem>
+                         <SidebarMenuSubButton isActive={isActive('/admin/storefront/theme')} asChild>
+                            <Link href="/admin/storefront/theme">
+                                <Palette />
+                                <span>Theme</span>
+                            </Link>
+                         </SidebarMenuSubButton>
                       </SidebarMenuSubItem>
                       <SidebarMenuSubItem>
                          <SidebarMenuSubButton isActive={isActive('/admin/pages')} asChild>

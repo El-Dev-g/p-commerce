@@ -1,4 +1,7 @@
 
+'use client';
+
+import { useEffect } from 'react';
 import { CartProvider } from '@/context/cart-context';
 import { StorefrontHeader } from '@/components/storefront-header';
 import Link from 'next/link';
@@ -8,6 +11,26 @@ export default function StorefrontLayout({
 }: {
   children: React.ReactNode;
 }) {
+
+  useEffect(() => {
+    const handleMessage = (event: MessageEvent) => {
+      if (event.data.type === 'UPDATE_THEME') {
+        const { theme } = event.data;
+        const root = document.documentElement;
+        if (theme['--primary']) {
+            root.style.setProperty('--primary', theme['--primary']);
+        }
+        if (theme['--background']) {
+            root.style.setProperty('--background', theme['--background']);
+        }
+      }
+    };
+
+    window.addEventListener('message', handleMessage);
+    return () => window.removeEventListener('message', handleMessage);
+  }, []);
+
+
   return (
     <CartProvider>
       <div className="bg-background">
