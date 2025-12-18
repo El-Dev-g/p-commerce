@@ -54,11 +54,15 @@ export default function StorefrontEditorPage() {
            <Card className="h-[calc(100vh-12rem)]">
                 <CardHeader>
                     <CardTitle>Live Preview</CardTitle>
-                    <CardDescription>This is a simulated preview of your storefront.</CardDescription>
+                    <CardDescription>A live preview of your public-facing storefront.</CardDescription>
                 </CardHeader>
-                <CardContent>
-                    <div className="w-full h-full bg-muted rounded-lg flex items-center justify-center border-2 border-dashed">
-                        <p className="text-muted-foreground">Storefront preview will be displayed here.</p>
+                <CardContent className="h-full p-0">
+                    <div className="w-full h-full bg-muted rounded-b-lg border-t overflow-hidden">
+                        <iframe
+                            src="http://localhost:9001"
+                            title="Storefront Preview"
+                            className="w-full h-full border-none"
+                        />
                     </div>
                 </CardContent>
            </Card>
