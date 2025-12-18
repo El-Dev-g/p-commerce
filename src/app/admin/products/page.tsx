@@ -21,8 +21,20 @@ import { useEffect, useState } from 'react';
 import type { Product } from '@/lib/types';
 import { useDebounce } from '@/hooks/use-debounce';
 import { searchProducts } from '@/ai/flows/search-products';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
+import { toast } from '@/hooks/use-toast';
 
-function ProductTable({ products }: { products: Product[] }) {
+function ProductTable({ products, onDelete }: { products: Product[], onDelete: (productId: string) => void }) {
   return (
     <Table>
       <TableHeader>
@@ -59,10 +71,26 @@ function ProductTable({ products }: { products: Product[] }) {
                       <span className="sr-only">Edit product</span>
                   </Link>
                 </Button>
-                <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive">
-                  <Trash2 className="h-4 w-4" />
-                  <span className="sr-only">Delete product</span>
-                </Button>
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive">
+                      <Trash2 className="h-4 w-4" />
+                      <span className="sr-only">Delete product</span>
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        This action cannot be undone. This will permanently delete the product from your store.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogAction onClick={() => onDelete(product.id)} className="bg-destructive text-destructive-foreground">Delete</AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
               </div>
             </TableCell>
           </TableRow>
@@ -88,7 +116,13 @@ export default function ProductsPage() {
           setProducts(filteredProducts);
         } catch (error) {
           console.error("AI search failed:", error);
-          setProducts(allProducts.filter(p => p.name.toLowerCase().includes(debouncedSearchQuery.toLowerCase())));
+          // Fallback to simple text search
+          const query = debouncedSearchQuery.toLowerCase();
+          setProducts(allProducts.filter(p => 
+            p.name.toLowerCase().includes(query) ||
+            p.category.toLowerCase().includes(query) ||
+            p.description.toLowerCase().includes(query)
+          ));
         } finally {
           setIsSearching(false);
         }
@@ -98,6 +132,16 @@ export default function ProductsPage() {
     };
     performSearch();
   }, [debouncedSearchQuery]);
+
+  const handleDeleteProduct = (productId: string) => {
+    // In a real app, you would make an API call to delete the product
+    // For this prototype, we'll just filter it from the local state
+    setProducts(prev => prev.filter(p => p.id !== productId));
+    toast({
+        title: "Product Deleted",
+        description: "The product has been removed from your store.",
+    });
+  }
 
   return (
      <main className="flex-1 p-6 md:p-8">
@@ -128,7 +172,7 @@ export default function ProductsPage() {
           </div>
         </CardHeader>
         <CardContent>
-          <ProductTable products={products} />
+          <ProductTable products={products} onDelete={handleDeleteProduct} />
         </CardContent>
       </Card>
      </main>

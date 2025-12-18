@@ -7,6 +7,17 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Button } from '@/components/ui/button';
 import { MessageSquare, ShoppingCart, Settings, Trash2 } from 'lucide-react';
 import type { LucideProps } from 'lucide-react';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 
 type App = {
   id: string;
@@ -75,10 +86,28 @@ export default function AppStorePage() {
                                     Manage
                                 </Link>
                             </Button>
-                            <Button variant="destructive" onClick={() => handleUninstall(app.id)}>
-                                <Trash2 className="mr-2 h-4 w-4" />
-                                Uninstall
-                            </Button>
+                             <AlertDialog>
+                                <AlertDialogTrigger asChild>
+                                    <Button variant="destructive">
+                                        <Trash2 className="mr-2 h-4 w-4" />
+                                        Uninstall
+                                    </Button>
+                                </AlertDialogTrigger>
+                                <AlertDialogContent>
+                                    <AlertDialogHeader>
+                                        <AlertDialogTitle>Are you sure you want to uninstall {app.name}?</AlertDialogTitle>
+                                        <AlertDialogDescription>
+                                            This will disable the integration. You can reinstall it at any time.
+                                        </AlertDialogDescription>
+                                    </AlertDialogHeader>
+                                    <AlertDialogFooter>
+                                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                        <AlertDialogAction onClick={() => handleUninstall(app.id)} className="bg-destructive text-destructive-foreground">
+                                            Uninstall
+                                        </AlertDialogAction>
+                                    </AlertDialogFooter>
+                                </AlertDialogContent>
+                            </AlertDialog>
                         </>
                        ) : (
                         <Button onClick={() => handleInstall(app.id)}>

@@ -15,6 +15,18 @@ import { Button } from '@/components/ui/button';
 import { Edit, PlusCircle, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import Link from 'next/link';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
+import { toast } from '@/hooks/use-toast';
 
 const variationsData = [
   { id: 'var_001', productId: 'prod_004', sku: 'SCRF-WL-RD-M', attributes: [ { name: 'color', value: 'Red' }, { name: 'size', value: 'Medium' } ], stock: 25, priceModifier: 0 },
@@ -28,6 +40,16 @@ const variationsData = [
 
 export default function VariationsPage() {
   const [variations, setVariations] = useState(variationsData);
+
+  const handleDeleteVariation = (variationId: string) => {
+    // In a real app, you would make an API call to delete the variation
+    // For this prototype, we'll just filter it from the local state
+    setVariations(prev => prev.filter(v => v.id !== variationId));
+    toast({
+        title: "Variation Deleted",
+        description: "The variation has been removed.",
+    });
+  }
 
   return (
     <main className="flex-1 p-6 md:p-8">
@@ -87,10 +109,26 @@ export default function VariationsPage() {
                           <span className="sr-only">Edit variation</span>
                         </Link>
                       </Button>
-                      <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive">
-                        <Trash2 className="h-4 w-4" />
-                        <span className="sr-only">Delete variation</span>
-                      </Button>
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive">
+                            <Trash2 className="h-4 w-4" />
+                            <span className="sr-only">Delete variation</span>
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                            <AlertDialogHeader>
+                            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                            <AlertDialogDescription>
+                                This action cannot be undone. This will permanently delete the variation.
+                            </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogAction onClick={() => handleDeleteVariation(variation.id)} className="bg-destructive text-destructive-foreground">Delete</AlertDialogAction>
+                            </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
                     </div>
                   </TableCell>
                 </TableRow>
