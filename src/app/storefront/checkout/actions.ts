@@ -18,20 +18,60 @@ function generateConfirmationHtml(orderId: string, orderData: PlaceOrderInput): 
     const subject = `Your Curated Finds Order Confirmation (#${orderId})`;
 
     const itemsHtml = orderData.cartItems.map(item => 
-        `<li>${item.quantity}x ${item.productName} - $${(item.price * item.quantity).toFixed(2)}</li>`
+        `<tr>
+            <td style="padding: 10px; border-bottom: 1px solid #eee;">${item.quantity}x ${item.productName}</td>
+            <td style="padding: 10px; border-bottom: 1px solid #eee; text-align: right;">$${(item.price * item.quantity).toFixed(2)}</td>
+        </tr>`
     ).join('');
 
     const body = `
-        <div style="font-family: sans-serif; line-height: 1.6;">
-            <h1>Thank you for your order, ${orderData.customerName}!</h1>
-            <p>We've received your order #${orderId} and are getting it ready for shipment.</p>
-            <h2>Order Summary</h2>
-            <ul>
-                ${itemsHtml}
-            </ul>
-            <p style="font-size: 1.2em; font-weight: bold;">Total: $${orderData.total.toFixed(2)}</p>
-            <p>We'll notify you again once your order has shipped. Thank you for shopping with Curated Finds!</p>
-        </div>
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Order Confirmation</title>
+        </head>
+        <body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #eef2f9; color: #333;">
+            <table width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color: #eef2f9;">
+                <tr>
+                    <td align="center" style="padding: 20px;">
+                        <table width="100%" border="0" cellspacing="0" cellpadding="0" style="max-width: 600px; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+                            <!-- Header -->
+                            <tr>
+                                <td align="center" style="padding: 20px; background-color: #2c3e50; color: #ffffff;">
+                                    <h1 style="margin: 0; font-size: 24px;">Curated Finds</h1>
+                                </td>
+                            </tr>
+                            <!-- Body -->
+                            <tr>
+                                <td style="padding: 30px 20px;">
+                                    <h2 style="font-size: 20px; margin-top: 0;">Thank you for your order, ${orderData.customerName}!</h2>
+                                    <p>We've received your order #${orderId} and are getting it ready for shipment. We'll notify you again once your order has shipped.</p>
+                                    
+                                    <h3 style="border-bottom: 2px solid #eee; padding-bottom: 10px; margin-top: 30px; font-size: 18px;">Order Summary</h3>
+                                    <table width="100%" cellspacing="0" cellpadding="0">
+                                        ${itemsHtml}
+                                        <!-- Total -->
+                                        <tr>
+                                            <td style="padding: 15px 10px 10px; font-weight: bold; font-size: 1.1em;">Total</td>
+                                            <td style="padding: 15px 10px 10px; text-align: right; font-weight: bold; font-size: 1.1em;">$${orderData.total.toFixed(2)}</td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                            <!-- Footer -->
+                            <tr>
+                                <td align="center" style="padding: 20px; background-color: #f7f7f7; font-size: 12px; color: #777;">
+                                    <p>&copy; 2024 Curated Finds. All rights reserved.</p>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+        </body>
+        </html>
     `;
 
     return { subject, body };
