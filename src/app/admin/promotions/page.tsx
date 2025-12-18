@@ -7,6 +7,7 @@ import { PlusCircle } from 'lucide-react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { toast } from '@/hooks/use-toast';
+import Link from 'next/link';
 
 const promotionsData = [
   { id: 'promo_001', code: 'SUMMER20', description: '20% off all orders', status: 'Active' },
@@ -27,9 +28,11 @@ export default function PromotionsPage() {
     <main className="flex-1 p-6 md:p-8">
       <div className="flex items-center justify-between mb-8">
         <h1 className="font-headline text-3xl font-bold tracking-tight">Promotions</h1>
-        <Button>
-          <PlusCircle className="mr-2 h-4 w-4" />
-          Create Promotion
+        <Button asChild>
+          <Link href="/admin/promotions/new">
+            <PlusCircle className="mr-2 h-4 w-4" />
+            Create Promotion
+          </Link>
         </Button>
       </div>
       <Card>

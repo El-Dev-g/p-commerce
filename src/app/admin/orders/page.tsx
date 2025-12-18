@@ -39,6 +39,7 @@ import type { Order, OrderStatus } from './actions';
 import { getOrders, updateOrderStatus, updateShippingInfo } from './actions';
 import { OrderStatusBadge } from './order-status-badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import Link from 'next/link';
 
 export default function OrdersPage() {
   const [orders, setOrders] = React.useState<Order[]>([]);
@@ -97,9 +98,11 @@ export default function OrdersPage() {
       <div className="flex items-center justify-between mb-8">
         <h1 className="font-headline text-3xl font-bold tracking-tight">Orders</h1>
         <div className="flex gap-2">
-            <Button>
+            <Button asChild>
+              <Link href="/admin/orders/new">
                 <PlusCircle className="mr-2 h-4 w-4" />
                 Add Order
+              </Link>
             </Button>
             <Button variant="outline">
               <FileDown className="mr-2 h-4 w-4" />

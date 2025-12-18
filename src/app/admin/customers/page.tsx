@@ -30,9 +30,11 @@ export default function CustomersPage() {
     <main className="flex-1 p-6 md:p-8">
       <div className="flex items-center justify-between mb-8">
         <h1 className="font-headline text-3xl font-bold tracking-tight">Customers</h1>
-        <Button>
+        <Button asChild>
+          <Link href="/admin/customers/new">
             <PlusCircle className="mr-2 h-4 w-4" />
             Add Customer
+          </Link>
         </Button>
       </div>
       <Card>

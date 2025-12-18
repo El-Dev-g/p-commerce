@@ -5,6 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { PlusCircle } from 'lucide-react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import Link from 'next/link';
 
 const vendorsData = [
     { id: 'ven_001', name: 'Artisan Goods Co.', contact: 'contact@artisangoods.com', productCount: 5 },
@@ -17,9 +18,11 @@ export default function VendorsPage() {
     <main className="flex-1 p-6 md:p-8">
       <div className="flex items-center justify-between mb-8">
         <h1 className="font-headline text-3xl font-bold tracking-tight">Vendors</h1>
-        <Button>
-          <PlusCircle className="mr-2 h-4 w-4" />
-          Add Vendor
+        <Button asChild>
+          <Link href="/admin/vendors/new">
+            <PlusCircle className="mr-2 h-4 w-4" />
+            Add Vendor
+          </Link>
         </Button>
       </div>
       <Card>
