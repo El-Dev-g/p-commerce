@@ -10,6 +10,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Eye, FileDown, PlusCircle, Truck, AlertTriangle, Ban } from 'lucide-react';
@@ -51,7 +52,7 @@ export default function OrdersPage() {
 
   const handleSaveTracking = async (orderId: string, trackingNumber: string, customerEmail: string) => {
     try {
-        await updateShippingInfo(orderId, trackingNumber, '+15551234567', customerEmail); // Using a dummy phone number
+        await updateShippingInfo(orderId, trackingNumber, customerEmail);
         
         // Data is revalidated by server action, just need to fetch it again
         getOrders().then(setOrders);
@@ -295,3 +296,5 @@ function OrderDetailsDialog({
     </Dialog>
   )
 }
+
+    
