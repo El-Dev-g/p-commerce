@@ -39,7 +39,8 @@ import {
   ClipboardList,
   Palette,
   Megaphone,
-  Mail
+  Mail,
+  User,
 } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import { ModeToggle } from '@/components/mode-toggle';
@@ -245,17 +246,32 @@ function AdminSidebar() {
             </SidebarMenuButton>
           </SidebarMenuItem>
            <SidebarMenuItem>
-            <SidebarMenuButton
-              asChild
-              isActive={isActive('/admin/settings')}
-              tooltip="Settings"
-              onClick={handleLinkClick}
-            >
-              <Link href="/admin/settings">
-                <Settings />
-                <span>Settings</span>
-              </Link>
-            </SidebarMenuButton>
+            <Collapsible open={openCollapsibles['settings']} onOpenChange={() => toggleCollapsible('settings')}>
+                <CollapsibleTrigger asChild>
+                    <SidebarMenuButton
+                      asChild
+                      isActive={isActive('/admin/settings')}
+                      tooltip="Settings"
+                    >
+                      <Link href="/admin/settings">
+                        <Settings />
+                        <span>Settings</span>
+                      </Link>
+                    </SidebarMenuButton>
+                </CollapsibleTrigger>
+                <CollapsibleContent>
+                  <SidebarMenuSub>
+                    <SidebarMenuSubItem>
+                        <SidebarMenuSubButton isActive={isActive('/admin/settings/profile')} asChild>
+                          <Link href="/admin/settings/profile">
+                              <User />
+                              <span>User Profile</span>
+                          </Link>
+                        </SidebarMenuSubButton>
+                    </SidebarMenuSubItem>
+                  </SidebarMenuSub>
+                </CollapsibleContent>
+            </Collapsible>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarContent>
