@@ -7,8 +7,8 @@ import type { Product } from '@/lib/types';
 import { AddToCartButton } from '@/components/add-to-cart-button';
 
 async function getFeaturedProducts() {
-  // Fetch data from the admin project's API
-  const res = await fetch('http://localhost:9002/api/v1/products', { cache: 'no-store' });
+  const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:9002';
+  const res = await fetch(`${apiBaseUrl}/api/v1/products`, { cache: 'no-store' });
   if (!res.ok) {
     throw new Error('Failed to fetch products');
   }

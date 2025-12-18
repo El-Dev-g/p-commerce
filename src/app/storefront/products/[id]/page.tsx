@@ -23,10 +23,9 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
     async function getProduct() {
       try {
         setIsLoading(true);
-        const res = await fetch(`http://localhost:9002/api/v1/products/${id}`);
+        const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:9002';
+        const res = await fetch(`${apiBaseUrl}/api/v1/products/${id}`);
         if (!res.ok) {
-          // For client components, we can't use notFound().
-          // We'll set product to null and handle it in the UI.
           setProduct(null);
         } else {
           const data = await res.json();
