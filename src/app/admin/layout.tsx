@@ -214,7 +214,7 @@ function AdminSidebar() {
         <SidebarGroup>
             <SidebarGroupLabel>Store</SidebarGroupLabel>
             <SidebarMenu>
-                <Collapsible open={openCollapsibles['storefront']} onOpenChange={() => toggleCollapsible('storefront')}>
+                <Collapsible open={openCollapsibles['storefront']} onOpenChange={() => toggleCollapsible('storefront')} defaultValue="true">
                   <SidebarMenuItem>
                       <CollapsibleTrigger asChild>
                           <SidebarMenuButton
