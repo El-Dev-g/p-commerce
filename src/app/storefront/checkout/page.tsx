@@ -1,6 +1,8 @@
 
 'use client';
 
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { useCart } from '@/context/cart-context';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -8,16 +10,26 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import Image from 'next/image';
+import { Loader2 } from 'lucide-react';
 
 export default function CheckoutPage() {
   const { cartItems, total } = useCart();
+  const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handlePlaceOrder = (e: React.FormEvent) => {
+  const handlePlaceOrder = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Here you would typically integrate with a payment provider like Stripe
-    // and then call your API to create the order.
+    setIsLoading(true);
+
+    // In a real app, you would call your API to create the order
+    // and process payment with a provider like Stripe.
     console.log("Placing order with items:", cartItems);
-    alert("Thank you for your order! (This is a simulation)");
+    
+    // Simulate network delay
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    
+    setIsLoading(false);
+    router.push('/storefront/thank-you');
   };
 
   return (
@@ -79,7 +91,10 @@ export default function CheckoutPage() {
                 </div>
               </CardContent>
             </Card>
-             <Button type="submit" className="w-full mt-8" size="lg">Place Order</Button>
+             <Button type="submit" className="w-full mt-8" size="lg" disabled={isLoading}>
+                {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                {isLoading ? 'Placing Order...' : 'Place Order'}
+             </Button>
           </form>
         </div>
         <div className="bg-muted/50 rounded-lg p-6">
