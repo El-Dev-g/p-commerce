@@ -59,6 +59,11 @@ export const products: Product[] = [
     price: 65.00,
     category: 'Apparel',
     image: getImage('woolen-scarf'),
+    variations: [
+      { id: 'var_008', attributes: [{ name: 'Color', value: 'Red' }], stock: 15, priceModifier: 0, sku: 'SCRF-WOOL-RED' },
+      { id: 'var_009', attributes: [{ name: 'Color', value: 'Blue' }], stock: 20, priceModifier: 0, sku: 'SCRF-WOOL-BLU' },
+      { id: 'var_010', attributes: [{ name: 'Color', value: 'Green' }], stock: 12, priceModifier: 0, sku: 'SCRF-WOOL-GRN' },
+    ]
   },
   {
     id: 'prod_005',
