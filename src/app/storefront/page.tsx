@@ -9,6 +9,8 @@ import type { Product } from '@/lib/types';
 import { AddToCartButton } from '@/components/add-to-cart-button';
 import { products as allProducts } from '@/lib/products';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 
 // Helper function to render a section based on its type
 const renderSection = (section: { type: string; id: string }, products: Product[], heroImage: any) => {
@@ -17,7 +19,9 @@ const renderSection = (section: { type: string; id: string }, products: Product[
       return <HeroSection key={section.id} heroImage={heroImage} />;
     case 'featured-collection':
       return <FeaturedProductsSection key={section.id} products={products} />;
-    // Add other cases here for new section types like 'testimonials', 'newsletter', etc.
+    case 'newsletter':
+        return <NewsletterSection key={section.id} />;
+    // Add other cases here for new section types like 'testimonials'
     default:
       return (
         <div key={section.id} className="container mx-auto py-12 text-center">
@@ -150,3 +154,28 @@ function FeaturedProductsSection({ products }: { products: Product[] }) {
         </section>
     );
 }
+
+function NewsletterSection() {
+    return (
+        <section className="w-full py-12 md:py-24 lg:py-32">
+            <div className="container grid items-center justify-center gap-4 px-4 text-center md:px-6">
+                <div className="space-y-3">
+                    <h2 className="text-3xl font-bold tracking-tighter md:text-4xl">Stay in the Loop</h2>
+                    <p className="mx-auto max-w-[600px] text-muted-foreground md:text-xl">
+                        Subscribe to our newsletter to get the latest updates on new arrivals, special offers, and more.
+                    </p>
+                </div>
+                <div className="mx-auto w-full max-w-sm space-y-2">
+                    <form className="flex space-x-2">
+                        <Input type="email" placeholder="Enter your email" className="max-w-lg flex-1" />
+                        <Button type="submit">Subscribe</Button>
+                    </form>
+                    <p className="text-xs text-muted-foreground">
+                        We respect your privacy. Unsubscribe at any time.
+                    </p>
+                </div>
+            </div>
+        </section>
+    );
+}
+
