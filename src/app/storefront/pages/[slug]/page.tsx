@@ -7,7 +7,12 @@ import type { Page } from '@/lib/pages';
 async function getPage(slug: string): Promise<Page | null> {
   try {
     const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:9002';
-    const res = await fetch(`${apiBaseUrl}/api/v1/pages/${slug}`, { cache: 'no-store' });
+    const res = await fetch(`${apiBaseUrl}/api/v1/pages/${slug}`, { 
+        cache: 'no-store',
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    });
     if (!res.ok) {
       return null;
     }

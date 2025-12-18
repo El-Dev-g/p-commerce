@@ -8,7 +8,12 @@ import { AddToCartButton } from '@/components/add-to-cart-button';
 
 async function getFeaturedProducts() {
   const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:9002';
-  const res = await fetch(`${apiBaseUrl}/api/v1/products`, { cache: 'no-store' });
+  const res = await fetch(`${apiBaseUrl}/api/v1/products`, { 
+    cache: 'no-store',
+    headers: {
+      'Content-Type': 'application/json',
+    }
+  });
   if (!res.ok) {
     throw new Error('Failed to fetch products');
   }

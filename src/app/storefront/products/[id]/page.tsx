@@ -24,7 +24,11 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
       try {
         setIsLoading(true);
         const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:9002';
-        const res = await fetch(`${apiBaseUrl}/api/v1/products/${id}`);
+        const res = await fetch(`${apiBaseUrl}/api/v1/products/${id}`, {
+          headers: {
+            'Content-Type': 'application/json',
+          }
+        });
         if (!res.ok) {
           setProduct(null);
         } else {
