@@ -1,15 +1,15 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { PlusCircle, Image as ImageIcon, Type, Bell, Sparkles, Loader2, Menu, Trash2, Library, MessageCircle, Star } from 'lucide-react';
+import { PlusCircle, Image as ImageIcon, Type, Bell, Sparkles, Loader2, Trash2, Library, Star } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { toast } from '@/hooks/use-toast';
 import { generatePageContent } from '@/ai/flows/generate-page-content';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 
 const initialSections = [
     { id: 'hero', name: 'Hero Section', icon: ImageIcon, type: 'hero' },
@@ -30,6 +30,20 @@ export default function StorefrontEditorPage() {
   const [sections, setSections] = useState(initialSections);
   const [activeSection, setActiveSection] = useState<string | null>(null);
   const [isAddSectionOpen, setIsAddSectionOpen] = useState(false);
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+
+  // Send updated sections to the iframe preview
+  useEffect(() => {
+    if (iframeRef.current && iframeRef.current.contentWindow) {
+      iframeRef.current.contentWindow.postMessage(
+        {
+          type: 'UPDATE_SECTIONS',
+          sections: sections,
+        },
+        '*' // In production, you should use a specific target origin
+      );
+    }
+  }, [sections]);
 
   const handleGenerateContent = async () => {
     if (!topic) {
@@ -199,6 +213,7 @@ export default function StorefrontEditorPage() {
                 <CardContent className="h-full p-0">
                     <div className="w-full h-full bg-muted rounded-b-lg border-t overflow-hidden">
                         <iframe
+                            ref={iframeRef}
                             src="/storefront"
                             title="Curated Finds - Storefront Preview"
                             className="w-full h-full border-none"
@@ -210,6 +225,3 @@ export default function StorefrontEditorPage() {
       </div>
     </main>
   );
-
-    
-
