@@ -2,21 +2,19 @@
 import { notFound } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { pagesData, type Page } from '@/lib/pages';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/components/ui/accordion';
 
 async function getPage(slug: string): Promise<Page | null> {
-  try {
-    const page = pagesData.find((p) => p.slug === slug);
-    if (!page) {
-      return null;
-    }
-    return page;
-  } catch (error) {
-    console.error('Failed to fetch page:', error);
-    return null;
-  }
+  const page = pagesData.find((p) => p.slug === slug) || null;
+  return Promise.resolve(page);
 }
 
-function renderContent(content: Record<string, any>) {
+function renderContentAsText(content: Record<string, any>) {
     return Object.entries(content).map(([key, value]) => {
         if (typeof value === 'string' && !key.toLowerCase().includes('title')) {
              const title = key.charAt(0).toUpperCase() + key.slice(1).replace(/([A-Z])/g, ' $1');
@@ -29,6 +27,29 @@ function renderContent(content: Record<string, any>) {
         }
         return null;
     })
+}
+
+function renderFaqAccordion(content: Record<string, any>) {
+    const faqPairs: { question: string, answer: string }[] = [];
+    for (let i = 1; content[`question${i}`]; i++) {
+        faqPairs.push({
+            question: content[`question${i}`],
+            answer: content[`answer${i}`],
+        });
+    }
+
+    return (
+        <Accordion type="single" collapsible className="w-full">
+            {faqPairs.map((pair, index) => (
+                <AccordionItem key={index} value={`item-${index}`}>
+                    <AccordionTrigger className="text-lg font-semibold text-left">{pair.question}</AccordionTrigger>
+                    <AccordionContent className="text-muted-foreground whitespace-pre-line">
+                        {pair.answer}
+                    </AccordionContent>
+                </AccordionItem>
+            ))}
+        </Accordion>
+    )
 }
 
 export default async function StorefrontPage({ params }: { params: { slug: string } }) {
@@ -45,7 +66,7 @@ export default async function StorefrontPage({ params }: { params: { slug: strin
                 <CardTitle className="text-4xl font-bold tracking-tighter">{page.title}</CardTitle>
             </CardHeader>
             <CardContent>
-                {renderContent(page.content)}
+                {page.slug === 'faq' ? renderFaqAccordion(page.content) : renderContentAsText(page.content)}
             </CardContent>
         </Card>
     </div>
