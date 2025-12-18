@@ -1,11 +1,33 @@
 
+'use client';
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
+import { toast } from '@/hooks/use-toast';
 
 export default function ProfilePage() {
+    const handleDeleteAccount = () => {
+        toast({
+            title: 'Account Deletion Requested',
+            description: 'Your account has been scheduled for deletion. (This is a simulation)',
+            variant: 'destructive',
+        });
+    }
+
   return (
     <main className="flex-1 p-6 md:p-8">
       <h1 className="font-headline text-3xl font-bold tracking-tight mb-8">User Profile</h1>
@@ -56,6 +78,34 @@ export default function ProfilePage() {
             </div>
             <Button>Update Password</Button>
           </CardContent>
+        </Card>
+
+        <Card className="border-destructive">
+            <CardHeader>
+                <CardTitle className="text-destructive">Danger Zone</CardTitle>
+                <CardDescription>These actions are irreversible. Please be certain.</CardDescription>
+            </CardHeader>
+            <CardContent>
+                <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                         <Button variant="destructive">Delete Account</Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                        <AlertDialogHeader>
+                            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                            <AlertDialogDescription>
+                                This action cannot be undone. This will permanently delete your account and remove your data from our servers.
+                            </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogAction onClick={handleDeleteAccount} className="bg-destructive text-destructive-foreground">
+                                Yes, Delete Account
+                            </AlertDialogAction>
+                        </AlertDialogFooter>
+                    </AlertDialogContent>
+                </AlertDialog>
+            </CardContent>
         </Card>
       </div>
     </main>
