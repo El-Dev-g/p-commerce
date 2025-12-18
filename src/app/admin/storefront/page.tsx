@@ -4,29 +4,37 @@
 import { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { PlusCircle, GripVertical, Image as ImageIcon, Type, Bell, Sparkles, Loader2 } from 'lucide-react';
+import { PlusCircle, Image as ImageIcon, Type, Bell, Sparkles, Loader2, Menu, Trash2, Library, MessageCircle, Star } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { toast } from '@/hooks/use-toast';
 import { generatePageContent } from '@/ai/flows/generate-page-content';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from '@/components/ui/dialog';
 
-const sections = [
-    { id: 'announcement', name: 'Announcement Bar', icon: Bell },
-    { id: 'header', name: 'Header', icon: Type },
-    { id: 'hero', name: 'Image with Text', icon: ImageIcon },
-    { id: 'new-arrivals', name: 'New Arrivals', icon: ImageIcon },
-    { id: 'image-banner', name: 'Image Banner', icon: ImageIcon },
+const initialSections = [
+    { id: 'announcement', name: 'Announcement Bar', icon: Bell, type: 'announcement' },
+    { id: 'header', name: 'Header', icon: Type, type: 'header' },
+    { id: 'hero', name: 'Image with Text', icon: ImageIcon, type: 'hero' },
+    { id: 'new-arrivals', name: 'New Arrivals', icon: Library, type: 'featured-collection' },
+    { id: 'image-banner', name: 'Image Banner', icon: ImageIcon, type: 'image-banner' },
 ];
+
+const availableSectionTypes = [
+    { type: 'featured-collection', name: 'Featured Collection', icon: Library },
+    { type: 'testimonials', name: 'Testimonials', icon: Star },
+    { type: 'newsletter', name: 'Newsletter Signup', icon: Bell },
+    { type: 'rich-text', name: 'Rich Text', icon: Type },
+]
 
 export default function StorefrontEditorPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [topic, setTopic] = useState('');
   const [keywords, setKeywords] = useState('');
+  const [sections, setSections] = useState(initialSections);
   const [activeSection, setActiveSection] = useState<string | null>(null);
+  const [isAddSectionOpen, setIsAddSectionOpen] = useState(false);
 
   const handleGenerateContent = async () => {
-    // This is a placeholder for now. In a real app, you'd have a way to target
-    // the content area of the selected section in the iframe.
     if (!topic) {
         toast({
             variant: 'destructive',
@@ -43,7 +51,7 @@ export default function StorefrontEditorPage() {
             keywords: keywords.split(',').map(k => k.trim()),
             tone: 'promotional',
         });
-        console.log("Generated content:", result.content);
+        console.log("Generated content for section " + activeSection + ":", result.content);
         toast({
             title: 'Content Generated',
             description: 'The AI content has been generated and printed to the console.',
@@ -58,7 +66,26 @@ export default function StorefrontEditorPage() {
     } finally {
         setIsLoading(false);
     }
-};
+  };
+
+  const handleRemoveSection = (sectionId: string) => {
+    setSections(prev => prev.filter(s => s.id !== sectionId));
+    if (activeSection === sectionId) {
+        setActiveSection(null);
+    }
+  };
+
+  const handleAddSection = (sectionType: { type: string; name: string; icon: React.ElementType }) => {
+    const newSection = {
+        id: `${sectionType.type}-${Date.now()}`,
+        name: sectionType.name,
+        icon: sectionType.icon,
+        type: sectionType.type,
+    };
+    setSections(prev => [...prev, newSection]);
+    setIsAddSectionOpen(false);
+  };
+
 
   return (
     <main className="flex-1 p-6 md:p-8">
@@ -72,26 +99,55 @@ export default function StorefrontEditorPage() {
             <Card>
                 <CardHeader>
                     <CardTitle>Homepage Sections</CardTitle>
-                    <CardDescription>Select a section to edit its content with AI.</CardDescription>
+                    <CardDescription>Add, remove, and reorder sections on your homepage.</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                     <div className="space-y-2">
                         {sections.map((section) => (
-                            <Button 
-                                key={section.id} 
-                                variant="outline" 
-                                className={`w-full justify-start ${activeSection === section.id ? 'ring-2 ring-primary' : ''}`}
-                                onClick={() => setActiveSection(section.id)}
-                            >
-                                <section.icon className="mr-2 h-4 w-4 text-muted-foreground" />
-                                {section.name}
-                            </Button>
+                            <div key={section.id} className="group flex items-center gap-2">
+                                <Button 
+                                    variant="outline" 
+                                    className={`w-full justify-start ${activeSection === section.id ? 'ring-2 ring-primary' : ''}`}
+                                    onClick={() => setActiveSection(section.id)}
+                                >
+                                    <section.icon className="mr-2 h-4 w-4 text-muted-foreground" />
+                                    {section.name}
+                                </Button>
+                                <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-destructive opacity-50 group-hover:opacity-100" onClick={() => handleRemoveSection(section.id)}>
+                                    <Trash2 className="h-4 w-4" />
+                                </Button>
+                            </div>
                         ))}
                     </div>
-                     <Button variant="outline" className="w-full border-dashed">
-                        <PlusCircle className="mr-2 h-4 w-4" />
-                        Add Section
-                    </Button>
+                     <Dialog open={isAddSectionOpen} onOpenChange={setIsAddSectionOpen}>
+                        <DialogTrigger asChild>
+                             <Button variant="outline" className="w-full border-dashed">
+                                <PlusCircle className="mr-2 h-4 w-4" />
+                                Add Section
+                            </Button>
+                        </DialogTrigger>
+                        <DialogContent>
+                            <DialogHeader>
+                                <DialogTitle>Add a new section</DialogTitle>
+                                <DialogDescription>Choose a section type to add to your homepage.</DialogDescription>
+                            </DialogHeader>
+                            <div className="grid grid-cols-2 gap-4 py-4">
+                                {availableSectionTypes.map((type) => {
+                                    const Icon = type.icon;
+                                    return (
+                                        <button
+                                            key={type.type}
+                                            onClick={() => handleAddSection(type)}
+                                            className="flex flex-col items-center justify-center gap-2 rounded-lg border p-4 text-center hover:bg-accent hover:text-accent-foreground transition-colors"
+                                        >
+                                            <Icon className="h-8 w-8 text-muted-foreground" />
+                                            <span className="text-sm font-medium">{type.name}</span>
+                                        </button>
+                                    );
+                                })}
+                            </div>
+                        </DialogContent>
+                     </Dialog>
                 </CardContent>
             </Card>
              <Card>
@@ -157,4 +213,5 @@ export default function StorefrontEditorPage() {
       </div>
     </main>
   );
-}
+
+    
