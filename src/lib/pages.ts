@@ -42,4 +42,33 @@ export const pagesData: Page[] = [
         'By accessing the website at https://curatedfinds.com, you are agreeing to be bound by these terms of service, all applicable laws and regulations, and agree that you are responsible for compliance with any applicable local laws. If you do not agree with any of these terms, you are prohibited from using or accessing this site. The materials contained in this website are protected by applicable copyright and trademark law.',
     },
   },
+  {
+    slug: 'shipping-policy',
+    title: 'Shipping Policy',
+    content: {
+      processingTime: 'Orders are processed within 1-2 business days. Once your order has shipped, you will receive a confirmation email with tracking information.',
+      shippingRates: 'We offer flat-rate shipping of $5.00 for all domestic orders. International shipping is calculated at checkout based on your location. Enjoy free shipping on all domestic orders over $75.',
+      deliveryEstimates: 'Domestic orders typically arrive within 3-5 business days. International delivery times vary by destination.'
+    }
+  },
+  {
+    slug: 'return-policy',
+    title: 'Return Policy',
+    content: {
+      policy: 'We want you to love your purchase. If you are not completely satisfied, you may return your item(s) within 30 days of receipt for a full refund or exchange. Items must be unused and in their original condition and packaging.',
+      process: 'To initiate a return, please contact our support team at support@curatedfinds.com with your order number. We will provide you with instructions and a return shipping label.'
+    }
+  },
+  {
+    slug: 'faq',
+    title: 'Frequently Asked Questions',
+    content: {
+      question1: 'What is your return policy?',
+      answer1: 'You can return any item within 30 days of receipt for a full refund, provided it is unused and in its original packaging. Please see our full Return Policy for more details.',
+      question2: 'How long will it take to get my order?',
+      answer2: 'Orders are typically processed in 1-2 business days and standard domestic shipping takes 3-5 business days.',
+      question3: 'Do you ship internationally?',
+      answer3: 'Yes, we do! International shipping rates and times are calculated at checkout.'
+    }
+  }
 ];

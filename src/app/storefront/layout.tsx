@@ -19,6 +19,9 @@ export default function StorefrontLayout({
                 <nav className="flex flex-wrap justify-center gap-4 sm:gap-6">
                     <Link href="/storefront/pages/about-us" className="text-sm hover:underline">About Us</Link>
                     <Link href="/storefront/pages/contact-us" className="text-sm hover:underline">Contact Us</Link>
+                    <Link href="/storefront/pages/faq" className="text-sm hover:underline">FAQ</Link>
+                    <Link href="/storefront/pages/shipping-policy" className="text-sm hover:underline">Shipping</Link>
+                    <Link href="/storefront/pages/return-policy" className="text-sm hover:underline">Returns</Link>
                     <Link href="/storefront/pages/terms-of-service" className="text-sm hover:underline">Terms of Service</Link>
                     <Link href="/storefront/pages/privacy-policy" className="text-sm hover:underline">Privacy Policy</Link>
                 </nav>

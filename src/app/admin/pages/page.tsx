@@ -119,6 +119,50 @@ export default function PagesManagementPage() {
                     <Button variant="outline">Save Contact Us</Button>
                 </AccordionContent>
                 </AccordionItem>
+                <AccordionItem value="faq">
+                  <AccordionTrigger className="text-lg font-semibold">FAQ</AccordionTrigger>
+                  <AccordionContent className="space-y-6 pt-4">
+                      {Object.keys(pageContents.find(p => p.slug === 'faq')?.content || {}).filter(k => k.startsWith('question')).map((key, i) => {
+                          const questionKey = `question${i+1}`;
+                          const answerKey = `answer${i+1}`;
+                          return (
+                              <div key={i} className="space-y-2">
+                                  <Label htmlFor={`faq-q${i+1}`}>Question {i+1}</Label>
+                                  <Input id={`faq-q${i+1}`} defaultValue={pageContents.find(p => p.slug === 'faq')?.content[questionKey]} />
+                                  <Label htmlFor={`faq-a${i+1}`}>Answer {i+1}</Label>
+                                  <Textarea id={`faq-a${i+1}`} defaultValue={pageContents.find(p => p.slug === 'faq')?.content[answerKey]} className="min-h-[100px]" />
+                              </div>
+                          )
+                      })}
+                      <Button variant="outline">Save FAQ</Button>
+                  </AccordionContent>
+                </AccordionItem>
+                <AccordionItem value="shipping-policy">
+                  <AccordionTrigger className="text-lg font-semibold">Shipping Policy</AccordionTrigger>
+                  <AccordionContent className="space-y-4 pt-4">
+                      <div className="space-y-2">
+                          <Label htmlFor="shipping-processing">Processing Time</Label>
+                          <Textarea id="shipping-processing" defaultValue={pageContents.find(p => p.slug === 'shipping-policy')?.content.processingTime} className="min-h-[100px]" />
+                      </div>
+                      <div className="space-y-2">
+                          <Label htmlFor="shipping-rates">Shipping Rates</Label>
+                          <Textarea id="shipping-rates" defaultValue={pageContents.find(p => p.slug === 'shipping-policy')?.content.shippingRates} className="min-h-[100px]" />
+                      </div>
+                      <Button variant="outline">Save Shipping Policy</Button>
+                  </AccordionContent>
+                </AccordionItem>
+                <AccordionItem value="return-policy">
+                  <AccordionTrigger className="text-lg font-semibold">Return Policy</AccordionTrigger>
+                  <AccordionContent className="space-y-4 pt-4">
+                      <Textarea
+                          id="return-policy-textarea"
+                          placeholder="Enter your return policy text here..."
+                          className="min-h-[200px]"
+                          defaultValue={pageContents.find(p => p.slug === 'return-policy')?.content.policy}
+                      />
+                      <Button variant="outline">Save Return Policy</Button>
+                  </AccordionContent>
+                </AccordionItem>
                 <AccordionItem value="privacy-policy">
                 <AccordionTrigger className="text-lg font-semibold">Privacy Policy</AccordionTrigger>
                 <AccordionContent className="space-y-4 pt-4">
