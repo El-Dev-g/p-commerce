@@ -20,16 +20,17 @@ export async function sendContactMessageAction(input: ContactFormInput) {
   }
 
   const resend = new Resend(process.env.RESEND_API_KEY);
-  const toEmail = process.env.RESEND_FROM_EMAIL; // Send to the store owner
+  const fromEmail = process.env.RESEND_FROM_EMAIL; // This should be your verified domain email
+  const toEmail = "hello@prigidcommerce.shop"; // This is where you will receive the emails
 
-  if (!toEmail) {
+  if (!fromEmail) {
     console.error("RESEND_FROM_EMAIL is not set. Cannot send contact form email.");
-    return { success: false, error: { _form: ["Server is not configured to receive emails."] } };
+    return { success: false, error: { _form: ["Server is not configured to send emails."] } };
   }
 
   try {
     const { data, error } = await resend.emails.send({
-      from: toEmail, // Must be a verified domain
+      from: fromEmail,
       to: toEmail,
       reply_to: input.email, // So you can reply directly to the user
       subject: `New Contact Form Message from ${input.name}`,
