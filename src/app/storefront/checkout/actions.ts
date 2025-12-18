@@ -45,7 +45,7 @@ export async function placeOrderAction(orderData: PlaceOrderInput) {
     // Explicitly check if the API key is missing or empty.
     if (!apiKey) {
         console.error("Resend API key is not set in environment variables.");
-        return { success: false, error: "The Resend API key is missing. Please add it to your .env.local file." };
+        return { success: false, error: "The Resend API key is missing. Please add it to your .env file." };
     }
 
     if (!fromEmail) {
