@@ -12,11 +12,8 @@ import { generatePageContent } from '@/ai/flows/generate-page-content';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from '@/components/ui/dialog';
 
 const initialSections = [
-    { id: 'announcement', name: 'Announcement Bar', icon: Bell, type: 'announcement' },
-    { id: 'header', name: 'Header', icon: Type, type: 'header' },
-    { id: 'hero', name: 'Image with Text', icon: ImageIcon, type: 'hero' },
-    { id: 'new-arrivals', name: 'New Arrivals', icon: Library, type: 'featured-collection' },
-    { id: 'image-banner', name: 'Image Banner', icon: ImageIcon, type: 'image-banner' },
+    { id: 'hero', name: 'Hero Section', icon: ImageIcon, type: 'hero' },
+    { id: 'featured-products', name: 'Featured Products', icon: Library, type: 'featured-collection' },
 ];
 
 const availableSectionTypes = [
@@ -215,3 +212,4 @@ export default function StorefrontEditorPage() {
   );
 
     
+
