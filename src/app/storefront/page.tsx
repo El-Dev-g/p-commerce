@@ -6,14 +6,33 @@ import { Button } from '@/components/ui/button';
 import type { Product } from '@/lib/types';
 import { AddToCartButton } from '@/components/add-to-cart-button';
 import { products as allProducts } from '@/lib/products';
+import { PlaceHolderImages } from '@/lib/placeholder-images';
 
 async function getFeaturedProducts() {
   // Return the first 4 products as featured
   return allProducts.slice(0, 4);
 }
 
+function getHeroImage() {
+    const image = PlaceHolderImages.find(img => img.id === 'hero-watch');
+    if (!image) {
+        return {
+            src: 'https://picsum.photos/seed/storefront-hero/1200/800',
+            alt: 'Hero Image',
+            'data-ai-hint': 'elegant storefront display'
+        }
+    }
+    return {
+        src: image.imageUrl,
+        alt: image.description,
+        'data-ai-hint': image.imageHint,
+    }
+}
+
+
 export default async function StorefrontPage() {
   const featuredProducts: Product[] = await getFeaturedProducts();
+  const heroImage = getHeroImage();
 
   return (
     <>
@@ -21,12 +40,12 @@ export default async function StorefrontPage() {
         <div className="container mx-auto px-4 md:px-6">
           <div className="grid gap-6 lg:grid-cols-2 lg:gap-12">
             <Image
-              src="https://picsum.photos/seed/storefront-hero/1200/800"
-              alt="Hero Image"
+              src={heroImage.src}
+              alt={heroImage.alt}
               width={1200}
               height={800}
               className="mx-auto aspect-video overflow-hidden rounded-xl object-cover"
-              data-ai-hint="elegant storefront display"
+              data-ai-hint={heroImage['data-ai-hint']}
             />
             <div className="flex flex-col justify-center space-y-4">
               <h1 className="text-3xl font-bold tracking-tighter sm:text-5xl">Discover Our Curated Collection</h1>

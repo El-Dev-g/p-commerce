@@ -71,6 +71,12 @@
       "description": "A wooden desk organizer with compartments.",
       "imageUrl": "https://images.unsplash.com/photo-1594243936168-7d8481355018?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHx3b29kZW4lMjBkZXNrJTIwb3JnYW5pemVyfGVufDB8fHx8MTc2NTk0NjIwN3ww&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "desk organizer"
+    },
+    {
+      "id": "hero-watch",
+      "description": "A stylish watch on a dark background.",
+      "imageUrl": "https://images.unsplash.com/photo-1524805444758-089113d48a6d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHx3YXRjaHxlbnwwfHx8fDE3NjU5NDcyNzZ8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "watch product"
     }
   ]
 }
