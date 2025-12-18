@@ -19,59 +19,72 @@ function generateConfirmationHtml(orderId: string, orderData: PlaceOrderInput): 
 
     const itemsHtml = orderData.cartItems.map(item => 
         `<tr>
-            <td style="padding: 10px; border-bottom: 1px solid #eee;">${item.quantity}x ${item.productName}</td>
-            <td style="padding: 10px; border-bottom: 1px solid #eee; text-align: right;">$${(item.price * item.quantity).toFixed(2)}</td>
-        </tr>`
+            <td style="padding-bottom:8px;">${item.quantity}× ${item.productName}</td>
+            <td align="right" style="padding-bottom:8px;">$${(item.price * item.quantity).toFixed(2)}</td>
+          </tr>`
     ).join('');
 
     const body = `
-        <!DOCTYPE html>
-        <html lang="en">
-        <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Order Confirmation</title>
-        </head>
-        <body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #eef2f9; color: #333;">
-            <table width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color: #eef2f9;">
-                <tr>
-                    <td align="center" style="padding: 20px;">
-                        <table width="100%" border="0" cellspacing="0" cellpadding="0" style="max-width: 600px; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
-                            <!-- Header -->
-                            <tr>
-                                <td align="center" style="padding: 20px; background-color: #2c3e50; color: #ffffff;">
-                                    <h1 style="margin: 0; font-size: 24px;">Curated Finds</h1>
-                                </td>
-                            </tr>
-                            <!-- Body -->
-                            <tr>
-                                <td style="padding: 30px 20px;">
-                                    <h2 style="font-size: 20px; margin-top: 0;">Thank you for your order, ${orderData.customerName}!</h2>
-                                    <p>We've received your order #${orderId} and are getting it ready for shipment. We'll notify you again once your order has shipped.</p>
-                                    
-                                    <h3 style="border-bottom: 2px solid #eee; padding-bottom: 10px; margin-top: 30px; font-size: 18px;">Order Summary</h3>
-                                    <table width="100%" cellspacing="0" cellpadding="0">
-                                        ${itemsHtml}
-                                        <!-- Total -->
-                                        <tr>
-                                            <td style="padding: 15px 10px 10px; font-weight: bold; font-size: 1.1em;">Total</td>
-                                            <td style="padding: 15px 10px 10px; text-align: right; font-weight: bold; font-size: 1.1em;">$${orderData.total.toFixed(2)}</td>
-                                        </tr>
-                                    </table>
-                                </td>
-                            </tr>
-                            <!-- Footer -->
-                            <tr>
-                                <td align="center" style="padding: 20px; background-color: #f7f7f7; font-size: 12px; color: #777;">
-                                    <p>&copy; 2024 Curated Finds. All rights reserved.</p>
-                                </td>
-                            </tr>
-                        </table>
+        <div style="font-family: Arial, Helvetica, sans-serif; background-color:#f6f7f9; padding:24px;">
+          <div style="max-width:600px; margin:0 auto; background:#ffffff; border-radius:8px; overflow:hidden;">
+        
+            <!-- Header -->
+            <div style="background:#111827; color:#ffffff; padding:24px; text-align:center;">
+              <h1 style="margin:0; font-size:22px; font-weight:600;">
+                Thank you for your order!
+              </h1>
+              <p style="margin:8px 0 0; font-size:14px; opacity:0.9;">
+                Order #${orderId}
+              </p>
+            </div>
+        
+            <!-- Body -->
+            <div style="padding:24px; color:#374151;">
+        
+              <p style="font-size:15px; margin:0 0 16px;">
+                Hi <strong>${orderData.customerName}</strong>,
+              </p>
+        
+              <p style="font-size:15px; margin:0 0 24px;">
+                We’ve received your order and are currently preparing it for shipment.
+                You’ll get another email once it’s on the way.
+              </p>
+        
+              <!-- Order Summary -->
+              <h2 style="font-size:16px; margin-bottom:12px; color:#111827;">
+                Order Summary
+              </h2>
+        
+              <div style="border:1px solid #e5e7eb; border-radius:6px; padding:16px;">
+                <table width="100%" cellpadding="0" cellspacing="0" style="font-size:14px;">
+                  ${itemsHtml}
+                  <tr>
+                    <td colspan="2" style="border-top:1px solid #e5e7eb; padding-top:12px;"></td>
+                  </tr>
+                  <tr>
+                    <td style="font-weight:600; padding-top:8px;">Total</td>
+                    <td align="right" style="font-weight:600; padding-top:8px;">
+                      $${orderData.total.toFixed(2)}
                     </td>
-                </tr>
-            </table>
-        </body>
-        </html>
+                  </tr>
+                </table>
+              </div>
+        
+              <!-- Footer Message -->
+              <p style="font-size:14px; margin:24px 0 0; color:#6b7280;">
+                Thank you for shopping with <strong>Curated Finds</strong>.  
+                If you have any questions, just reply to this email—we’re happy to help.
+              </p>
+        
+            </div>
+        
+            <!-- Footer -->
+            <div style="background:#f9fafb; text-align:center; padding:16px; font-size:12px; color:#9ca3af;">
+              © Curated Finds — All rights reserved
+            </div>
+        
+          </div>
+        </div>
     `;
 
     return { subject, body };
