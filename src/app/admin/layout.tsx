@@ -17,6 +17,7 @@ import {
   SidebarMenuSub,
   SidebarMenuSubButton,
   SidebarProvider,
+  SidebarMenuSubItem,
 } from '@/components/ui/sidebar';
 import {
   LayoutDashboard,
