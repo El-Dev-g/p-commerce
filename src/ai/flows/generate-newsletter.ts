@@ -12,6 +12,7 @@ import { ai } from '@/ai/genkit';
 import { z } from 'genkit';
 
 const ProductInfoSchema = z.object({
+  id: z.string(),
   name: z.string(),
   description: z.string(),
   price: z.number(),
@@ -44,19 +45,21 @@ const prompt = ai.definePrompt({
   Your task is to write a compelling newsletter based on a given topic and a list of featured products.
 
   The tone should be engaging, friendly, and promotional. The output should be in Markdown.
+  When you include a product, make sure to link to it using the format: "[Product Name](/storefront/products/{{id}})"
 
   Topic: {{{topic}}}
 
   {{#if featuredProducts}}
   Featured Products:
   {{#each featuredProducts}}
-  - Name: {{{name}}}
+  - ID: {{{id}}}
+    Name: {{{name}}}
     Description: {{{description}}}
     Price: {{{price}}}
   {{/each}}
   {{/if}}
 
-  Generate an exciting subject line and a newsletter body that highlights the topic and seamlessly integrates the featured products.
+  Generate an exciting subject line and a newsletter body that highlights the topic and seamlessly integrates the featured products with correct Markdown links.
   `,
 });
 

@@ -43,7 +43,7 @@ export default function CreateNewsletterPage() {
     setGeneratedContent(null);
     try {
       const featuredProducts = allProducts.filter(p => selectedProducts.includes(p.id))
-        .map(p => ({ name: p.name, description: p.description, price: p.price }));
+        .map(p => ({ id: p.id, name: p.name, description: p.description, price: p.price }));
 
       const result = await generateNewsletter({ topic, featuredProducts });
       setGeneratedContent(result);
