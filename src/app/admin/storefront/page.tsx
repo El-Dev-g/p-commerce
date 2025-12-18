@@ -4,7 +4,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { PlusCircle, Image as ImageIcon, Type, Bell, Sparkles, Loader2, Trash2, Library, Star, Megaphone } from 'lucide-react';
+import { PlusCircle, Image as ImageIcon, Type, Bell, Sparkles, Loader2, Trash2, Library, Star, Megaphone, Columns, GalleryHorizontal, Video } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { toast } from '@/hooks/use-toast';
@@ -20,6 +20,9 @@ const getInitialSections = () => {
         'testimonials': { name: 'Testimonials', icon: Star },
         'newsletter': { name: 'Newsletter Signup', icon: Bell },
         'rich-text': { name: 'Rich Text', icon: Type },
+        'image-with-text': { name: 'Image with Text', icon: Columns },
+        'gallery': { name: 'Gallery', icon: GalleryHorizontal },
+        'video': { name: 'Video', icon: Video },
     };
 
     return initialSectionsData.sections.map(section => ({
@@ -33,6 +36,9 @@ const availableSectionTypes = [
     { type: 'header-banner', name: 'Header Banner', icon: Megaphone },
     { type: 'hero', name: 'Hero Section', icon: ImageIcon },
     { type: 'featured-collection', name: 'Featured Collection', icon: Library },
+    { type: 'image-with-text', name: 'Image with Text', icon: Columns },
+    { type: 'video', name: 'Video', icon: Video },
+    { type: 'gallery', name: 'Gallery', icon: GalleryHorizontal },
     { type: 'testimonials', name: 'Testimonials', icon: Star },
     { type: 'newsletter', name: 'Newsletter Signup', icon: Bell },
     { type: 'rich-text', name: 'Rich Text', icon: Type },
@@ -197,7 +203,7 @@ export default function StorefrontEditorPage() {
                                 <DialogTitle>Add a new section</DialogTitle>
                                 <DialogDescription>Choose a section type to add to your homepage.</DialogDescription>
                             </DialogHeader>
-                            <div className="grid grid-cols-2 gap-4 py-4">
+                            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 py-4">
                                 {availableSectionTypes.map((type) => {
                                     const Icon = type.icon;
                                     return (
@@ -282,6 +288,7 @@ export default function StorefrontEditorPage() {
   );
 
     
+
 
 
 

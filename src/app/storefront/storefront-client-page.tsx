@@ -24,6 +24,12 @@ const renderSection = (section: { type: string; id: string }, products: Product[
         return <TestimonialsSection key={section.id} />;
     case 'rich-text':
         return <RichTextSection key={section.id} />;
+    case 'image-with-text':
+        return <ImageWithTextSection key={section.id} />;
+    case 'gallery':
+        return <GallerySection key={section.id} />;
+    case 'video':
+        return <VideoSection key={section.id} />;
     case 'header-banner':
         // The banner is handled by the StorefrontHeader component now
         return null;
@@ -243,6 +249,88 @@ function RichTextSection() {
                     <p className="max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
                         Every item in our collection is selected with an eye for detail, a passion for craftsmanship, and a commitment to timeless style. We believe in products that are not just beautiful, but are made to last and tell a story for years to come.
                     </p>
+                </div>
+            </div>
+        </section>
+    );
+}
+
+function ImageWithTextSection() {
+    return (
+        <section className="w-full py-12 md:py-24">
+            <div className="container px-4 md:px-6">
+                <div className="grid gap-6 lg:grid-cols-2 lg:gap-12 items-center">
+                    <Image
+                        src="https://picsum.photos/seed/iw-1/800/600"
+                        alt="Descriptive image"
+                        width={800}
+                        height={600}
+                        className="mx-auto aspect-video overflow-hidden rounded-xl object-cover"
+                        data-ai-hint="product lifestyle"
+                    />
+                    <div className="space-y-4">
+                        <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl">Crafted for Life</h2>
+                        <p className="max-w-[600px] text-muted-foreground md:text-xl/relaxed">
+                           Our products are designed not just to be used, but to be lived with. Each piece is a blend of functionality and artistry, made to become a cherished part of your daily routine.
+                        </p>
+                        <Button asChild variant="outline">
+                            <Link href="/storefront/catalog">Explore the Collection</Link>
+                        </Button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    );
+}
+
+function GallerySection() {
+    const images = [
+        { src: "https://picsum.photos/seed/gal-1/600/800", alt: "Gallery image 1", hint: "artisan product" },
+        { src: "https://picsum.photos/seed/gal-2/600/800", alt: "Gallery image 2", hint: "lifestyle detail" },
+        { src: "https://picsum.photos/seed/gal-3/600/800", alt: "Gallery image 3", hint: "material texture" },
+    ];
+    return (
+        <section className="w-full py-12 md:py-24 bg-muted">
+            <div className="container px-4 md:px-6">
+                <div className="space-y-3 text-center mb-8">
+                    <h2 className="text-3xl font-bold tracking-tighter md:text-4xl">Visual Stories</h2>
+                    <p className="mx-auto max-w-[600px] text-muted-foreground md:text-xl">A glimpse into the world of Curated Finds.</p>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {images.map((img, index) => (
+                        <Image
+                            key={index}
+                            src={img.src}
+                            alt={img.alt}
+                            width={600}
+                            height={800}
+                            className="rounded-lg object-cover w-full aspect-[3/4]"
+                            data-ai-hint={img.hint}
+                        />
+                    ))}
+                </div>
+            </div>
+        </section>
+    );
+}
+
+function VideoSection() {
+    return (
+        <section className="w-full py-12 md:py-24">
+            <div className="container px-4 md:px-6">
+                <div className="mx-auto max-w-3xl text-center mb-8">
+                    <h2 className="text-3xl font-bold tracking-tighter md:text-4xl">The Making Of</h2>
+                    <p className="mt-2 text-muted-foreground md:text-xl">See the care and craftsmanship that goes into our collection.</p>
+                </div>
+                <div className="aspect-video w-full max-w-4xl mx-auto">
+                    <iframe
+                        className="w-full h-full rounded-lg"
+                        src="https://www.youtube.com/embed/dQw4w9WgXcQ"
+                        title="YouTube video player"
+                        frameBorder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                    ></iframe>
                 </div>
             </div>
         </section>
