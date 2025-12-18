@@ -22,7 +22,7 @@ export default function SettingsPage() {
             </div>
             <div className="space-y-2">
               <Label htmlFor="storeEmail">Contact Email</Label>
-              <Input id="storeEmail" type="email" defaultValue="hello@curatedfinds.com" />
+              <Input id="storeEmail" type="email" defaultValue="hello@prigidcommerce.shop" />
             </div>
             <Button>Save Changes</Button>
           </CardContent>
