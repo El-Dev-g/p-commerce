@@ -36,6 +36,7 @@ import {
   Building,
   ExternalLink,
   PenSquare,
+  ClipboardList
 } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import { ModeToggle } from '@/components/mode-toggle';
@@ -45,7 +46,9 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/component
 function AdminSidebar() {
   const pathname = usePathname();
   const { setOpenMobile } = useSidebar();
-  const [openCollapsibles, setOpenCollapsibles] = React.useState<Record<string, boolean>>({});
+  const [openCollapsibles, setOpenCollapsibles] = React.useState<Record<string, boolean>>({
+    products: true,
+  });
 
   const isActive = (path: string) => {
     return pathname.startsWith(path);
@@ -118,17 +121,34 @@ function AdminSidebar() {
             </SidebarMenuButton>
           </SidebarMenuItem>
           <SidebarMenuItem>
-            <SidebarMenuButton
-              asChild
-              isActive={isActive('/admin/products')}
-              tooltip="Products"
-              onClick={handleLinkClick}
-            >
-              <Link href="/admin/products">
-                <Package />
-                <span>Products</span>
-              </Link>
-            </SidebarMenuButton>
+            <Collapsible open={openCollapsibles['products']} onOpenChange={() => toggleCollapsible('products')}>
+                <SidebarMenuItem>
+                    <CollapsibleTrigger asChild>
+                        <SidebarMenuButton
+                            asChild
+                            isActive={isActive('/admin/products')}
+                            tooltip="Products"
+                        >
+                            <Link href="/admin/products">
+                                <Package />
+                                <span>Products</span>
+                            </Link>
+                        </SidebarMenuButton>
+                    </CollapsibleTrigger>
+                </SidebarMenuItem>
+                <CollapsibleContent>
+                  <SidebarMenuSub>
+                    <SidebarMenuSubItem>
+                        <SidebarMenuSubButton isActive={isActive('/admin/variations')} asChild>
+                          <Link href="/admin/variations">
+                              <ClipboardList />
+                              <span>Variations</span>
+                          </Link>
+                        </SidebarMenuSubButton>
+                    </SidebarMenuSubItem>
+                  </SidebarMenuSub>
+                </CollapsibleContent>
+            </Collapsible>
           </SidebarMenuItem>
           <SidebarMenuItem>
             <SidebarMenuButton
