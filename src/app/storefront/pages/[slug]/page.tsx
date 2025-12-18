@@ -1,14 +1,22 @@
 
-import { pagesData } from '@/lib/pages';
 import { notFound } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import type { Page } from '@/lib/pages';
 
-// This function can be used to generate static pages at build time
-// export async function generateStaticParams() {
-//   return pagesData.map((page) => ({
-//     slug: page.slug,
-//   }));
-// }
+
+async function getPage(slug: string): Promise<Page | null> {
+  try {
+    const res = await fetch(`http://localhost:9002/api/v1/pages/${slug}`, { cache: 'no-store' });
+    if (!res.ok) {
+      return null;
+    }
+    const data = await res.json();
+    return data.page;
+  } catch (error) {
+    console.error('Failed to fetch page:', error);
+    return null;
+  }
+}
 
 function renderContent(content: Record<string, any>) {
     return Object.entries(content).map(([key, value]) => {
@@ -25,8 +33,8 @@ function renderContent(content: Record<string, any>) {
     })
 }
 
-export default function StorefrontPage({ params }: { params: { slug: string } }) {
-  const page = pagesData.find((p) => p.slug === params.slug);
+export default async function StorefrontPage({ params }: { params: { slug: string } }) {
+  const page = await getPage(params.slug);
 
   if (!page) {
     notFound();
