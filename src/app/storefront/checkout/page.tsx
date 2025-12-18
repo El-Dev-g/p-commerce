@@ -11,25 +11,62 @@ import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import Image from 'next/image';
 import { Loader2 } from 'lucide-react';
+import { placeOrderAction } from './actions';
+import { toast } from '@/hooks/use-toast';
 
 export default function CheckoutPage() {
   const { cartItems, total } = useCart();
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+  const [formData, setFormData] = useState({
+      firstName: '',
+      lastName: '',
+      email: '',
+      address: '',
+      city: '',
+      zip: '',
+  });
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { id, value } = e.target;
+    setFormData(prev => ({...prev, [id]: value}));
+  };
 
   const handlePlaceOrder = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
 
-    // In a real app, you would call your API to create the order
-    // and process payment with a provider like Stripe.
-    console.log("Placing order with items:", cartItems);
-    
-    // Simulate network delay
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    
-    setIsLoading(false);
-    router.push('/storefront/thank-you');
+    const orderData = {
+        customerName: `${formData.firstName} ${formData.lastName}`,
+        customerEmail: formData.email,
+        cartItems: cartItems.map(item => ({
+            productName: item.product.name,
+            quantity: item.quantity,
+            price: item.product.price + (item.variation?.priceModifier || 0),
+        })),
+        total,
+    };
+
+    try {
+        const result = await placeOrderAction(orderData);
+        if (result.success) {
+             router.push('/storefront/thank-you');
+        } else {
+            toast({
+                variant: 'destructive',
+                title: 'Order Failed',
+                description: result.error || 'There was a problem placing your order.',
+            });
+        }
+    } catch (error) {
+        toast({
+            variant: 'destructive',
+            title: 'Order Failed',
+            description: 'An unexpected error occurred. Please try again.',
+        });
+    } finally {
+        setIsLoading(false);
+    }
   };
 
   return (
@@ -40,31 +77,35 @@ export default function CheckoutPage() {
           <form onSubmit={handlePlaceOrder}>
             <Card>
               <CardHeader>
-                <CardTitle>Shipping Information</CardTitle>
+                <CardTitle>Contact & Shipping</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
+                <div className="space-y-2">
+                    <Label htmlFor="email">Email Address</Label>
+                    <Input id="email" type="email" placeholder="you@example.com" value={formData.email} onChange={handleInputChange} required />
+                </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="firstName">First Name</Label>
-                    <Input id="firstName" placeholder="John" required />
+                    <Input id="firstName" placeholder="John" value={formData.firstName} onChange={handleInputChange} required />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="lastName">Last Name</Label>
-                    <Input id="lastName" placeholder="Doe" required />
+                    <Input id="lastName" placeholder="Doe" value={formData.lastName} onChange={handleInputChange} required />
                   </div>
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="address">Address</Label>
-                  <Input id="address" placeholder="123 Main St" required />
+                  <Input id="address" placeholder="123 Main St" value={formData.address} onChange={handleInputChange} required />
                 </div>
                 <div className="grid grid-cols-3 gap-4">
                   <div className="space-y-2 col-span-2">
                     <Label htmlFor="city">City</Label>
-                    <Input id="city" placeholder="Anytown" required />
+                    <Input id="city" placeholder="Anytown" value={formData.city} onChange={handleInputChange} required />
                   </div>
                    <div className="space-y-2">
                     <Label htmlFor="zip">ZIP Code</Label>
-                    <Input id="zip" placeholder="12345" required />
+                    <Input id="zip" placeholder="12345" value={formData.zip} onChange={handleInputChange} required />
                   </div>
                 </div>
               </CardContent>
