@@ -37,7 +37,8 @@ import {
   ExternalLink,
   PenSquare,
   ClipboardList,
-  Palette
+  Palette,
+  Megaphone
 } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import { ModeToggle } from '@/components/mode-toggle';
@@ -175,18 +176,38 @@ function AdminSidebar() {
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
-           <SidebarMenuItem>
-            <SidebarMenuButton
-              asChild
-              isActive={isActive('/admin/promotions')}
-              tooltip="Promotions"
-              onClick={handleLinkClick}
-            >
-              <Link href="/admin/promotions">
-                <Tag />
-                <span>Promotions</span>
-              </Link>
-            </SidebarMenuButton>
+          <SidebarMenuItem>
+            <Collapsible open={openCollapsibles['marketing']} onOpenChange={() => toggleCollapsible('marketing')}>
+                <CollapsibleTrigger asChild>
+                    <SidebarMenuButton
+                        isActive={isActive('/admin/marketing')}
+                        tooltip="Marketing"
+                    >
+                        <Megaphone />
+                        <span>Marketing</span>
+                    </SidebarMenuButton>
+                </CollapsibleTrigger>
+                <CollapsibleContent>
+                  <SidebarMenuSub>
+                    <SidebarMenuSubItem>
+                        <SidebarMenuSubButton isActive={isActive('/admin/promotions')} asChild>
+                            <Link href="/admin/promotions">
+                                <Tag />
+                                <span>Promotions</span>
+                            </Link>
+                        </SidebarMenuSubButton>
+                    </SidebarMenuSubItem>
+                    <SidebarMenuSubItem>
+                        <SidebarMenuSubButton isActive={isActive('/admin/marketing/newsletter')} asChild>
+                            <Link href="/admin/marketing/newsletter">
+                                <Newspaper />
+                                <span>Newsletter</span>
+                            </Link>
+                        </SidebarMenuSubButton>
+                    </SidebarMenuSubItem>
+                  </SidebarMenuSub>
+                </CollapsibleContent>
+            </Collapsible>
           </SidebarMenuItem>
           <SidebarMenuItem>
             <SidebarMenuButton
