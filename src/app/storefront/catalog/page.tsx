@@ -1,25 +1,26 @@
 
-'use client';
-
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { products } from '@/lib/products';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { useCart } from '@/context/cart-context';
-import { toast } from '@/hooks/use-toast';
 import type { Product } from '@/lib/types';
+import { AddToCartButton } from '@/components/add-to-cart-button';
 
-export default function CatalogPage() {
-  const { addToCart } = useCart();
 
-  const handleAddToCart = (product: Product) => {
-    addToCart(product);
-    toast({
-      title: 'Added to Cart',
-      description: `${product.name} has been added to your cart.`,
-    });
+async function getProducts() {
+  // Fetch data from the admin project's API
+  // In a production environment, this URL would be an environment variable.
+  const res = await fetch('http://localhost:9002/api/v1/products', { cache: 'no-store' });
+  if (!res.ok) {
+    throw new Error('Failed to fetch products');
   }
+  const data = await res.json();
+  return data.products;
+}
+
+
+export default async function CatalogPage() {
+  const products: Product[] = await getProducts();
 
   return (
     <div className="container mx-auto px-4 md:px-6 py-12">
@@ -45,7 +46,7 @@ export default function CatalogPage() {
                         <p className="text-muted-foreground">${product.price.toFixed(2)}</p>
                     </CardHeader>
                     <div className="p-4 pt-0">
-                        <Button className="w-full" onClick={() => handleAddToCart(product)}>Add to Cart</Button>
+                        <AddToCartButton product={product} />
                     </div>
                 </Card>
             ))}

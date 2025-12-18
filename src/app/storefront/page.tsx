@@ -1,25 +1,24 @@
 
-'use client';
-
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { products } from '@/lib/products';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { useCart } from '@/context/cart-context';
-import { toast } from '@/hooks/use-toast';
 import type { Product } from '@/lib/types';
+import { AddToCartButton } from '@/components/add-to-cart-button';
 
-export default function StorefrontPage() {
-  const { addToCart } = useCart();
-
-  const handleAddToCart = (product: Product) => {
-    addToCart(product);
-    toast({
-      title: 'Added to Cart',
-      description: `${product.name} has been added to your cart.`,
-    });
+async function getFeaturedProducts() {
+  // Fetch data from the admin project's API
+  const res = await fetch('http://localhost:9002/api/v1/products', { cache: 'no-store' });
+  if (!res.ok) {
+    throw new Error('Failed to fetch products');
   }
+  const data = await res.json();
+  // Return the first 4 products as featured
+  return data.products.slice(0, 4);
+}
+
+export default async function StorefrontPage() {
+  const featuredProducts: Product[] = await getFeaturedProducts();
 
   return (
     <>
@@ -56,7 +55,7 @@ export default function StorefrontPage() {
                   </p>
               </div>
               <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-                  {products.slice(0, 4).map(product => (
+                  {featuredProducts.map(product => (
                       <Card key={product.id}>
                           <CardContent className="p-0">
                                <Link href={`/storefront/products/${product.id}`}>
@@ -76,7 +75,7 @@ export default function StorefrontPage() {
                               <p className="text-muted-foreground">${product.price.toFixed(2)}</p>
                           </CardHeader>
                           <div className="p-4 pt-0">
-                             <Button className="w-full" onClick={() => handleAddToCart(product)}>Add to Cart</Button>
+                             <AddToCartButton product={product} />
                           </div>
                       </Card>
                   ))}

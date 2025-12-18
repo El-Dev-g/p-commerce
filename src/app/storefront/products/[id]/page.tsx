@@ -1,8 +1,7 @@
 
 'use client';
 
-import { useState, useMemo } from 'react';
-import { products } from '@/lib/products';
+import { useState, useMemo, useEffect } from 'react';
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import { Button } from '@/components/ui/button';
@@ -12,10 +11,33 @@ import type { Product, ProductVariation } from '@/lib/types';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { cn } from '@/lib/utils';
+import { Skeleton } from '@/components/ui/skeleton';
 
 export default function ProductDetailPage({ params }: { params: { id: string } }) {
   const { addToCart } = useCart();
-  const product = products.find(p => p.id === params.id);
+  const [product, setProduct] = useState<Product | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    async function getProduct() {
+      try {
+        setIsLoading(true);
+        const res = await fetch(`http://localhost:9002/api/v1/products/${params.id}`);
+        if (!res.ok) {
+          notFound();
+        }
+        const data = await res.json();
+        setProduct(data.product);
+      } catch (error) {
+        console.error('Failed to fetch product', error);
+        notFound();
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    getProduct();
+  }, [params.id]);
+
 
   const [selectedOptions, setSelectedOptions] = useState<Record<string, string>>({});
 
@@ -45,6 +67,24 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
   const handleOptionChange = (attributeName: string, value: string) => {
     setSelectedOptions(prev => ({ ...prev, [attributeName]: value }));
   };
+
+  if (isLoading) {
+    return (
+        <div className="container mx-auto px-4 md:px-6 py-12 md:py-24">
+            <div className="grid md:grid-cols-2 gap-12">
+                <div>
+                    <Skeleton className="w-full aspect-square rounded-lg" />
+                </div>
+                <div className="flex flex-col justify-center space-y-4">
+                    <Skeleton className="h-10 w-3/4" />
+                    <Skeleton className="h-8 w-1/4" />
+                    <Skeleton className="h-20 w-full" />
+                    <Skeleton className="h-12 w-40" />
+                </div>
+            </div>
+        </div>
+    );
+  }
 
   if (!product) {
     notFound();
@@ -121,3 +161,4 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
     </div>
   );
 }
+
