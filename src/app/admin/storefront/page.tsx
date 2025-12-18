@@ -60,7 +60,7 @@ export default function StorefrontEditorPage() {
                     <div className="w-full h-full bg-muted rounded-b-lg border-t overflow-hidden">
                         <iframe
                             src="http://localhost:9001"
-                            title="Storefront Preview"
+                            title="Curated Finds - Storefront Preview"
                             className="w-full h-full border-none"
                         />
                     </div>
