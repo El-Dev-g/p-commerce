@@ -20,9 +20,15 @@ type PlaceOrderInput = {
 
 export async function placeOrderAction(orderData: PlaceOrderInput) {
     const resend = new Resend(process.env.RESEND_API_KEY);
+    const fromEmail = process.env.RESEND_FROM_EMAIL;
     
     // Simulate creating an order ID
     const orderId = `ORD${Math.floor(Math.random() * 90000) + 10000}`;
+
+    if (!fromEmail) {
+        console.error("RESEND_FROM_EMAIL is not set in environment variables.");
+        return { success: false, error: "Server is not configured to send emails." };
+    }
 
     try {
         // Prepare input for the AI flow
@@ -38,9 +44,7 @@ export async function placeOrderAction(orderData: PlaceOrderInput) {
 
         // 2. Send the email using Resend
         const { data, error } = await resend.emails.send({
-            // IMPORTANT: Replace this with your own verified domain in Resend.
-            // To send to any email address, you must use a real domain you own.
-            from: 'Curated Finds <store@your-verified-domain.com>',
+            from: fromEmail,
             to: orderData.customerEmail,
             subject: emailContent.subject,
             html: emailContent.body,
@@ -50,7 +54,7 @@ export async function placeOrderAction(orderData: PlaceOrderInput) {
             console.error('Resend error:', error);
             // Even if email fails, we might not want to fail the whole order.
             // For now, we will fail it to make it obvious.
-            return { success: false, error: 'Failed to send confirmation email. Have you verified your domain with Resend?' };
+            return { success: false, error: 'Failed to send confirmation email. Have you verified your domain with Resend and set up your API key?' };
         }
 
         console.log(`Order confirmation email sent successfully for order ${orderId}:`, data);

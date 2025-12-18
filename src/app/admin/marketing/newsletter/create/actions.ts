@@ -12,17 +12,21 @@ const subscribers = [
 
 export async function sendNewsletterAction(content: { subject: string; body: string }) {
     const resend = new Resend(process.env.RESEND_API_KEY);
+    const fromEmail = process.env.RESEND_FROM_EMAIL;
     const { subject, body } = content;
+
+    if (!fromEmail) {
+        console.error("RESEND_FROM_EMAIL is not set in environment variables.");
+        return { success: false, error: "Server is not configured to send emails." };
+    }
 
     // Use a Bcc to send to all subscribers without revealing their emails to each other
     const bccEmails = subscribers.map(s => s.email);
 
     try {
         const { data, error } = await resend.emails.send({
-            // IMPORTANT: Replace this with your own verified domain in Resend.
-            // To send to any email address, you must use a real domain you own.
-            from: 'Curated Finds <newsletter@your-verified-domain.com>',
-            to: 'newsletter-archive@your-verified-domain.com', // A placeholder 'to' address.
+            from: fromEmail,
+            to: fromEmail, // Resend requires a 'to' address, sending to self is a common practice for BCC newsletters
             bcc: bccEmails,
             subject: subject,
             html: body, // Resend expects HTML, but Markdown often renders fine in email clients.
@@ -31,7 +35,7 @@ export async function sendNewsletterAction(content: { subject: string; body: str
 
         if (error) {
             console.error('Resend error:', error);
-            return { success: false, error: error.message };
+            return { success: false, error: `Failed to send email. Have you verified your domain with Resend and set up your API key? Error: ${error.message}` };
         }
 
         console.log('Resend success:', data);

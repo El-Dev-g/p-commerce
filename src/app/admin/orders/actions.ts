@@ -55,13 +55,19 @@ export async function updateShippingInfo(orderId: string, trackingNumber: string
         }
         
         const resend = new Resend(process.env.RESEND_API_KEY);
+        const fromEmail = process.env.RESEND_FROM_EMAIL;
+
+        if (!fromEmail) {
+            console.error("RESEND_FROM_EMAIL is not set in environment variables. Cannot send shipping notification.");
+            // We don't want to block the UI update if email fails, so just log it and return success.
+            revalidatePath('/admin/orders');
+            return { success: true, order: order };
+        }
 
         // Send a shipping confirmation email
         try {
             await resend.emails.send({
-                // IMPORTANT: Replace this with your own verified domain in Resend.
-                // To send to any email address, you must use a real domain you own.
-                from: 'Curated Finds <shipping@your-verified-domain.com>',
+                from: fromEmail,
                 to: customerEmail,
                 subject: `Your order ${order.id} has shipped!`,
                 html: `
