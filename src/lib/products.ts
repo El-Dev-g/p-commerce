@@ -1,3 +1,4 @@
+
 import type { Product } from '@/lib/types';
 import { PlaceHolderImages } from './placeholder-images';
 
@@ -34,6 +35,10 @@ export const products: Product[] = [
     price: 45.00,
     category: 'Stationery',
     image: getImage('leather-journal'),
+    variations: [
+      { id: 'var_006', attributes: [{ name: 'color', value: 'Brown' }, { name: 'size', value: 'Small' }], stock: 30, priceModifier: -5.00, sku: 'JRNL-LTH-BRN-SM' },
+      { id: 'var_007', attributes: [{ name: 'color', value: 'Brown' }, { name: 'size', value: 'Large' }], stock: 20, priceModifier: 5.00, sku: 'JRNL-LTH-BRN-LG' },
+    ]
   },
   {
     id: 'prod_003',
@@ -42,6 +47,10 @@ export const products: Product[] = [
     price: 28.00,
     category: 'Home Goods',
     image: getImage('ceramic-mug'),
+    variations: [
+        { id: 'var_003', attributes: [{ name: 'color', value: 'White' }], stock: 50, priceModifier: 0, sku: 'MUG-CRM-WHT-OS' },
+        { id: 'var_004', attributes: [{ name: 'color', value: 'Black' }], stock: 40, priceModifier: 2.50, sku: 'MUG-CRM-BLK-OS' },
+    ]
   },
   {
     id: 'prod_004',

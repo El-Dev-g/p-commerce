@@ -25,6 +25,7 @@ export type Product = {
 export type CartItem = {
   product: Product;
   quantity: number;
+  variation?: ProductVariation;
 };
 
 export type Order = {

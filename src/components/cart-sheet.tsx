@@ -20,8 +20,8 @@ import { toast } from '@/hooks/use-toast';
 export function CartSheet({ open, onOpenChange }: { open: boolean; onOpenChange: (open: boolean) => void }) {
   const { cartItems, total, removeFromCart, updateQuantity, itemCount } = useCart();
 
-  const handleRemove = (productId: string) => {
-    removeFromCart(productId);
+  const handleRemove = (productId: string, variationId?: string) => {
+    removeFromCart(productId, variationId);
     toast({
         title: 'Item Removed',
         description: 'The item has been removed from your cart.',
@@ -40,8 +40,8 @@ export function CartSheet({ open, onOpenChange }: { open: boolean; onOpenChange:
           <>
             <ScrollArea className="flex-1">
               <div className="flex flex-col gap-6 p-6">
-                {cartItems.map((item) => (
-                  <div key={item.product.id} className="flex items-start justify-between gap-4">
+                {cartItems.map((item, index) => (
+                  <div key={`${item.product.id}-${item.variation?.id || index}`} className="flex items-start justify-between gap-4">
                     <div className="flex items-center gap-4">
                         <Image
                             src={item.product.image.src}
@@ -52,13 +52,18 @@ export function CartSheet({ open, onOpenChange }: { open: boolean; onOpenChange:
                         />
                         <div>
                             <h3 className="font-medium">{item.product.name}</h3>
-                            <p className="text-sm text-muted-foreground">${item.product.price.toFixed(2)}</p>
+                            {item.variation && (
+                                <div className="text-sm text-muted-foreground">
+                                    {item.variation.attributes.map(attr => `${attr.name}: ${attr.value}`).join(', ')}
+                                </div>
+                            )}
+                            <p className="text-sm text-muted-foreground">${(item.product.price + (item.variation?.priceModifier || 0)).toFixed(2)}</p>
                             <div className="mt-2 flex items-center gap-2">
                                 <Button
                                 variant="outline"
                                 size="icon"
                                 className="h-6 w-6"
-                                onClick={() => updateQuantity(item.product.id, item.quantity - 1)}
+                                onClick={() => updateQuantity(item.product.id, item.quantity - 1, item.variation?.id)}
                                 >
                                 <Minus className="h-3 w-3" />
                                 </Button>
@@ -67,14 +72,14 @@ export function CartSheet({ open, onOpenChange }: { open: boolean; onOpenChange:
                                 variant="outline"
                                 size="icon"
                                 className="h-6 w-6"
-                                onClick={() => updateQuantity(item.product.id, item.quantity + 1)}
+                                onClick={() => updateQuantity(item.product.id, item.quantity + 1, item.variation?.id)}
                                 >
                                 <Plus className="h-3 w-3" />
                                 </Button>
                             </div>
                         </div>
                     </div>
-                    <Button variant="ghost" size="icon" className="text-muted-foreground" onClick={() => handleRemove(item.product.id)}>
+                    <Button variant="ghost" size="icon" className="text-muted-foreground" onClick={() => handleRemove(item.product.id, item.variation?.id)}>
                       <Trash2 className="h-4 w-4" />
                     </Button>
                   </div>
@@ -99,7 +104,7 @@ export function CartSheet({ open, onOpenChange }: { open: boolean; onOpenChange:
             <h3 className="text-lg font-medium">Your cart is empty</h3>
             <p className="text-sm text-muted-foreground">Add some products to get started.</p>
              <Button asChild onClick={() => onOpenChange(false)}>
-                <Link href="/storefront">Continue Shopping</Link>
+                <Link href="/storefront/catalog">Continue Shopping</Link>
             </Button>
           </div>
         )}

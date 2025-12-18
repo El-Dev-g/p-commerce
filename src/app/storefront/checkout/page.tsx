@@ -91,7 +91,7 @@ export default function CheckoutPage() {
                 </div>
               </CardContent>
             </Card>
-             <Button type="submit" className="w-full mt-8" size="lg" disabled={isLoading}>
+             <Button type="submit" className="w-full mt-8" size="lg" disabled={isLoading || cartItems.length === 0}>
                 {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 {isLoading ? 'Placing Order...' : 'Place Order'}
              </Button>
@@ -99,35 +99,48 @@ export default function CheckoutPage() {
         </div>
         <div className="bg-muted/50 rounded-lg p-6">
           <h2 className="text-2xl font-semibold mb-6">Order Summary</h2>
-          <div className="space-y-4">
-            {cartItems.map(item => (
-              <div key={item.product.id} className="flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                  <Image src={item.product.image.src} alt={item.product.image.alt} width={64} height={64} className="rounded-md object-cover" />
-                  <div>
-                    <p className="font-medium">{item.product.name}</p>
-                    <p className="text-sm text-muted-foreground">Quantity: {item.quantity}</p>
-                  </div>
+          {cartItems.length > 0 ? (
+            <>
+                <div className="space-y-4">
+                    {cartItems.map((item, index) => (
+                    <div key={`${item.product.id}-${item.variation?.id || index}`} className="flex items-center justify-between">
+                        <div className="flex items-center gap-4">
+                        <Image src={item.product.image.src} alt={item.product.image.alt} width={64} height={64} className="rounded-md object-cover" />
+                        <div>
+                            <p className="font-medium">{item.product.name}</p>
+                            {item.variation && (
+                                <p className="text-sm text-muted-foreground">
+                                    {item.variation.attributes.map(attr => attr.value).join(', ')}
+                                </p>
+                            )}
+                            <p className="text-sm text-muted-foreground">Quantity: {item.quantity}</p>
+                        </div>
+                        </div>
+                        <p className="font-medium">${((item.product.price + (item.variation?.priceModifier || 0)) * item.quantity).toFixed(2)}</p>
+                    </div>
+                    ))}
                 </div>
-                <p className="font-medium">${(item.product.price * item.quantity).toFixed(2)}</p>
-              </div>
-            ))}
-          </div>
-          <Separator className="my-6" />
-          <div className="space-y-2">
-             <div className="flex justify-between">
-                <p>Subtotal</p>
-                <p>${total.toFixed(2)}</p>
+                <Separator className="my-6" />
+                <div className="space-y-2">
+                    <div className="flex justify-between">
+                        <p>Subtotal</p>
+                        <p>${total.toFixed(2)}</p>
+                    </div>
+                    <div className="flex justify-between">
+                        <p>Shipping</p>
+                        <p>Free</p>
+                    </div>
+                    <div className="flex justify-between font-bold text-lg">
+                        <p>Total</p>
+                        <p>${total.toFixed(2)}</p>
+                    </div>
+                </div>
+            </>
+          ) : (
+             <div className="text-center text-muted-foreground py-12">
+                Your cart is empty.
              </div>
-             <div className="flex justify-between">
-                <p>Shipping</p>
-                <p>Free</p>
-             </div>
-             <div className="flex justify-between font-bold text-lg">
-                <p>Total</p>
-                <p>${total.toFixed(2)}</p>
-             </div>
-          </div>
+          )}
         </div>
       </div>
     </div>
