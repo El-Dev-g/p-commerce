@@ -11,6 +11,7 @@ import { products as allProducts } from '@/lib/products';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 // Helper function to render a section based on its type
 const renderSection = (section: { type: string; id: string }, products: Product[], heroImage: any) => {
@@ -21,7 +22,10 @@ const renderSection = (section: { type: string; id: string }, products: Product[
       return <FeaturedProductsSection key={section.id} products={products} />;
     case 'newsletter':
         return <NewsletterSection key={section.id} />;
-    // Add other cases here for new section types like 'testimonials'
+    case 'testimonials':
+        return <TestimonialsSection key={section.id} />;
+    case 'rich-text':
+        return <RichTextSection key={section.id} />;
     default:
       return (
         <div key={section.id} className="container mx-auto py-12 text-center">
@@ -67,7 +71,8 @@ export default function StorefrontPage() {
             // if (event.origin !== 'http://localhost:9002') return;
 
             if (event.data.type === 'UPDATE_SECTIONS') {
-                setSections(event.data.sections);
+                const serializableSections = event.data.sections.map(({ id, type }: { id: string, type: string }) => ({ id, type }));
+                setSections(serializableSections);
             }
         };
 
@@ -179,3 +184,81 @@ function NewsletterSection() {
     );
 }
 
+function TestimonialsSection() {
+    return (
+        <section className="w-full py-12 md:py-24 lg:py-32 bg-muted">
+            <div className="container px-4 md:px-6">
+                <div className="grid gap-10 sm:gap-16">
+                    <div className="flex flex-col items-center justify-center text-center">
+                         <h2 className="text-3xl font-bold tracking-tighter md:text-4xl">What Our Customers Say</h2>
+                        <p className="max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
+                            Hear from our community of happy shoppers.
+                        </p>
+                    </div>
+                    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                        <Card>
+                            <CardContent className="p-6">
+                                <p className="text-muted-foreground">"The quality is outstanding. I've never owned a journal this beautiful. You can feel the craftsmanship."</p>
+                            </CardContent>
+                             <CardHeader className="p-6 pt-0 flex-row items-center gap-4">
+                                <Avatar>
+                                    <AvatarImage src="https://i.pravatar.cc/150?img=11" alt="Jane Doe" />
+                                    <AvatarFallback>JD</AvatarFallback>
+                                </Avatar>
+                                <div>
+                                    <CardTitle className="text-base">Jane Doe</CardTitle>
+                                    <p className="text-sm text-muted-foreground">Verified Buyer</p>
+                                </div>
+                            </CardHeader>
+                        </Card>
+                         <Card>
+                            <CardContent className="p-6">
+                                <p className="text-muted-foreground">"Fast shipping and the scarf was even cozier than I imagined. I'll definitely be back for more."</p>
+                            </CardContent>
+                            <CardHeader className="p-6 pt-0 flex-row items-center gap-4">
+                                <Avatar>
+                                    <AvatarImage src="https://i.pravatar.cc/150?img=33" alt="John Smith" />
+                                    <AvatarFallback>JS</AvatarFallback>
+                                </Avatar>
+                                <div>
+                                    <CardTitle className="text-base">John Smith</CardTitle>
+                                    <p className="text-sm text-muted-foreground">Verified Buyer</p>
+                                </div>
+                            </CardHeader>
+                        </Card>
+                         <Card>
+                            <CardContent className="p-6">
+                                <p className="text-muted-foreground">"I bought the compass as a gift and it was a huge hit. The packaging was beautiful too. Great attention to detail."</p>
+                            </CardContent>
+                             <CardHeader className="p-6 pt-0 flex-row items-center gap-4">
+                                <Avatar>
+                                    <AvatarImage src="https://i.pravatar.cc/150?img=14" alt="Emily White" />
+                                    <AvatarFallback>EW</AvatarFallback>
+                                </Avatar>
+                                <div>
+                                    <CardTitle className="text-base">Emily White</CardTitle>
+                                    <p className="text-sm text-muted-foreground">Verified Buyer</p>
+                                </div>
+                            </CardHeader>
+                        </Card>
+                    </div>
+                </div>
+            </div>
+        </section>
+    );
+}
+
+function RichTextSection() {
+    return (
+        <section className="w-full py-12 md:py-24">
+            <div className="container px-4 md:px-6">
+                <div className="flex flex-col items-center justify-center space-y-4 text-center">
+                    <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl">Our Commitment to Quality</h2>
+                    <p className="max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
+                        Every item in our collection is selected with an eye for detail, a passion for craftsmanship, and a commitment to timeless style. We believe in products that are not just beautiful, but are made to last and tell a story for years to come.
+                    </p>
+                </div>
+            </div>
+        </section>
+    );
+}
