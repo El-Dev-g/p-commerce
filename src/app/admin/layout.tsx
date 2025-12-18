@@ -233,7 +233,7 @@ function AdminSidebar() {
                     <SidebarMenuSub>
                       <SidebarMenuSubItem>
                         <SidebarMenuSubButton asChild>
-                          <a href="https://6000-firebase-curated-dashboard-1765891223552.cluster-64pjnskmlbaxowh5lzq6i7v4ra.cloudworkstations.dev/" target="_blank" rel="noopener noreferrer">
+                          <a href="/storefront" target="_blank" rel="noopener noreferrer">
                             <ExternalLink />
                             <span>View Live Site</span>
                           </a>
