@@ -16,6 +16,7 @@ import {
   SidebarGroupLabel,
   SidebarMenuSub,
   SidebarMenuSubButton,
+  SidebarProvider,
 } from '@/components/ui/sidebar';
 import {
   LayoutDashboard,
