@@ -14,6 +14,7 @@ import { cn } from '@/lib/utils';
 import { Skeleton } from '@/components/ui/skeleton';
 
 export default function ProductDetailPage({ params }: { params: { id: string } }) {
+  const { id } = params;
   const { addToCart } = useCart();
   const [product, setProduct] = useState<Product | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -22,7 +23,7 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
     async function getProduct() {
       try {
         setIsLoading(true);
-        const res = await fetch(`http://localhost:9002/api/v1/products/${params.id}`);
+        const res = await fetch(`http://localhost:9002/api/v1/products/${id}`);
         if (!res.ok) {
           notFound();
         }
@@ -36,7 +37,7 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
       }
     }
     getProduct();
-  }, [params.id]);
+  }, [id]);
 
 
   const [selectedOptions, setSelectedOptions] = useState<Record<string, string>>({});
@@ -161,4 +162,3 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
     </div>
   );
 }
-
