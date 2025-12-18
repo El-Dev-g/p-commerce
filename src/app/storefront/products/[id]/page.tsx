@@ -14,8 +14,9 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { cn } from '@/lib/utils';
 
 export default function ProductDetailPage({ params }: { params: { id: string } }) {
+  const { id } = params;
   const { addToCart } = useCart();
-  const product = products.find(p => p.id === params.id);
+  const product = products.find(p => p.id === id);
 
   const [selectedOptions, setSelectedOptions] = useState<Record<string, string>>({});
 
@@ -51,7 +52,7 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
   }
 
   const handleAddToCart = () => {
-    if (product.variations && !selectedVariation) {
+    if (product.variations && product.variations.length > 0 && !selectedVariation) {
         toast({
             title: 'Please select options',
             description: 'You must select all available options before adding to cart.',
