@@ -16,8 +16,6 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 // Helper function to render a section based on its type
 const renderSection = (section: { type: string; id: string }, products: Product[], heroImage: any) => {
   switch (section.type) {
-    case 'header-banner':
-        return <HeaderBannerSection key={section.id} />;
     case 'hero':
       return <HeroSection key={section.id} heroImage={heroImage} />;
     case 'featured-collection':
@@ -62,19 +60,24 @@ const defaultSections = [
     { id: 'featured-products', type: 'featured-collection' },
 ];
 
-export default function StorefrontPage() {
-    const [sections, setSections] = useState(defaultSections);
+export default function StorefrontPage({ sections: sectionsFromProps }: { sections?: { id: string; type: string }[] }) {
+    const [sections, setSections] = useState(sectionsFromProps || defaultSections);
     const featuredProducts: Product[] = getFeaturedProducts();
     const heroImage = getHeroImage();
 
     useEffect(() => {
+        // For live preview inside the iframe, update based on props from layout
+        if (sectionsFromProps) {
+            setSections(sectionsFromProps);
+        }
+    }, [sectionsFromProps]);
+    
+    // This is a fallback listener in case the page is not in an iframe,
+    // though the primary mechanism is now props-drilling from the layout.
+    useEffect(() => {
         const handleMessage = (event: MessageEvent) => {
-            // Optional: Add a check for the event origin for security
-            // if (event.origin !== 'http://localhost:9002') return;
-
-            if (event.data.type === 'UPDATE_SECTIONS') {
-                const serializableSections = event.data.sections.map(({ id, type }: { id: string, type: string }) => ({ id, type }));
-                setSections(serializableSections);
+             if (event.data.type === 'SECTIONS_FROM_LAYOUT') {
+                setSections(event.data.sections);
             }
         };
 

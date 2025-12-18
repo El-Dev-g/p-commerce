@@ -1,18 +1,86 @@
 
+'use client';
+
+import { useState, useEffect } from 'react';
 import { CartProvider } from '@/context/cart-context';
 import { StorefrontHeader } from '@/components/storefront-header';
 import Link from 'next/link';
+
+// Define the component for the banner here so it can be used in the layout
+function HeaderBannerSection() {
+    return (
+        <div className="bg-primary text-primary-foreground text-center p-2 text-sm">
+            Free shipping on all orders over $75!
+        </div>
+    )
+}
+
+const defaultSections = [
+    { id: 'hero', type: 'hero' },
+    { id: 'featured-products', type: 'featured-collection' },
+];
 
 export default function StorefrontLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const [sections, setSections] = useState(defaultSections);
+  const [contentSections, setContentSections] = useState(defaultSections);
+  const [hasBanner, setHasBanner] = useState(false);
+
+  useEffect(() => {
+    const handleMessage = (event: MessageEvent) => {
+        // Optional: Add a check for the event origin for security
+        // if (event.origin !== 'http://localhost:9002') return;
+
+        if (event.data.type === 'UPDATE_SECTIONS') {
+            const receivedSections = event.data.sections.map(({ id, type }: { id: string, type: string }) => ({ id, type }));
+            setSections(receivedSections);
+        }
+    };
+
+    window.addEventListener('message', handleMessage);
+
+    return () => {
+        window.removeEventListener('message', handleMessage);
+    };
+  }, []);
+
+
+  useEffect(() => {
+    const banner = sections.find(s => s.type === 'header-banner');
+    const mainContent = sections.filter(s => s.type !== 'header-banner');
+    
+    setHasBanner(!!banner);
+    setContentSections(mainContent);
+
+    // Pass sections to children if they are in an iframe
+    if (window.self !== window.top) {
+      const iframe = window.document.querySelector('iframe');
+      if (iframe && iframe.contentWindow) {
+        iframe.contentWindow.postMessage({ type: 'SECTIONS_FROM_LAYOUT', sections: mainContent }, '*');
+      }
+    }
+
+  }, [sections]);
+  
+
+  // Pass sections to the child StorefrontPage component
+  const childrenWithProps = React.Children.map(children, child => {
+    if (React.isValidElement(child)) {
+      // @ts-ignore
+      return React.cloneElement(child, { sections: contentSections });
+    }
+    return child;
+  });
+
   return (
     <CartProvider>
       <div className="bg-background">
+        {hasBanner && <HeaderBannerSection />}
         <StorefrontHeader />
-        <main>{children}</main>
+        <main>{childrenWithProps}</main>
         <footer className="border-t bg-muted/40 py-6">
             <div className="container mx-auto flex flex-col items-center justify-between gap-4 px-4 md:flex-row md:px-6">
                 <p className="text-sm text-muted-foreground">&copy; 2024 Curated Finds. All rights reserved.</p>
