@@ -10,6 +10,10 @@ import {
 } from '@/components/ui/accordion';
 
 async function getPage(slug: string): Promise<Page | null> {
+  // Exclude 'contact-us' as it now has a dedicated page
+  if (slug === 'contact-us') {
+    return null;
+  }
   const page = pagesData.find((p) => p.slug === slug) || null;
   return Promise.resolve(page);
 }
