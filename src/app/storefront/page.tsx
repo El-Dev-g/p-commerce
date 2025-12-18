@@ -16,6 +16,8 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 // Helper function to render a section based on its type
 const renderSection = (section: { type: string; id: string }, products: Product[], heroImage: any) => {
   switch (section.type) {
+    case 'header-banner':
+        return <HeaderBannerSection key={section.id} />;
     case 'hero':
       return <HeroSection key={section.id} heroImage={heroImage} />;
     case 'featured-collection':
@@ -90,6 +92,13 @@ export default function StorefrontPage() {
     );
 }
 
+function HeaderBannerSection() {
+    return (
+        <div className="bg-primary text-primary-foreground text-center p-2 text-sm">
+            Free shipping on all orders over $75!
+        </div>
+    )
+}
 
 function HeroSection({ heroImage }: { heroImage: any }) {
     return (
