@@ -45,17 +45,17 @@ const prompt = ai.definePrompt({
   Your task is to write a compelling newsletter based on a given topic and a list of featured products.
 
   The tone should be engaging, friendly, and promotional. The output should be in Markdown.
-  When you include a product, make sure to link to it using the format: "[Product Name](/storefront/products/{{{id}}})"
+  When you include a product, make sure to link to it using the format: "[Product Name](/storefront/products/{{{this.id}}})"
 
   Topic: {{{topic}}}
 
   {{#if featuredProducts}}
   Featured Products:
   {{#each featuredProducts}}
-  - ID: {{{id}}}
-    Name: {{{name}}}
-    Description: {{{description}}}
-    Price: {{{price}}}
+  - ID: {{{this.id}}}
+    Name: {{{this.name}}}
+    Description: {{{this.description}}}
+    Price: {{{this.price}}}
   {{/each}}
   {{/if}}
 
