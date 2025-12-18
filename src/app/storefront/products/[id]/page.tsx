@@ -14,9 +14,8 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { cn } from '@/lib/utils';
 
 export default function ProductDetailPage({ params }: { params: { id: string } }) {
-  const { id } = params;
   const { addToCart } = useCart();
-  const product = products.find(p => p.id === id);
+  const product = products.find(p => p.id === params.id);
 
   const [selectedOptions, setSelectedOptions] = useState<Record<string, string>>({});
 
