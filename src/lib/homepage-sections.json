@@ -1,0 +1,7 @@
+
+{
+  "sections": [
+    { "id": "hero", "type": "hero" },
+    { "id": "featured-products", "type": "featured-collection" }
+  ]
+}

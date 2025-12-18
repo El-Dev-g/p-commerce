@@ -1,10 +1,11 @@
 
 'use client';
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { CartProvider } from '@/context/cart-context';
 import { StorefrontHeader } from '@/components/storefront-header';
 import Link from 'next/link';
+import initialSectionsData from '@/lib/homepage-sections.json';
 
 // Define the component for the banner here so it can be used in the layout
 function HeaderBannerSection() {
@@ -15,10 +16,7 @@ function HeaderBannerSection() {
     )
 }
 
-const defaultSections = [
-    { id: 'hero', type: 'hero' },
-    { id: 'featured-products', type: 'featured-collection' },
-];
+const defaultSections = initialSectionsData.sections;
 
 export default function StorefrontLayout({
   children,

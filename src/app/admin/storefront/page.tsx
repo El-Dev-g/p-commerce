@@ -10,11 +10,24 @@ import { Label } from '@/components/ui/label';
 import { toast } from '@/hooks/use-toast';
 import { generatePageContent } from '@/ai/flows/generate-page-content';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import initialSectionsData from '@/lib/homepage-sections.json';
 
-const initialSections = [
-    { id: 'hero', name: 'Hero Section', icon: ImageIcon, type: 'hero' },
-    { id: 'featured-products', name: 'Featured Products', icon: Library, type: 'featured-collection' },
-];
+const initialSections = initialSectionsData.sections.map(section => {
+    // We need to map the stored data to the component structure which includes the icon
+    const typeMap: Record<string, {name: string, icon: React.ElementType}> = {
+        'hero': { name: 'Hero Section', icon: ImageIcon },
+        'featured-collection': { name: 'Featured Products', icon: Library },
+        'header-banner': { name: 'Header Banner', icon: Megaphone },
+        'testimonials': { name: 'Testimonials', icon: Star },
+        'newsletter': { name: 'Newsletter Signup', icon: Bell },
+        'rich-text': { name: 'Rich Text', icon: Type },
+    };
+    return {
+        ...section,
+        name: typeMap[section.type]?.name || 'Unknown Section',
+        icon: typeMap[section.type]?.icon || ImageIcon,
+    };
+});
 
 const availableSectionTypes = [
     { type: 'header-banner', name: 'Header Banner', icon: Megaphone },
@@ -22,10 +35,11 @@ const availableSectionTypes = [
     { type: 'testimonials', name: 'Testimonials', icon: Star },
     { type: 'newsletter', name: 'Newsletter Signup', icon: Bell },
     { type: 'rich-text', name: 'Rich Text', icon: Type },
-]
+];
 
 export default function StorefrontEditorPage() {
-  const [isLoading, setIsLoading] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const [topic, setTopic] = useState('');
   const [keywords, setKeywords] = useState('');
   const [sections, setSections] = useState(initialSections);
@@ -59,7 +73,7 @@ export default function StorefrontEditorPage() {
         return;
     }
 
-    setIsLoading(true);
+    setIsGenerating(true);
     try {
         const result = await generatePageContent({
             topic,
@@ -79,7 +93,7 @@ export default function StorefrontEditorPage() {
             description: 'Failed to generate page content.',
         });
     } finally {
-        setIsLoading(false);
+        setIsGenerating(false);
     }
   };
 
@@ -101,12 +115,47 @@ export default function StorefrontEditorPage() {
     setIsAddSectionOpen(false);
   };
 
+  const handleSaveChanges = async () => {
+    setIsSaving(true);
+    try {
+      const response = await fetch('/api/v1/storefront/update-sections', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ sections }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to save changes');
+      }
+
+      toast({
+        title: 'Changes Saved',
+        description: 'Your storefront homepage has been updated.',
+      });
+
+    } catch (error) {
+      console.error(error);
+      toast({
+        variant: 'destructive',
+        title: 'Save Failed',
+        description: 'Could not save homepage changes. Please try again.',
+      });
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
 
   return (
     <main className="flex-1 p-6 md:p-8">
       <div className="flex items-center justify-between mb-8">
         <h1 className="font-headline text-3xl font-bold tracking-tight">Storefront Editor</h1>
-        <Button>Save Changes</Button>
+        <Button onClick={handleSaveChanges} disabled={isSaving}>
+            {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+            {isSaving ? 'Saving...' : 'Save Changes'}
+        </Button>
       </div>
 
       <div className="grid gap-8 md:grid-cols-3">
@@ -199,9 +248,9 @@ export default function StorefrontEditorPage() {
                     <Button
                         className="w-full"
                         onClick={handleGenerateContent}
-                        disabled={isLoading || !activeSection}
+                        disabled={isGenerating || !activeSection}
                     >
-                        {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                        {isGenerating && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                         Generate Content
                     </Button>
                     <p className="text-xs text-muted-foreground text-center">Select a homepage section above to enable generation.</p>
@@ -231,5 +280,6 @@ export default function StorefrontEditorPage() {
   );
 
     
+
 
 
