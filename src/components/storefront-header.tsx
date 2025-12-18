@@ -23,8 +23,8 @@ export function StorefrontHeader() {
           <nav className="hidden items-center gap-6 text-sm font-medium md:flex">
             <Link href="/storefront" className="hover:underline">Home</Link>
             <Link href="/storefront/catalog" className="hover:underline">Catalog</Link>
-            <Link href="#" className="hover:underline">About</Link>
-            <Link href="#" className="hover:underline">Contact</Link>
+            <Link href="/storefront/pages/about-us" className="hover:underline">About</Link>
+            <Link href="/storefront/pages/contact-us" className="hover:underline">Contact</Link>
           </nav>
           <div className="relative">
              <Button variant="ghost" size="icon" onClick={() => setIsCartOpen(true)}>
