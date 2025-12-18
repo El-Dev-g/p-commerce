@@ -25,7 +25,8 @@ const renderSection = (section: { type: string; id: string }, products: Product[
     case 'rich-text':
         return <RichTextSection key={section.id} />;
     case 'header-banner':
-        return null; // Rendered in the layout
+        // The banner is handled by the StorefrontHeader component now
+        return null;
     default:
       return (
         <div key={section.id} className="container mx-auto py-12 text-center">
@@ -40,27 +41,33 @@ type StorefrontPageClientProps = {
     initialSections: { id: string; type: string }[];
     featuredProducts: Product[];
     heroImage: any;
-    sections?: { id: string; type: string }[];
 }
 
 export default function StorefrontPageClient({ 
     initialSections, 
     featuredProducts, 
     heroImage,
-    sections: sectionsFromProps,
 }: StorefrontPageClientProps) {
     
-    const [sections, setSections] = useState(sectionsFromProps || initialSections);
+    const [sections, setSections] = useState(initialSections);
 
     useEffect(() => {
-        if (sectionsFromProps) {
-            setSections(sectionsFromProps);
-        }
-    }, [sectionsFromProps]);
+        const handleMessage = (event: MessageEvent) => {
+            if (event.data.type === 'UPDATE_SECTIONS') {
+                setSections(event.data.sections);
+            }
+        };
+
+        window.addEventListener('message', handleMessage);
+        return () => window.removeEventListener('message', handleMessage);
+    }, []);
+
+    // The banner is rendered in the header, filter it out from the main content
+    const contentSections = sections.filter(s => s.type !== 'header-banner');
 
     return (
         <>
-            {sections.map(section => renderSection(section, featuredProducts, heroImage))}
+            {contentSections.map(section => renderSection(section, featuredProducts, heroImage))}
         </>
     );
 }

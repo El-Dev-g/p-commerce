@@ -12,8 +12,7 @@ import { generatePageContent } from '@/ai/flows/generate-page-content';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import initialSectionsData from '@/lib/homepage-sections.json';
 
-const initialSections = initialSectionsData.sections.map(section => {
-    // We need to map the stored data to the component structure which includes the icon
+const getInitialSections = () => {
     const typeMap: Record<string, {name: string, icon: React.ElementType}> = {
         'hero': { name: 'Hero Section', icon: ImageIcon },
         'featured-collection': { name: 'Featured Products', icon: Library },
@@ -22,15 +21,17 @@ const initialSections = initialSectionsData.sections.map(section => {
         'newsletter': { name: 'Newsletter Signup', icon: Bell },
         'rich-text': { name: 'Rich Text', icon: Type },
     };
-    return {
+
+    return initialSectionsData.sections.map(section => ({
         ...section,
         name: typeMap[section.type]?.name || 'Unknown Section',
         icon: typeMap[section.type]?.icon || ImageIcon,
-    };
-});
+    }));
+};
 
 const availableSectionTypes = [
     { type: 'header-banner', name: 'Header Banner', icon: Megaphone },
+    { type: 'hero', name: 'Hero Section', icon: ImageIcon },
     { type: 'featured-collection', name: 'Featured Collection', icon: Library },
     { type: 'testimonials', name: 'Testimonials', icon: Star },
     { type: 'newsletter', name: 'Newsletter Signup', icon: Bell },
@@ -42,7 +43,7 @@ export default function StorefrontEditorPage() {
   const [isSaving, setIsSaving] = useState(false);
   const [topic, setTopic] = useState('');
   const [keywords, setKeywords] = useState('');
-  const [sections, setSections] = useState(initialSections);
+  const [sections, setSections] = useState(getInitialSections);
   const [activeSection, setActiveSection] = useState<string | null>(null);
   const [isAddSectionOpen, setIsAddSectionOpen] = useState(false);
   const iframeRef = useRef<HTMLIFrameElement>(null);
@@ -118,12 +119,13 @@ export default function StorefrontEditorPage() {
   const handleSaveChanges = async () => {
     setIsSaving(true);
     try {
+      const serializableSections = sections.map(({ id, type }) => ({ id, type }));
       const response = await fetch('/api/v1/storefront/update-sections', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ sections }),
+        body: JSON.stringify({ sections: serializableSections }),
       });
 
       if (!response.ok) {
@@ -280,6 +282,7 @@ export default function StorefrontEditorPage() {
   );
 
     
+
 
 
 

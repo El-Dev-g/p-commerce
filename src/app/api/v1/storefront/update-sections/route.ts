@@ -13,9 +13,8 @@ export async function POST(request: Request) {
 
     const filePath = path.join(process.cwd(), 'src', 'lib', 'homepage-sections.json');
     
-    // Create a serializable version of the sections
-    const serializableSections = sections.map(({ id, type }) => ({ id, type }));
-    const fileContent = JSON.stringify({ sections: serializableSections }, null, 2);
+    // The sections array is already serializable, no need to map it again
+    const fileContent = JSON.stringify({ sections: sections }, null, 2);
 
     await fs.writeFile(filePath, fileContent, 'utf-8');
 

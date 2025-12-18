@@ -1,20 +1,45 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { ShoppingBag } from 'lucide-react';
 import { useCart } from '@/context/cart-context';
 import { Button } from './ui/button';
 import { CartSheet } from './cart-sheet';
 import { Badge } from './ui/badge';
+import initialSectionsData from '@/lib/homepage-sections.json';
+
+function HeaderBannerSection() {
+    return (
+        <div className="bg-primary text-primary-foreground text-center p-2 text-sm">
+            Free shipping on all orders over $75!
+        </div>
+    )
+}
 
 export function StorefrontHeader() {
   const { itemCount } = useCart();
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [showBanner, setShowBanner] = useState(() => {
+    return initialSectionsData.sections.some(s => s.type === 'header-banner');
+  });
+
+  useEffect(() => {
+    const handleMessage = (event: MessageEvent) => {
+        if (event.data.type === 'UPDATE_SECTIONS') {
+            const hasBanner = event.data.sections.some((s: any) => s.type === 'header-banner');
+            setShowBanner(hasBanner);
+        }
+    };
+
+    window.addEventListener('message', handleMessage);
+    return () => window.removeEventListener('message', handleMessage);
+  }, []);
 
   return (
     <>
+      {showBanner && <HeaderBannerSection />}
       <header className="sticky top-0 z-40 border-b bg-background">
         <div className="container mx-auto flex h-16 items-center justify-between px-4 md:px-6">
           <Link href="/storefront" className="flex items-center gap-2">

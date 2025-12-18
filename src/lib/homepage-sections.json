@@ -9,10 +9,6 @@
       "type": "featured-collection"
     },
     {
-      "id": "header-banner-1766063667726",
-      "type": "header-banner"
-    },
-    {
       "id": "testimonials-1766063685137",
       "type": "testimonials"
     },
@@ -23,6 +19,10 @@
     {
       "id": "rich-text-1766063694736",
       "type": "rich-text"
+    },
+    {
+      "id": "header-banner-1766063930987",
+      "type": "header-banner"
     }
   ]
 }
