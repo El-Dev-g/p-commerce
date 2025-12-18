@@ -81,9 +81,11 @@ export default function VariationsPage() {
                   </TableCell>
                   <TableCell className="text-center">
                     <div className="flex justify-center gap-2">
-                      <Button variant="ghost" size="icon">
-                        <Edit className="h-4 w-4" />
-                        <span className="sr-only">Edit variation</span>
+                      <Button variant="ghost" size="icon" asChild>
+                        <Link href={`/admin/products/edit/${variation.productId}`}>
+                          <Edit className="h-4 w-4" />
+                          <span className="sr-only">Edit variation</span>
+                        </Link>
                       </Button>
                       <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive">
                         <Trash2 className="h-4 w-4" />

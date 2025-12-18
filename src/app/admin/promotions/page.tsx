@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { PlusCircle } from 'lucide-react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
+import { toast } from '@/hooks/use-toast';
 
 const promotionsData = [
   { id: 'promo_001', code: 'SUMMER20', description: '20% off all orders', status: 'Active' },
@@ -14,6 +15,14 @@ const promotionsData = [
 ];
 
 export default function PromotionsPage() {
+
+  const handleEditClick = (promoId: string) => {
+    toast({
+      title: 'Edit Promotion',
+      description: `This would open an editor for promotion ${promoId}.`,
+    });
+  };
+
   return (
     <main className="flex-1 p-6 md:p-8">
       <div className="flex items-center justify-between mb-8">
@@ -47,7 +56,7 @@ export default function PromotionsPage() {
                     <Badge variant={promo.status === 'Active' ? 'default' : 'secondary'}>{promo.status}</Badge>
                   </TableCell>
                   <TableCell>
-                    <Button variant="outline" size="sm">Edit</Button>
+                    <Button variant="outline" size="sm" onClick={() => handleEditClick(promo.id)}>Edit</Button>
                   </TableCell>
                 </TableRow>
               ))}
