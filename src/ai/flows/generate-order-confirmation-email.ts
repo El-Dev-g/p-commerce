@@ -18,7 +18,7 @@ const CartItemSchema = z.object({
   price: z.number(),
 });
 
-export const GenerateOrderConfirmationEmailInputSchema = z.object({
+const GenerateOrderConfirmationEmailInputSchema = z.object({
   customerName: z.string().describe('The name of the customer.'),
   orderId: z.string().describe('The unique ID of the order.'),
   cartItems: z.array(CartItemSchema).describe('A list of items in the order.'),
