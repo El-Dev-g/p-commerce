@@ -5,21 +5,11 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import type { Product } from '@/lib/types';
 import { AddToCartButton } from '@/components/add-to-cart-button';
+import { products as allProducts } from '@/lib/products';
 
 async function getFeaturedProducts() {
-  const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:9002';
-  const res = await fetch(`${apiBaseUrl}/api/v1/products`, { 
-    cache: 'no-store',
-    headers: {
-      'Content-Type': 'application/json',
-    }
-  });
-  if (!res.ok) {
-    throw new Error('Failed to fetch products');
-  }
-  const data = await res.json();
   // Return the first 4 products as featured
-  return data.products.slice(0, 4);
+  return allProducts.slice(0, 4);
 }
 
 export default async function StorefrontPage() {

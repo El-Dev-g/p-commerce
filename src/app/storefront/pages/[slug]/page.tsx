@@ -1,23 +1,15 @@
 
 import { notFound } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import type { Page } from '@/lib/pages';
-
+import { pagesData, type Page } from '@/lib/pages';
 
 async function getPage(slug: string): Promise<Page | null> {
   try {
-    const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:9002';
-    const res = await fetch(`${apiBaseUrl}/api/v1/pages/${slug}`, { 
-        cache: 'no-store',
-        headers: {
-            'Content-Type': 'application/json',
-        }
-    });
-    if (!res.ok) {
+    const page = pagesData.find((p) => p.slug === slug);
+    if (!page) {
       return null;
     }
-    const data = await res.json();
-    return data.page;
+    return page;
   } catch (error) {
     console.error('Failed to fetch page:', error);
     return null;

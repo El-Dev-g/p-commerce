@@ -12,6 +12,7 @@ import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { cn } from '@/lib/utils';
 import { Skeleton } from '@/components/ui/skeleton';
+import { products as allProducts } from '@/lib/products';
 
 export default function ProductDetailPage({ params }: { params: { id: string } }) {
   const { id } = params;
@@ -23,18 +24,10 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
     async function getProduct() {
       try {
         setIsLoading(true);
-        const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:9002';
-        const res = await fetch(`${apiBaseUrl}/api/v1/products/${id}`, {
-          headers: {
-            'Content-Type': 'application/json',
-          }
-        });
-        if (!res.ok) {
-          setProduct(null);
-        } else {
-          const data = await res.json();
-          setProduct(data.product);
-        }
+        // Simulate network delay for loading state
+        await new Promise(resolve => setTimeout(resolve, 200)); 
+        const foundProduct = allProducts.find(p => p.id === id) || null;
+        setProduct(foundProduct);
       } catch (error) {
         console.error('Failed to fetch product', error);
         setProduct(null);
