@@ -1,7 +1,28 @@
-
 {
   "sections": [
-    { "id": "hero", "type": "hero" },
-    { "id": "featured-products", "type": "featured-collection" }
+    {
+      "id": "hero",
+      "type": "hero"
+    },
+    {
+      "id": "featured-products",
+      "type": "featured-collection"
+    },
+    {
+      "id": "header-banner-1766063667726",
+      "type": "header-banner"
+    },
+    {
+      "id": "testimonials-1766063685137",
+      "type": "testimonials"
+    },
+    {
+      "id": "newsletter-1766063690991",
+      "type": "newsletter"
+    },
+    {
+      "id": "rich-text-1766063694736",
+      "type": "rich-text"
+    }
   ]
 }

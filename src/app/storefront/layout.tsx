@@ -5,7 +5,7 @@ import React, { useState, useEffect } from 'react';
 import { CartProvider } from '@/context/cart-context';
 import { StorefrontHeader } from '@/components/storefront-header';
 import Link from 'next/link';
-import initialSectionsData from '@/lib/homepage-sections.json';
+import StorefrontPageClient from './storefront-client-page';
 
 // Define the component for the banner here so it can be used in the layout
 function HeaderBannerSection() {
@@ -16,22 +16,16 @@ function HeaderBannerSection() {
     )
 }
 
-const defaultSections = initialSectionsData.sections;
-
 export default function StorefrontLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const [sections, setSections] = useState(defaultSections);
-  const [contentSections, setContentSections] = useState(defaultSections);
+  const [sections, setSections] = useState<any[]>([]);
   const [hasBanner, setHasBanner] = useState(false);
 
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
-        // Optional: Add a check for the event origin for security
-        // if (event.origin !== 'http://localhost:9002') return;
-
         if (event.data.type === 'UPDATE_SECTIONS') {
             const receivedSections = event.data.sections.map(({ id, type }: { id: string, type: string }) => ({ id, type }));
             setSections(receivedSections);
@@ -48,27 +42,23 @@ export default function StorefrontLayout({
 
   useEffect(() => {
     const banner = sections.find(s => s.type === 'header-banner');
-    const mainContent = sections.filter(s => s.type !== 'header-banner');
-    
     setHasBanner(!!banner);
-    setContentSections(mainContent);
-
-    // Pass sections to children if they are in an iframe
-    if (window.self !== window.top) {
-      const iframe = window.document.querySelector('iframe');
-      if (iframe && iframe.contentWindow) {
-        iframe.contentWindow.postMessage({ type: 'SECTIONS_FROM_LAYOUT', sections: mainContent }, '*');
-      }
-    }
-
   }, [sections]);
-  
 
   // Pass sections to the child StorefrontPage component
   const childrenWithProps = React.Children.map(children, child => {
-    if (React.isValidElement(child)) {
+    if (React.isValidElement(child) && child.type === StorefrontPageClient) {
       // @ts-ignore
-      return React.cloneElement(child, { sections: contentSections });
+      const initialSections = child.props.initialSections || [];
+      const sectionsToRender = sections.length > 0 ? sections : initialSections;
+      const contentSections = sectionsToRender.filter(s => s.type !== 'header-banner');
+      
+      const newProps: { sections?: any[] } = {};
+      if (sections.length > 0) {
+        newProps.sections = contentSections;
+      }
+      
+      return React.cloneElement(child, newProps);
     }
     return child;
   });
