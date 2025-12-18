@@ -7,19 +7,41 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { toast } from '@/hooks/use-toast';
+import { trackOrderAction } from './actions';
+import { Loader2 } from 'lucide-react';
+import { Separator } from '@/components/ui/separator';
+
+type OrderStatusInfo = {
+  id: string;
+  status: string;
+  date: string;
+  trackingNumber?: string;
+};
 
 export default function TrackOrderPage() {
   const [orderId, setOrderId] = useState('');
   const [email, setEmail] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [orderStatus, setOrderStatus] = useState<OrderStatusInfo | null>(null);
 
-  const handleTrackOrder = (e: React.FormEvent) => {
+  const handleTrackOrder = async (e: React.FormEvent) => {
     e.preventDefault();
-    // In a real app, you would call an API to get order status.
-    console.log(`Tracking order ${orderId} for email ${email}`);
-    toast({
-      title: 'Order Status',
-      description: `Fetching status for order #${orderId}... (This is a simulation)`,
-    });
+    setIsLoading(true);
+    setOrderStatus(null);
+
+    const result = await trackOrderAction({ orderId, email });
+
+    if (result.success && result.order) {
+      setOrderStatus(result.order);
+    } else {
+      toast({
+        variant: 'destructive',
+        title: 'Order Not Found',
+        description: result.error,
+      });
+    }
+
+    setIsLoading(false);
   };
 
   return (
@@ -57,12 +79,40 @@ export default function TrackOrderPage() {
               </div>
             </CardContent>
             <CardContent>
-                <Button type="submit" className="w-full">
+                <Button type="submit" className="w-full" disabled={isLoading}>
+                    {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                     Track Order
                 </Button>
             </CardContent>
           </form>
         </Card>
+
+        {orderStatus && (
+          <Card className="mt-8">
+            <CardHeader>
+              <CardTitle>Order Status</CardTitle>
+              <CardDescription>Showing status for order #{orderStatus.id}</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Status</span>
+                <span className="font-medium">{orderStatus.status}</span>
+              </div>
+              <Separator />
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Order Date</span>
+                <span className="font-medium">{orderStatus.date}</span>
+              </div>
+              <Separator />
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Tracking Number</span>
+                <span className="font-medium">
+                  {orderStatus.trackingNumber || 'Not available yet'}
+                </span>
+              </div>
+            </CardContent>
+          </Card>
+        )}
       </div>
     </div>
   );
