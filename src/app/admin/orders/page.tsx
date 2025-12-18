@@ -49,9 +49,9 @@ export default function OrdersPage() {
   }, []);
 
 
-  const handleSaveTracking = async (orderId: string, trackingNumber: string) => {
+  const handleSaveTracking = async (orderId: string, trackingNumber: string, customerEmail: string) => {
     try {
-        await updateShippingInfo(orderId, trackingNumber, '+15551234567'); // Using a dummy phone number
+        await updateShippingInfo(orderId, trackingNumber, '+15551234567', customerEmail); // Using a dummy phone number
         
         // Data is revalidated by server action, just need to fetch it again
         getOrders().then(setOrders);
@@ -166,7 +166,7 @@ function OrderDetailsDialog({
     onStatusUpdate
 }: { 
     order: Order; 
-    onSaveTracking: (orderId: string, trackingNumber: string) => void; 
+    onSaveTracking: (orderId: string, trackingNumber: string, customerEmail: string) => void; 
     onCancel: (orderId: string) => void;
     onStatusUpdate: (orderId: string, status: OrderStatus) => void;
 }) {
@@ -178,7 +178,7 @@ function OrderDetailsDialog({
   const handleSave = async () => {
     setIsSaving(true);
     if (trackingNumber !== order.trackingNumber) {
-        await onSaveTracking(order.id, trackingNumber);
+        await onSaveTracking(order.id, trackingNumber, order.email);
     }
     if (currentStatus !== order.status) {
         await onStatusUpdate(order.id, currentStatus);
@@ -220,7 +220,7 @@ function OrderDetailsDialog({
                     <p className="text-sm text-destructive/80 mt-1">Reason: Mismatched billing and shipping addresses.</p>
                 </div>
             )}
-            <p><strong>Customer:</strong> {order.customer}</p>
+            <p><strong>Customer:</strong> {order.customer} ({order.email})</p>
             <p><strong>Date:</strong> {order.date}</p>
             <p><strong>Total:</strong> {order.total}</p>
             
