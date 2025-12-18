@@ -35,10 +35,13 @@ export default function StorefrontEditorPage() {
   // Send updated sections to the iframe preview
   useEffect(() => {
     if (iframeRef.current && iframeRef.current.contentWindow) {
+      // Create a serializable version of the sections without the component icons
+      const serializableSections = sections.map(({ id, type }) => ({ id, type }));
+      
       iframeRef.current.contentWindow.postMessage(
         {
           type: 'UPDATE_SECTIONS',
-          sections: sections,
+          sections: serializableSections,
         },
         '*' // In production, you should use a specific target origin
       );
@@ -225,3 +228,5 @@ export default function StorefrontEditorPage() {
       </div>
     </main>
   );
+
+    
