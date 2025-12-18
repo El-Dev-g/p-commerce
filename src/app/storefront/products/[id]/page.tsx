@@ -3,7 +3,7 @@
 
 import { useState, useMemo, useEffect } from 'react';
 import Image from 'next/image';
-import { notFound } from 'next/navigation';
+import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { useCart } from '@/context/cart-context';
 import { toast } from '@/hooks/use-toast';
@@ -25,13 +25,16 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
         setIsLoading(true);
         const res = await fetch(`http://localhost:9002/api/v1/products/${id}`);
         if (!res.ok) {
-          notFound();
+          // For client components, we can't use notFound().
+          // We'll set product to null and handle it in the UI.
+          setProduct(null);
+        } else {
+          const data = await res.json();
+          setProduct(data.product);
         }
-        const data = await res.json();
-        setProduct(data.product);
       } catch (error) {
         console.error('Failed to fetch product', error);
-        notFound();
+        setProduct(null);
       } finally {
         setIsLoading(false);
       }
@@ -88,7 +91,15 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
   }
 
   if (!product) {
-    notFound();
+    return (
+      <div className="container mx-auto px-4 md:px-6 py-24 text-center">
+        <h1 className="text-3xl font-bold mb-4">Product Not Found</h1>
+        <p className="text-muted-foreground mb-6">We couldn't find the product you were looking for.</p>
+        <Button asChild>
+          <Link href="/storefront/catalog">Back to Catalog</Link>
+        </Button>
+      </div>
+    );
   }
 
   const handleAddToCart = () => {
