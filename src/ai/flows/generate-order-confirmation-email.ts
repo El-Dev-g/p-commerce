@@ -64,7 +64,7 @@ const prompt = ai.definePrompt({
 
   Items:
   {{#each cartItems}}
-  - {{{this.quantity}}}x {{{this.productName}}} (${{{this.price}}})
+  - {{{this.quantity}}}x {{{this.productName}}} (\${{{this.price}}})
   {{/each}}
   `,
 });
