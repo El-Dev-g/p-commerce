@@ -9,20 +9,41 @@ import {
   SidebarMenu,
   SidebarMenuItem,
   SidebarMenuButton,
-  SidebarProvider,
   SidebarTrigger,
   SidebarInset,
   useSidebar,
   SidebarGroup,
-  SidebarGroupLabel
+  SidebarGroupLabel,
+  SidebarMenuSub,
+  SidebarMenuSubButton,
 } from '@/components/ui/sidebar';
-import { LayoutDashboard, Package, ShoppingCart, Settings, Sparkles, Newspaper, Undo2, GitBranch, TrendingUp, MessageSquare, Store, Users as UsersIcon, Tag, Building } from 'lucide-react';
+import {
+  LayoutDashboard,
+  Package,
+  ShoppingCart,
+  Settings,
+  Sparkles,
+  Newspaper,
+  Undo2,
+  GitBranch,
+  TrendingUp,
+  MessageSquare,
+  Store,
+  Users as UsersIcon,
+  Tag,
+  Building,
+  ExternalLink,
+  PenSquare,
+} from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import { ModeToggle } from '@/components/mode-toggle';
+import * as React from 'react';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 
 function AdminSidebar() {
   const pathname = usePathname();
   const { setOpenMobile } = useSidebar();
+  const [openCollapsibles, setOpenCollapsibles] = React.useState<Record<string, boolean>>({});
 
   const isActive = (path: string) => {
     return pathname.startsWith(path);
@@ -32,6 +53,10 @@ function AdminSidebar() {
     if(setOpenMobile) {
       setOpenMobile(false);
     }
+  }
+
+  const toggleCollapsible = (name: string) => {
+    setOpenCollapsibles(prev => ({...prev, [name]: !prev[name]}));
   }
 
   return (
@@ -187,14 +212,42 @@ function AdminSidebar() {
         <SidebarGroup>
             <SidebarGroupLabel>Store</SidebarGroupLabel>
             <SidebarMenu>
-                <SidebarMenuItem>
-                    <SidebarMenuButton asChild tooltip="Storefront">
-                        <a href="http://localhost:9001" target="_blank" rel="noopener noreferrer">
-                        <Store />
-                        <span>Storefront</span>
-                        </a>
-                    </SidebarMenuButton>
-                </SidebarMenuItem>
+                <Collapsible open={openCollapsibles['storefront']} onOpenChange={() => toggleCollapsible('storefront')}>
+                  <SidebarMenuItem>
+                      <CollapsibleTrigger asChild>
+                          <SidebarMenuButton
+                              asChild
+                              isActive={isActive('/admin/storefront')}
+                              tooltip="Storefront Editor"
+                          >
+                              <Link href="/admin/storefront">
+                                  <Store />
+                                  <span>Storefront</span>
+                              </Link>
+                          </SidebarMenuButton>
+                      </CollapsibleTrigger>
+                  </SidebarMenuItem>
+                  <CollapsibleContent>
+                    <SidebarMenuSub>
+                      <SidebarMenuSubItem>
+                        <SidebarMenuSubButton asChild>
+                          <a href="http://localhost:9001" target="_blank" rel="noopener noreferrer">
+                            <ExternalLink />
+                            <span>View Live Site</span>
+                          </a>
+                        </SidebarMenuSubButton>
+                      </SidebarMenuSubItem>
+                      <SidebarMenuSubItem>
+                         <SidebarMenuSubButton isActive={isActive('/admin/pages')} asChild>
+                            <Link href="/admin/pages">
+                                <Newspaper />
+                                <span>Content Pages</span>
+                            </Link>
+                         </SidebarMenuSubButton>
+                      </SidebarMenuSubItem>
+                    </SidebarMenuSub>
+                  </CollapsibleContent>
+                </Collapsible>
             </SidebarMenu>
         </SidebarGroup>
       </SidebarContent>
