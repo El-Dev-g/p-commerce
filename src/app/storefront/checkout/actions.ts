@@ -38,7 +38,9 @@ export async function placeOrderAction(orderData: PlaceOrderInput) {
 
         // 2. Send the email using Resend
         const { data, error } = await resend.emails.send({
-            from: 'Curated Finds <onboarding@resend.dev>', // IMPORTANT: Replace with your verified Resend domain
+            // IMPORTANT: Replace this with your own verified domain in Resend.
+            // To send to any email address, you must use a real domain you own.
+            from: 'Curated Finds <store@your-verified-domain.com>',
             to: orderData.customerEmail,
             subject: emailContent.subject,
             html: emailContent.body,
@@ -48,7 +50,7 @@ export async function placeOrderAction(orderData: PlaceOrderInput) {
             console.error('Resend error:', error);
             // Even if email fails, we might not want to fail the whole order.
             // For now, we will fail it to make it obvious.
-            return { success: false, error: 'Failed to send confirmation email.' };
+            return { success: false, error: 'Failed to send confirmation email. Have you verified your domain with Resend?' };
         }
 
         console.log(`Order confirmation email sent successfully for order ${orderId}:`, data);

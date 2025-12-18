@@ -19,8 +19,10 @@ export async function sendNewsletterAction(content: { subject: string; body: str
 
     try {
         const { data, error } = await resend.emails.send({
-            from: 'Curated Finds <newsletter@your-domain.com>', // IMPORTANT: Replace with your verified Resend domain
-            to: 'newsletter-archive@your-domain.com', // A placeholder 'to' address.
+            // IMPORTANT: Replace this with your own verified domain in Resend.
+            // To send to any email address, you must use a real domain you own.
+            from: 'Curated Finds <newsletter@your-verified-domain.com>',
+            to: 'newsletter-archive@your-verified-domain.com', // A placeholder 'to' address.
             bcc: bccEmails,
             subject: subject,
             html: body, // Resend expects HTML, but Markdown often renders fine in email clients.

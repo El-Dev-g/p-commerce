@@ -43,7 +43,7 @@ export async function updateOrderStatus(orderId: string, status: OrderStatus) {
     return { success: false, message: 'Order not found' };
 }
 
-export async function updateShippingInfo(orderId: string, trackingNumber: string, customerPhone: string, customerEmail: string) {
+export async function updateShippingInfo(orderId: string, trackingNumber: string, customerEmail: string) {
      console.log(`Updating shipping for ${orderId} with tracking ${trackingNumber}`);
     
     const orderIndex = ordersData.findIndex(o => o.id === orderId);
@@ -59,7 +59,9 @@ export async function updateShippingInfo(orderId: string, trackingNumber: string
         // Send a shipping confirmation email
         try {
             await resend.emails.send({
-                from: 'Curated Finds <shipping@your-domain.com>',
+                // IMPORTANT: Replace this with your own verified domain in Resend.
+                // To send to any email address, you must use a real domain you own.
+                from: 'Curated Finds <shipping@your-verified-domain.com>',
                 to: customerEmail,
                 subject: `Your order ${order.id} has shipped!`,
                 html: `
@@ -75,24 +77,6 @@ export async function updateShippingInfo(orderId: string, trackingNumber: string
         } catch (error) {
             console.error("Failed to send shipping email via Resend:", error);
             // We don't want to block the UI update if email fails, so we'll just log it.
-        }
-
-        // Simulate sending a WhatsApp notification
-        try {
-            await fetch(`http://localhost:9002/api/v1/send-whatsapp`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    to: customerPhone,
-                    type: 'shipping_update',
-                    orderId: orderId,
-                    trackingNumber: trackingNumber,
-                    carrier: 'Auto-Detect',
-                }),
-            });
-             console.log("WhatsApp tracking update triggered successfully.");
-        } catch (error) {
-             console.error("Failed to trigger WhatsApp tracking message:", error);
         }
 
         revalidatePath('/admin/orders');
