@@ -59,7 +59,7 @@ export default function StorefrontEditorPage() {
                 <CardContent className="h-full p-0">
                     <div className="w-full h-full bg-muted rounded-b-lg border-t overflow-hidden">
                         <iframe
-                            src="http://localhost:9001"
+                            src="https://6000-firebase-curated-dashboard-1765891223552.cluster-64pjnskmlbaxowh5lzq6i7v4ra.cloudworkstations.dev/"
                             title="Curated Finds - Storefront Preview"
                             className="w-full h-full border-none"
                         />
