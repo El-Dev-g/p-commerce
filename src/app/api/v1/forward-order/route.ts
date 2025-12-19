@@ -12,7 +12,7 @@ export async function POST(request: Request) {
     // 3. Adding the order to a shared database or Google Sheet.
 
     console.log('--- Order received at /api/v1/forward-order ---');
-    console.log('Forwarding to dropshipping supplier:');
+    console.log('Forwarding to CJ Dropshipping:');
     console.log(JSON.stringify(order, null, 2));
     console.log('-------------------------------------------------');
 

@@ -36,7 +36,7 @@ const availableApps: App[] = [
   {
     id: 'supplier',
     name: 'Supplier Integration',
-    description: 'Automate order forwarding to your dropshipping supplier (e.g., AliExpress).',
+    description: 'Automate order forwarding to your dropshipping supplier (e.g., CJ Dropshipping).',
     icon: ShoppingCart,
   },
 ];

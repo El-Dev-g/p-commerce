@@ -61,7 +61,7 @@ export default function SettingsPage() {
               <Input id="whatsappToken" type="password" defaultValue="a-secret-token-goes-here" />
             </div>
              <div className="space-y-2">
-              <Label htmlFor="supplierKey">Supplier API Key</Label>
+              <Label htmlFor="supplierKey">CJ Dropshipping API Key</Label>
               <Input id="supplierKey" type="password" defaultValue="another-secret-key-goes-here" />
             </div>
             <Button onClick={() => handleSave(setIsApiSaving, 'API Keys')} disabled={isApiSaving}>
