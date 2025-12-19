@@ -141,7 +141,7 @@ export function ProductForm({ product }: { product?: Product }) {
         productName,
         keywords: keywords.split(',').map(k => k.trim()),
       });
-      form.setValue('description', result.description);
+      form.setValue('description', result.description, { shouldValidate: true });
     } catch (error) {
       console.error(error);
       toast({
@@ -417,7 +417,7 @@ export function ProductForm({ product }: { product?: Product }) {
                       variant="outline"
                       className="w-full"
                       onClick={handleGenerateTitles}
-                      disabled={isTitleLoading}
+                      disabled={isTitleLoading || !form.formState.isValid}
                   >
                       {isTitleLoading ? (
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
