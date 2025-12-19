@@ -41,6 +41,7 @@ import {
   Megaphone,
   Mail,
   User,
+  Code,
 } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import { ModeToggle } from '@/components/mode-toggle';
@@ -242,6 +243,19 @@ function AdminSidebar() {
               <Link href="/admin/app-store">
                 <GitBranch />
                 <span>Integrations</span>
+              </Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              asChild
+              isActive={isActive('/admin/code')}
+              tooltip="Code"
+              onClick={handleLinkClick}
+            >
+              <Link href="/admin/code">
+                <Code />
+                <span>Code</span>
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
