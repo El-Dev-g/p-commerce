@@ -20,6 +20,7 @@ import { pagesData } from '@/lib/pages';
 
 export default function PagesManagementPage() {
     const [isLoading, setIsLoading] = useState(false);
+    const [isSaving, setIsSaving] = useState(false);
     const [topic, setTopic] = useState('');
     const [keywords, setKeywords] = useState('');
     const [activeAccordion, setActiveAccordion] = useState<string | null>(null);
@@ -53,13 +54,38 @@ export default function PagesManagementPage() {
             setIsLoading(false);
         }
     };
+    
+    const handleSave = async (pageName: string) => {
+        setIsSaving(true);
+        // Simulate API call
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        toast({
+            title: `${pageName} Page Saved`,
+            description: "Your changes have been saved successfully.",
+        });
+        setIsSaving(false);
+    };
+
+    const handleSaveAll = async () => {
+        setIsSaving(true);
+        // Simulate API call
+        await new Promise(resolve => setTimeout(resolve, 1500));
+        toast({
+            title: "All Pages Saved",
+            description: "All your changes have been saved successfully.",
+        });
+        setIsSaving(false);
+    };
 
 
   return (
     <main className="flex-1 p-6 md:p-8">
         <div className="flex items-center justify-between mb-8">
             <h1 className="font-headline text-3xl font-bold tracking-tight">Manage Pages</h1>
-            <Button>Save All Changes</Button>
+            <Button onClick={handleSaveAll} disabled={isSaving}>
+                {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                {isSaving ? 'Saving...' : 'Save All Changes'}
+            </Button>
         </div>
         <Card>
             <CardHeader>
@@ -91,7 +117,9 @@ export default function PagesManagementPage() {
                         className="min-h-[200px]"
                     />
                     </div>
-                    <Button variant="outline">Save About Us</Button>
+                    <Button variant="outline" onClick={() => handleSave('About Us')} disabled={isSaving}>
+                        {isSaving ? 'Saving...' : 'Save About Us'}
+                    </Button>
                 </AccordionContent>
                 </AccordionItem>
                 <AccordionItem value="contact-us">
@@ -116,7 +144,9 @@ export default function PagesManagementPage() {
                             <Input id="contact-phone" defaultValue={pageContents.find(p => p.slug === 'contact-us')?.content.phone} />
                         </div>
                     </div>
-                    <Button variant="outline">Save Contact Us</Button>
+                    <Button variant="outline" onClick={() => handleSave('Contact Us')} disabled={isSaving}>
+                        {isSaving ? 'Saving...' : 'Save Contact Us'}
+                    </Button>
                 </AccordionContent>
                 </AccordionItem>
                 <AccordionItem value="faq">
@@ -134,7 +164,9 @@ export default function PagesManagementPage() {
                               </div>
                           )
                       })}
-                      <Button variant="outline">Save FAQ</Button>
+                      <Button variant="outline" onClick={() => handleSave('FAQ')} disabled={isSaving}>
+                        {isSaving ? 'Saving...' : 'Save FAQ'}
+                      </Button>
                   </AccordionContent>
                 </AccordionItem>
                 <AccordionItem value="shipping-policy">
@@ -148,7 +180,9 @@ export default function PagesManagementPage() {
                           <Label htmlFor="shipping-rates">Shipping Rates</Label>
                           <Textarea id="shipping-rates" defaultValue={pageContents.find(p => p.slug === 'shipping-policy')?.content.shippingRates} className="min-h-[100px]" />
                       </div>
-                      <Button variant="outline">Save Shipping Policy</Button>
+                      <Button variant="outline" onClick={() => handleSave('Shipping Policy')} disabled={isSaving}>
+                        {isSaving ? 'Saving...' : 'Save Shipping Policy'}
+                      </Button>
                   </AccordionContent>
                 </AccordionItem>
                 <AccordionItem value="return-policy">
@@ -160,7 +194,9 @@ export default function PagesManagementPage() {
                           className="min-h-[200px]"
                           defaultValue={pageContents.find(p => p.slug === 'return-policy')?.content.policy}
                       />
-                      <Button variant="outline">Save Return Policy</Button>
+                      <Button variant="outline" onClick={() => handleSave('Return Policy')} disabled={isSaving}>
+                        {isSaving ? 'Saving...' : 'Save Return Policy'}
+                      </Button>
                   </AccordionContent>
                 </AccordionItem>
                 <AccordionItem value="privacy-policy">
@@ -172,7 +208,9 @@ export default function PagesManagementPage() {
                     className="min-h-[400px]"
                     defaultValue={pageContents.find(p => p.slug === 'privacy-policy')?.content.policy}
                     />
-                    <Button variant="outline">Save Privacy Policy</Button>
+                    <Button variant="outline" onClick={() => handleSave('Privacy Policy')} disabled={isSaving}>
+                        {isSaving ? 'Saving...' : 'Save Privacy Policy'}
+                    </Button>
                 </AccordionContent>
                 </AccordionItem>
                 <AccordionItem value="terms-of-service">
@@ -184,7 +222,9 @@ export default function PagesManagementPage() {
                     className="min-h-[400px]"
                     defaultValue={pageContents.find(p => p.slug === 'terms-of-service')?.content.terms}
                     />
-                    <Button variant="outline">Save Terms of Service</Button>
+                    <Button variant="outline" onClick={() => handleSave('Terms of Service')} disabled={isSaving}>
+                        {isSaving ? 'Saving...' : 'Save Terms of Service'}
+                    </Button>
                 </AccordionContent>
                 </AccordionItem>
             </Accordion>

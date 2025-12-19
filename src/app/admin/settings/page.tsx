@@ -1,10 +1,29 @@
 
+'use client';
+
+import { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { toast } from '@/hooks/use-toast';
+import { Loader2 } from 'lucide-react';
 
 export default function SettingsPage() {
+  const [isStoreSaving, setIsStoreSaving] = useState(false);
+  const [isApiSaving, setIsApiSaving] = useState(false);
+
+  const handleSave = async (setter: React.Dispatch<React.SetStateAction<boolean>>, title: string) => {
+    setter(true);
+    // Simulate API call
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    toast({
+      title: `${title} Saved`,
+      description: "Your changes have been saved successfully.",
+    });
+    setter(false);
+  };
+
   return (
     <main className="flex-1 p-6 md:p-8">
       <h1 className="font-headline text-3xl font-bold tracking-tight mb-8">Settings</h1>
@@ -24,7 +43,10 @@ export default function SettingsPage() {
               <Label htmlFor="storeEmail">Contact Email</Label>
               <Input id="storeEmail" type="email" defaultValue="hello@prigidcommerce.shop" />
             </div>
-            <Button>Save Changes</Button>
+            <Button onClick={() => handleSave(setIsStoreSaving, 'Store Information')} disabled={isStoreSaving}>
+              {isStoreSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              {isStoreSaving ? 'Saving...' : 'Save Changes'}
+            </Button>
           </CardContent>
         </Card>
 
@@ -42,7 +64,10 @@ export default function SettingsPage() {
               <Label htmlFor="supplierKey">Supplier API Key</Label>
               <Input id="supplierKey" type="password" defaultValue="another-secret-key-goes-here" />
             </div>
-            <Button>Save API Keys</Button>
+            <Button onClick={() => handleSave(setIsApiSaving, 'API Keys')} disabled={isApiSaving}>
+               {isApiSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+               {isApiSaving ? 'Saving...' : 'Save API Keys'}
+            </Button>
           </CardContent>
         </Card>
       </div>
