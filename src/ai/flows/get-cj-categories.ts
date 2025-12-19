@@ -57,6 +57,32 @@ const getCjCategoriesFlow = ai.defineFlow(
         throw new Error(result.message || 'Failed to fetch categories from CJ API.');
     }
 
-    return { categories: result.data };
+    // Flatten the nested category structure
+    const flattenedCategories: z.infer<typeof CjCategorySchema>[] = [];
+    result.data.forEach((cat1: any) => {
+        cat1.categoryFirstList?.forEach((cat2: any) => {
+            if (cat2.categorySecondList && cat2.categorySecondList.length > 0) {
+                 cat2.categorySecondList.forEach((cat3: any) => {
+                    flattenedCategories.push({
+                        categoryFirstId: cat1.categoryFirstId,
+                        categoryFirstName: cat1.categoryFirstName,
+                        categorySecondId: cat2.categorySecondId,
+                        categorySecondName: cat2.categorySecondName,
+                        categoryThirdId: cat3.categoryId,
+                        categoryThirdName: cat3.categoryName,
+                    });
+                });
+            } else {
+                 flattenedCategories.push({
+                    categoryFirstId: cat1.categoryFirstId,
+                    categoryFirstName: cat1.categoryFirstName,
+                    categorySecondId: cat2.categorySecondId,
+                    categorySecondName: cat2.categorySecondName,
+                });
+            }
+        });
+    });
+
+    return { categories: flattenedCategories };
   }
 );
