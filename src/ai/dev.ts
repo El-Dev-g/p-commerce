@@ -14,3 +14,7 @@ import '@/ai/flows/generate-newsletter.ts';
 import '@/ai/flows/search-cj-products.ts';
 import '@/ai/flows/get-cj-order-detail.ts';
 import '@/ai/flows/get-cj-categories.ts';
+import '@/ai/flows/get-cj-tracking-info.ts';
+import '@/ai/flows/calculate-cj-shipping.ts';
+import '@/ai/flows/get-cj-product-reviews.ts';
+import '@/ai/flows/get-cj-variant-details.ts';
