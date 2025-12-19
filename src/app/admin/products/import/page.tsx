@@ -24,7 +24,7 @@ export default function ImportProductsPage() {
   const [searchResults, setSearchResults] = useState<SearchResult>([]);
   const [importingIds, setImportingIds] = useState<string[]>([]);
   const [categories, setCategories] = useState<CjCategory[]>([]);
-  const [selectedCategory, setSelectedCategory] = useState<string>('');
+  const [selectedCategory, setSelectedCategory] = useState<string>('all');
 
   useEffect(() => {
     async function fetchCategories() {
@@ -56,7 +56,7 @@ export default function ImportProductsPage() {
     try {
       const results = await searchCjProducts({ 
         query: searchQuery,
-        categoryId: selectedCategory || undefined,
+        categoryId: selectedCategory === 'all' ? undefined : selectedCategory,
        });
       setSearchResults(results.products);
       if (results.products.length === 0) {
@@ -129,7 +129,7 @@ export default function ImportProductsPage() {
                     <SelectValue placeholder="All Categories" />
                 </SelectTrigger>
                 <SelectContent>
-                    <SelectItem value="">All Categories</SelectItem>
+                    <SelectItem value="all">All Categories</SelectItem>
                     {categories.map(cat => (
                         <SelectItem key={cat.categorySecondId} value={cat.categorySecondId}>
                             {cat.categoryFirstName} &gt; {cat.categorySecondName}
