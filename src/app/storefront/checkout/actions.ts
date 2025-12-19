@@ -15,7 +15,7 @@ type PlaceOrderInput = {
 };
 
 function generateConfirmationHtml(orderId: string, orderData: PlaceOrderInput): { subject: string, body: string } {
-    const subject = `Your Curated Finds Order Confirmation (#${orderId})`;
+    const subject = `Your p-commerce Order Confirmation (#${orderId})`;
 
     const itemsHtml = orderData.cartItems.map(item => 
         `<tr>
@@ -72,7 +72,7 @@ function generateConfirmationHtml(orderId: string, orderData: PlaceOrderInput): 
         
               <!-- Footer Message -->
               <p style="font-size:14px; margin:24px 0 0; color:#6b7280;">
-                Thank you for shopping with <strong>Curated Finds</strong>.  
+                Thank you for shopping with <strong>p-commerce</strong>.  
                 If you have any questions, just reply to this email—we’re happy to help.
               </p>
         
@@ -80,7 +80,7 @@ function generateConfirmationHtml(orderId: string, orderData: PlaceOrderInput): 
         
             <!-- Footer -->
             <div style="background:#f9fafb; text-align:center; padding:16px; font-size:12px; color:#9ca3af;">
-              © Curated Finds — All rights reserved
+              © p-commerce — All rights reserved
             </div>
         
           </div>

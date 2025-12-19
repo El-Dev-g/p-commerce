@@ -40,7 +40,7 @@ const prompt = ai.definePrompt({
   name: 'generateNewsletterPrompt',
   input: { schema: GenerateNewsletterInputSchema },
   output: { schema: GenerateNewsletterOutputSchema },
-  prompt: `You are an expert marketing copywriter for an e-commerce store called "Curated Finds".
+  prompt: `You are an expert marketing copywriter for an e-commerce store called "p-commerce".
 
   Your task is to write a compelling newsletter based on a given topic and a list of featured products.
 

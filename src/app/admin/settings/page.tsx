@@ -18,7 +18,7 @@ export default function SettingsPage() {
           <CardContent className="space-y-6">
             <div className="space-y-2">
               <Label htmlFor="storeName">Store Name</Label>
-              <Input id="storeName" defaultValue="Curated Finds" />
+              <Input id="storeName" defaultValue="p-commerce" />
             </div>
             <div className="space-y-2">
               <Label htmlFor="storeEmail">Contact Email</Label>

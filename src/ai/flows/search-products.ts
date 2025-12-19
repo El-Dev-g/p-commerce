@@ -49,7 +49,7 @@ const prompt = ai.definePrompt({
   name: 'searchProductsPrompt',
   input: {schema: SearchProductsInputSchema},
   output: {schema: SearchProductsOutputSchema},
-  prompt: `You are a helpful e-commerce search assistant for an online store called Curated Finds.
+  prompt: `You are a helpful e-commerce search assistant for an online store called p-commerce.
 
   A user has provided the following search query: "{{query}}"
 

@@ -39,7 +39,7 @@ export default function StorefrontLayout({
         <main>{children}</main>
         <footer className="border-t bg-muted/40 py-6">
             <div className="container mx-auto flex flex-col items-center justify-between gap-4 px-4 md:flex-row md:px-6">
-                <p className="text-sm text-muted-foreground">&copy; 2024 Curated Finds. All rights reserved.</p>
+                <p className="text-sm text-muted-foreground">&copy; 2024 p-commerce. All rights reserved.</p>
                 <nav className="flex flex-wrap justify-center gap-4 sm:gap-6">
                     <Link href="/storefront/track-order" className="text-sm hover:underline">Track Order</Link>
                     <Link href="/storefront/request-refund" className="text-sm hover:underline">Request Refund</Link>

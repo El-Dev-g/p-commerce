@@ -5,8 +5,8 @@ import { cn } from '@/lib/utils';
 import { ThemeProvider } from '@/components/theme-provider';
 
 export const metadata: Metadata = {
-  title: 'Curated Finds Admin',
-  description: 'Admin dashboard for Curated Finds.',
+  title: 'p-commerce Admin',
+  description: 'Admin dashboard for p-commerce.',
 };
 
 export default function RootLayout({

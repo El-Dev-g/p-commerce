@@ -1,6 +1,6 @@
-# Curated Finds - Admin Dashboard & Backend
+# p-commerce - Admin Dashboard & Backend
 
-This project serves as the central admin dashboard and API backend for the "Curated Finds" e-commerce store.
+This project serves as the central admin dashboard and API backend for the "p-commerce" e-commerce store.
 
 ## Architecture Overview
 

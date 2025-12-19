@@ -31,7 +31,7 @@ const chatPrompt = ai.definePrompt({
   name: 'whatsAppChatPrompt',
   input: { schema: WhatsAppChatInputSchema },
   output: { schema: WhatsAppChatOutputSchema },
-  prompt: `You are an AI assistant for an online store called Curated Finds.
+  prompt: `You are an AI assistant for an online store called p-commerce.
   You are friendly, helpful, and concise.
 
   A customer sent the following message from WhatsApp. Respond to it.

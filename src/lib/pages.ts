@@ -13,7 +13,7 @@ export const pagesData: Page[] = [
       mission:
         'To bring thoughtfully curated, high-quality goods to customers who appreciate authenticity and craftsmanship. We believe in products with a story.',
       story:
-        'Founded in a small workshop with a big dream, Curated Finds has grown from a passion project into a beloved brand. Our journey is one of dedication to quality and a deep respect for the artisans we work with. We travel the world to find unique items that you won\'t find anywhere else.',
+        'Founded in a small workshop with a big dream, p-commerce has grown from a passion project into a beloved brand. Our journey is one of dedication to quality and a deep respect for the artisans we work with. We travel the world to find unique items that you won\'t find anywhere else.',
     },
   },
   {
@@ -31,7 +31,7 @@ export const pagesData: Page[] = [
     title: 'Privacy Policy',
     content: {
       policy:
-        "Your privacy is important to us. It is Curated Finds' policy to respect your privacy regarding any information we may collect from you across our website, and other sites we own and operate. We only ask for personal information when we truly need it to provide a service to you. We collect it by fair and lawful means, with your knowledge and consent. We also let you know why we’re collecting it and how it will be used.",
+        "Your privacy is important to us. It is p-commerce's policy to respect your privacy regarding any information we may collect from you across our website, and other sites we own and operate. We only ask for personal information when we truly need it to provide a service to you. We collect it by fair and lawful means, with your knowledge and consent. We also let you know why we’re collecting it and how it will be used.",
     },
   },
   {
@@ -39,7 +39,7 @@ export const pagesData: Page[] = [
     title: 'Terms of Service',
     content: {
       terms:
-        'By accessing the website at https://curatedfinds.com, you are agreeing to be bound by these terms of service, all applicable laws and regulations, and agree that you are responsible for compliance with any applicable local laws. If you do not agree with any of these terms, you are prohibited from using or accessing this site. The materials contained in this website are protected by applicable copyright and trademark law.',
+        'By accessing the website at https://p-commerce.com, you are agreeing to be bound by these terms of service, all applicable laws and regulations, and agree that you are responsible for compliance with any applicable local laws. If you do not agree with any of these terms, you are prohibited from using or accessing this site. The materials contained in this website are protected by applicable copyright and trademark law.',
     },
   },
   {

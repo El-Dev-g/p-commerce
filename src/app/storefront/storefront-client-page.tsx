@@ -92,7 +92,7 @@ function HeroSection({ heroImage }: { heroImage: any }) {
                         data-ai-hint={heroImage['data-ai-hint']}
                     />
                     <div className="flex flex-col justify-center space-y-4">
-                        <h1 className="text-3xl font-bold tracking-tighter sm:text-5xl">Discover Our Curated Collection</h1>
+                        <h1 className="text-3xl font-bold tracking-tighter sm:text-5xl">Discover Our Collection</h1>
                         <p className="max-w-[600px] text-muted-foreground md:text-xl">
                             Explore a world of hand-picked items that blend quality craftsmanship with timeless design.
                         </p>
@@ -294,7 +294,7 @@ function GallerySection() {
             <div className="container px-4 md:px-6">
                 <div className="space-y-3 text-center mb-8">
                     <h2 className="text-3xl font-bold tracking-tighter md:text-4xl">Visual Stories</h2>
-                    <p className="mx-auto max-w-[600px] text-muted-foreground md:text-xl">A glimpse into the world of Curated Finds.</p>
+                    <p className="mx-auto max-w-[600px] text-muted-foreground md:text-xl">A glimpse into the world of p-commerce.</p>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                     {images.map((img, index) => (

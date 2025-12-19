@@ -83,7 +83,7 @@ const chatPrompt = ai.definePrompt({
   input: { schema: ChatInputSchema },
   output: { schema: ChatOutputSchema },
   tools: [productSearchTool],
-  prompt: `You are a friendly and helpful e-commerce assistant for an online store called "Curated Finds".
+  prompt: `You are a friendly and helpful e-commerce assistant for an online store called "p-commerce".
 
   Your goal is to help users find the perfect products.
   - Use the productSearch tool to find information about products when a user asks about them.

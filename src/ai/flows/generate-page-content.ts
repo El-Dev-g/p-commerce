@@ -38,7 +38,7 @@ const prompt = ai.definePrompt({
   name: 'generatePageContentPrompt',
   input: { schema: GeneratePageContentInputSchema },
   output: { schema: GeneratePageContentOutputSchema },
-  prompt: `You are an expert copywriter for an e-commerce store called "Curated Finds".
+  prompt: `You are an expert copywriter for an e-commerce store called "p-commerce".
 
   Generate compelling content for a webpage based on the following details. The content should be in Markdown.
 

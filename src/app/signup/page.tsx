@@ -38,7 +38,7 @@ export default function SignupPage() {
        <div className="absolute top-8 flex items-center gap-2">
           <Sparkles className="h-7 w-7 text-primary" />
           <span className="font-headline text-2xl font-bold text-primary">
-          Curated Finds
+          p-commerce
           </span>
       </div>
       <Card className="w-full max-w-sm">
