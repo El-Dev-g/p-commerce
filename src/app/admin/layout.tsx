@@ -42,6 +42,7 @@ import {
   Mail,
   User,
   Code,
+  Upload,
 } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import { ModeToggle } from '@/components/mode-toggle';
@@ -141,6 +142,14 @@ function AdminSidebar() {
                 </CollapsibleTrigger>
                 <CollapsibleContent>
                   <SidebarMenuSub>
+                    <SidebarMenuSubItem>
+                        <SidebarMenuSubButton isActive={isActive('/admin/products/import')} asChild>
+                          <Link href="/admin/products/import">
+                              <Upload />
+                              <span>Import Products</span>
+                          </Link>
+                        </SidebarMenuSubButton>
+                    </SidebarMenuSubItem>
                     <SidebarMenuSubItem>
                         <SidebarMenuSubButton isActive={isActive('/admin/variations')} asChild>
                           <Link href="/admin/variations">

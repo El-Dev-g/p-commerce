@@ -14,7 +14,7 @@ import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Edit, PlusCircle, Trash2, Search, Loader2 } from 'lucide-react';
+import { Edit, PlusCircle, Trash2, Search, Loader2, Upload } from 'lucide-react';
 import { getProducts, products as allProducts } from '@/lib/products';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
@@ -147,12 +147,20 @@ export default function ProductsPage() {
      <main className="flex-1 p-6 md:p-8">
       <div className="flex items-center justify-between mb-8">
         <h1 className="font-headline text-3xl font-bold tracking-tight">Products</h1>
-        <Button asChild>
-          <Link href="/admin/products/new">
-            <PlusCircle className="mr-2 h-4 w-4" />
-            Add Product
-          </Link>
-        </Button>
+        <div className="flex gap-2">
+            <Button asChild variant="outline">
+                <Link href="/admin/products/import">
+                    <Upload className="mr-2 h-4 w-4" />
+                    Import from Supplier
+                </Link>
+            </Button>
+            <Button asChild>
+              <Link href="/admin/products/new">
+                <PlusCircle className="mr-2 h-4 w-4" />
+                Add Product
+              </Link>
+            </Button>
+        </div>
       </div>
       <Card>
         <CardHeader>
