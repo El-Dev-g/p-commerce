@@ -42,7 +42,7 @@ const getCjCategoriesFlow = ai.defineFlow(
       throw new Error("CJ Dropshipping API key is not configured in .env file.");
     }
     
-    const response = await fetch('https://developers.cjdropshipping.com/api/product/getCategory', {
+    const response = await fetch('https://developers.cjdropshipping.com/api2.0/v1/product/getCategory', {
         method: 'GET',
         headers: {
             'Cj-Access-Token': apiKey,

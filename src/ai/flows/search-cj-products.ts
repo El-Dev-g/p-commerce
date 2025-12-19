@@ -31,7 +31,10 @@ const CjProductSchema = z.object({
 const CjApiResponseSchema = z.object({
     result: z.boolean(),
     message: z.string(),
-    data: z.array(CjProductSchema),
+    data: z.object({
+        total: z.number(),
+        records: z.array(CjProductSchema),
+    }),
 });
 
 
@@ -87,8 +90,7 @@ const searchCjProductsFlow = ai.defineFlow(
         requestBody.categoryId = input.categoryId;
     }
 
-    // Note: The V2 endpoint is often referenced, but the correct fetch URL uses /api/ not /api2.0/
-    const response = await fetch('https://developers.cjdropshipping.com/api/product/list', {
+    const response = await fetch('https://developers.cjdropshipping.com/api2.0/v1/product/list', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -110,7 +112,7 @@ const searchCjProductsFlow = ai.defineFlow(
         throw new Error("Failed to parse response from CJ Dropshipping API or request was unsuccessful.");
     }
 
-    const { data: cjProducts } = validationResult.data;
+    const cjProducts = validationResult.data.data.records;
 
     const products = cjProducts.map(p => {
         const price = parseFloat(p.sellPrice);

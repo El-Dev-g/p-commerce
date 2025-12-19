@@ -2,7 +2,7 @@
 import { NextResponse } from 'next/server';
 import { getCjOrderDetail } from '@/ai/flows/get-cj-order-detail';
 
-const CJ_API_BASE = 'https://developers.cjdropshipping.com/api';
+const CJ_API_BASE = 'https://developers.cjdropshipping.com/api2.0/v1';
 
 async function getCjClient() {
     const apiKey = process.env.CJ_DROPSHIPPING_API_KEY;
