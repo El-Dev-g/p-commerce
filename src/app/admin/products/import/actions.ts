@@ -13,7 +13,7 @@ export async function importProductAction(productToImport: SearchCjProductsOutpu
       id: `prod_${Math.floor(Math.random() * 100000)}`,
       name: productToImport.title,
       description: productToImport.description,
-      price: productToImport.price,
+      price: productToImport.price, // Price is now a number
       category: productToImport.category,
       image: {
         src: productToImport.imageUrl,
@@ -24,7 +24,8 @@ export async function importProductAction(productToImport: SearchCjProductsOutpu
         id: `var_${Math.floor(Math.random() * 100000)}`,
         attributes: v.attributes,
         stock: v.stock,
-        priceModifier: v.price, // Assuming the variant price is a modifier for simplicity
+        // The price from CJ is the base price of the variant, so modifier is 0 relative to that.
+        priceModifier: 0, 
         sku: v.sku,
       })),
     };

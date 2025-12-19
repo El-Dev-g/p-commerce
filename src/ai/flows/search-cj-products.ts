@@ -23,12 +23,12 @@ const CjProductSchema = z.object({
     description: z.string().optional().default(''),
     categoryName: z.string(),
     productImage: z.string().url(),
-    sellPrice: z.number(),
+    sellPrice: z.string(), // Price comes as a string
     productSku: z.string(),
 });
 
 const CjApiResponseSchema = z.object({
-    code: z.number(),
+    result: z.boolean(),
     message: z.string(),
     data: z.array(CjProductSchema),
 });
@@ -73,17 +73,19 @@ const searchCjProductsFlow = ai.defineFlow(
   async (input) => {
     const apiKey = process.env.CJ_DROPSHIPPING_API_KEY;
     if (!apiKey) {
-      throw new Error("CJ Dropshipping API key is not configured.");
+      throw new Error("CJ Dropshipping API key is not configured in .env file.");
     }
     
-    const response = await fetch('https://developers.cjdropshipping.com/api/v1/product/list', {
+    // Note: The V2 endpoint is often referenced, but the correct fetch URL uses /api/ not /api2.0/
+    const response = await fetch('https://developers.cjdropshipping.com/api/product/list', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'CJ-Access-Token': apiKey,
+            'Cj-Access-Token': apiKey,
         },
         body: JSON.stringify({
             productName: input.query,
+            pageNum: 1,
             pageSize: 10,
         })
     });
@@ -96,27 +98,30 @@ const searchCjProductsFlow = ai.defineFlow(
     const rawData: unknown = await response.json();
     const validationResult = CjApiResponseSchema.safeParse(rawData);
 
-    if (!validationResult.success) {
-        console.error("CJ API response validation error:", validationResult.error.flatten());
-        throw new Error("Failed to parse response from CJ Dropshipping API.");
+    if (!validationResult.success || !validationResult.data.result) {
+        console.error("CJ API response validation error:", validationResult.success ? validationResult.data.message : validationResult.error.flatten());
+        throw new Error("Failed to parse response from CJ Dropshipping API or request was unsuccessful.");
     }
 
     const { data: cjProducts } = validationResult.data;
 
-    const products = cjProducts.map(p => ({
-        id: p.pid,
-        title: p.productName,
-        description: p.description || 'No description available.',
-        category: p.categoryName,
-        imageUrl: p.productImage,
-        price: p.sellPrice,
-        variants: [{
-            sku: p.productSku,
-            attributes: [],
-            price: p.sellPrice,
-            stock: 99, // CJ API does not seem to provide stock in list view, defaulting to 99
-        }]
-    }));
+    const products = cjProducts.map(p => {
+        const price = parseFloat(p.sellPrice);
+        return {
+            id: p.pid,
+            title: p.productName,
+            description: p.description || 'No description available.',
+            category: p.categoryName,
+            imageUrl: p.productImage,
+            price: isNaN(price) ? 0 : price,
+            variants: [{
+                sku: p.productSku,
+                attributes: [],
+                price: isNaN(price) ? 0 : price,
+                stock: 99, // CJ API does not provide stock in list view, defaulting to 99
+            }]
+        }
+    });
 
     return { products };
   }
