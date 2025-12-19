@@ -13,7 +13,7 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Eye, FileDown, PlusCircle, Truck, AlertTriangle, Ban } from 'lucide-react';
+import { Eye, FileDown, PlusCircle, Truck, AlertTriangle, Ban, Search } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -176,6 +176,7 @@ function OrderDetailsDialog({
   const [currentStatus, setCurrentStatus] = React.useState<OrderStatus>(order.status as OrderStatus);
   const [isOpen, setIsOpen] = React.useState(false);
   const [isSaving, setIsSaving] = React.useState(false);
+  const [isCheckingTracking, setIsCheckingTracking] = React.useState(false);
 
   const handleSave = async () => {
     setIsSaving(true);
@@ -188,6 +189,31 @@ function OrderDetailsDialog({
     setIsSaving(false);
     setIsOpen(false);
   };
+
+  const handleCheckTracking = async () => {
+    if (!trackingNumber) {
+        toast({ variant: 'destructive', title: 'No tracking number to check.' });
+        return;
+    }
+    setIsCheckingTracking(true);
+    try {
+        const response = await fetch('/api/v1/get-tracking-info', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ trackNumber: trackingNumber }),
+        });
+        const result = await response.json();
+        if (!response.ok) throw new Error(result.error);
+        
+        // This is a simple alert. A more complex UI could show a new dialog/drawer.
+        const trace = result.data.traces[0];
+        alert(`Latest Tracking Update:\n\nStatus: ${trace.status}\nDetails: ${trace.remark}\nTime: ${new Date(trace.time).toLocaleString()}`);
+
+    } catch (error) {
+        toast({ variant: 'destructive', title: 'Failed to get tracking info', description: (error as Error).message });
+    }
+    setIsCheckingTracking(false);
+  }
 
   const handleCancel = () => {
     onCancel(order.id);
@@ -249,12 +275,17 @@ function OrderDetailsDialog({
                   Tracking Number
                 </div>
               </Label>
-              <Input
-                id="tracking-number"
-                value={trackingNumber}
-                onChange={(e) => setTrackingNumber(e.target.value)}
-                placeholder="Enter tracking number"
-              />
+              <div className="flex items-center gap-2">
+                <Input
+                    id="tracking-number"
+                    value={trackingNumber}
+                    onChange={(e) => setTrackingNumber(e.target.value)}
+                    placeholder="Enter tracking number"
+                />
+                <Button variant="outline" size="icon" onClick={handleCheckTracking} disabled={!trackingNumber || isCheckingTracking}>
+                    {isCheckingTracking ? <Truck className="h-4 w-4 animate-spin" /> : <Search className="h-4 w-4" />}
+                </Button>
+              </div>
             </div>
         </div>
         <DialogFooter className="sm:justify-between">
@@ -297,5 +328,3 @@ function OrderDetailsDialog({
     </Dialog>
   )
 }
-
-    

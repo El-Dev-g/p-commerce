@@ -2,6 +2,7 @@
 'use server';
 
 import { getOrders } from '@/app/admin/orders/actions';
+import { getCjTrackingInfo } from '@/ai/flows/get-cj-tracking-info';
 
 type TrackOrderInput = {
   orderId: string;
@@ -15,6 +16,7 @@ type TrackOrderResult = {
     status: string;
     date: string;
     trackingNumber?: string;
+    trackingDetails?: any;
   };
   error?: string;
 };
@@ -30,6 +32,16 @@ export async function trackOrderAction(input: TrackOrderInput): Promise<TrackOrd
       return { success: false, error: 'No order found with that ID and email address.' };
     }
 
+    let trackingDetails;
+    if (order.trackingNumber) {
+        try {
+            trackingDetails = await getCjTrackingInfo({ trackNumber: order.trackingNumber });
+        } catch (e) {
+            console.error(`Failed to get tracking info for ${order.trackingNumber}`, e);
+            // Don't fail the whole request, just log the error
+        }
+    }
+
     return {
       success: true,
       order: {
@@ -37,6 +49,7 @@ export async function trackOrderAction(input: TrackOrderInput): Promise<TrackOrd
         status: order.status,
         date: order.date,
         trackingNumber: order.trackingNumber,
+        trackingDetails: trackingDetails,
       },
     };
   } catch (error) {

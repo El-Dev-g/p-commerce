@@ -2,7 +2,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -16,6 +16,7 @@ type OrderStatusInfo = {
   status: string;
   date: string;
   trackingNumber?: string;
+  trackingDetails?: any;
 };
 
 export default function TrackOrderPage() {
@@ -110,6 +111,22 @@ export default function TrackOrderPage() {
                   {orderStatus.trackingNumber || 'Not available yet'}
                 </span>
               </div>
+              {orderStatus.trackingDetails && (
+                <>
+                    <Separator />
+                    <div>
+                        <h4 className="font-medium mb-2">Tracking History</h4>
+                        <div className="space-y-2 text-sm">
+                            {orderStatus.trackingDetails.traces.map((trace: any, index: number) => (
+                                <div key={index}>
+                                    <p className="font-semibold">{trace.status}</p>
+                                    <p className="text-muted-foreground">{trace.remark} - {new Date(trace.time).toLocaleString()}</p>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </>
+              )}
             </CardContent>
           </Card>
         )}
