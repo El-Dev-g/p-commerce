@@ -1,3 +1,4 @@
+
 'use server';
 
 import { revalidatePath } from 'next/cache';
@@ -29,7 +30,7 @@ export async function updateProductAction(
       description: data.description,
       price: data.price,
       category: data.category,
-      // Image is not updated via this form in this version
+      image: data.image,
       variations: data.variations,
     };
 
@@ -68,3 +69,5 @@ export async function deleteProductAction(
     return { success: false, error: error.message };
   }
 }
+
+    

@@ -11,6 +11,7 @@ import { categories, products } from '@/lib/products';
 import { generateProductDescription } from '@/ai/flows/generate-product-descriptions';
 import { generateProductTitles } from '@/ai/flows/generate-product-titles';
 import { updateProductAction } from './actions';
+import Image from 'next/image';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -19,9 +20,10 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
-import { Sparkles, Loader2, Trash2, PlusCircle } from 'lucide-react';
+import { Sparkles, Loader2, Trash2, PlusCircle, UploadCloud } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { Separator } from '@/components/ui/separator';
+import { createClient } from '@/utils/supabase/client';
 
 const variationSchema = z.object({
   id: z.string().optional(),
@@ -38,9 +40,10 @@ export const productSchema = z.object({
   price: z.coerce.number().positive({ message: "Price must be a positive number." }),
   category: z.string().min(1, { message: "Please select a category." }),
   image: z.object({
-    src: z.string().url(),
+    src: z.string().url({ message: "Please enter a valid image URL." }),
     alt: z.string(),
-  }).optional(),
+    'data-ai-hint': z.string().optional(),
+  }),
   variations: z.array(variationSchema).optional(),
 });
 
@@ -104,6 +107,7 @@ export function ProductForm({ product }: { product?: Product }) {
   const [isSaving, startTransition] = useTransition();
   const [keywords, setKeywords] = useState('');
   const [suggestedTitles, setSuggestedTitles] = useState<string[]>([]);
+  const [isUploading, setIsUploading] = useState(false);
 
   const form = useForm<ProductFormData>({
     resolver: zodResolver(productSchema),
@@ -117,6 +121,7 @@ export function ProductForm({ product }: { product?: Product }) {
       description: '',
       price: 0,
       category: '',
+      image: { src: 'https://placehold.co/600x400', alt: 'Placeholder', 'data-ai-hint': 'placeholder' },
       variations: [],
     },
   });
@@ -125,6 +130,42 @@ export function ProductForm({ product }: { product?: Product }) {
     control: form.control,
     name: "variations",
   });
+  
+  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    setIsUploading(true);
+    const supabase = createClient();
+    const fileName = `${Date.now()}_${file.name}`;
+    const { data, error } = await supabase.storage
+      .from('Jaidyblog')
+      .upload(fileName, file);
+
+    if (error) {
+      toast({
+        variant: 'destructive',
+        title: 'Upload Failed',
+        description: error.message,
+      });
+      setIsUploading(false);
+      return;
+    }
+
+    const { data: { publicUrl } } = supabase.storage
+      .from('Jaidyblog')
+      .getPublicUrl(data.path);
+
+    form.setValue('image.src', publicUrl, { shouldValidate: true });
+    form.setValue('image.alt', form.getValues('name') || 'Product image');
+    form.setValue('image.data-ai-hint', 'product image');
+    
+    setIsUploading(false);
+    toast({
+      title: 'Image Uploaded',
+      description: 'The new product image has been set.',
+    });
+  };
 
   const handleGenerateDescription = async () => {
     const productName = form.getValues('name');
@@ -143,7 +184,6 @@ export function ProductForm({ product }: { product?: Product }) {
         keywords: keywords.split(',').map(k => k.trim()),
       });
       form.setValue('description', result.description, { shouldValidate: true });
-      // Trigger validation manually after setting value
       await form.trigger('description');
     } catch (error) {
       console.error(error);
@@ -187,7 +227,6 @@ export function ProductForm({ product }: { product?: Product }) {
   const onSubmit = async (data: ProductFormData) => {
     startTransition(async () => {
         if (product) {
-            // Update existing product
             const result = await updateProductAction(product.id, data);
             if (result.success) {
                  toast({
@@ -203,8 +242,8 @@ export function ProductForm({ product }: { product?: Product }) {
                 });
             }
         } else {
-            // Create new product
-            // This is a mock implementation. In a real app, you'd have a `createProductAction`.
+            // This logic is for creating a new product.
+            // A proper `createProductAction` would be needed for a full implementation.
             console.log('Creating new product:', data);
             const newProduct = { ...data, id: `prod_${Date.now()}` };
             products.unshift(newProduct as Product);
@@ -214,10 +253,11 @@ export function ProductForm({ product }: { product?: Product }) {
             });
             router.push('/admin/products');
         }
-        // This is a client-side refresh, revalidatePath in actions handles server data
         router.refresh();
     });
   };
+  
+  const currentImage = form.watch('image.src');
 
   return (
     <Form {...form}>
@@ -226,7 +266,7 @@ export function ProductForm({ product }: { product?: Product }) {
           <Card>
             <CardHeader>
               <CardTitle>Product Details</CardTitle>
-              <CardDescription>Fill out the information for your new product.</CardDescription>
+              <CardDescription>Fill out the information for your product.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
                 <FormField
@@ -314,6 +354,38 @@ export function ProductForm({ product }: { product?: Product }) {
                 </div>
             </CardContent>
           </Card>
+          
+          <Card>
+            <CardHeader>
+                <CardTitle>Product Image</CardTitle>
+                <CardDescription>Upload an image for your product.</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+                {currentImage && (
+                    <div className="relative w-48 h-48">
+                        <Image src={currentImage} alt={form.getValues('name') || 'Product image'} fill className="rounded-md object-cover" />
+                         {isUploading && (
+                            <div className="absolute inset-0 bg-black/50 flex items-center justify-center rounded-md">
+                                <Loader2 className="h-8 w-8 animate-spin text-white" />
+                            </div>
+                        )}
+                    </div>
+                )}
+                <div className="space-y-2">
+                    <Label htmlFor="image-upload">Upload New Image</Label>
+                    <div className="flex items-center gap-2">
+                        <Input id="image-upload" type="file" onChange={handleImageUpload} disabled={isUploading} className="flex-1" />
+                        <Button type="button" variant="outline" size="icon" asChild>
+                            <label htmlFor="image-upload" className="cursor-pointer">
+                                <UploadCloud />
+                            </label>
+                        </Button>
+                    </div>
+                     <FormMessage>{form.formState.errors.image?.src?.message}</FormMessage>
+                </div>
+            </CardContent>
+          </Card>
+
            <Card>
             <CardHeader>
               <CardTitle>Inventory &amp; Variations</CardTitle>
@@ -393,9 +465,9 @@ export function ProductForm({ product }: { product?: Product }) {
                     <CardTitle>Save Product</CardTitle>
                 </CardHeader>
                 <CardContent>
-                    <Button type="submit" disabled={isSaving} className="w-full">
-                    {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                    {isSaving ? 'Saving...' : (product ? 'Save Changes' : 'Create Product')}
+                    <Button type="submit" disabled={isSaving || isUploading} className="w-full">
+                    {(isSaving || isUploading) && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                    {isSaving ? 'Saving...' : (isUploading ? 'Uploading...' : (product ? 'Save Changes' : 'Create Product'))}
                     </Button>
                 </CardContent>
             </Card>
@@ -474,3 +546,5 @@ export function ProductForm({ product }: { product?: Product }) {
     </Form>
   );
 }
+
+    
