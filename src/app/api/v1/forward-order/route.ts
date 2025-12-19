@@ -1,21 +1,20 @@
 
+
 import { NextResponse } from 'next/server';
 import { getCjOrderDetail } from '@/ai/flows/get-cj-order-detail';
+import { getAccessToken } from '@/lib/cj-token-service';
 
 const CJ_API_BASE = 'https://developers.cjdropshipping.com/api2.0/v1';
 
 async function getCjClient() {
-    const apiKey = process.env.CJ_DROPSHIPPING_API_KEY;
-    if (!apiKey) {
-      throw new Error("CJ Dropshipping API key is not configured in .env file.");
-    }
+    const accessToken = await getAccessToken();
     return {
         async post(endpoint: string, body: any) {
             const response = await fetch(`${CJ_API_BASE}${endpoint}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Cj-Access-Token': apiKey,
+                    'Cj-Access-Token': accessToken,
                 },
                 body: JSON.stringify(body)
             });
@@ -30,7 +29,7 @@ async function getCjClient() {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Cj-Access-Token': apiKey,
+                    'Cj-Access-Token': accessToken,
                 },
                 body: JSON.stringify(body)
             });

@@ -11,6 +11,7 @@
 
 import { ai } from '@/ai/genkit';
 import { z } from 'genkit';
+import { getAccessToken } from '@/lib/cj-token-service';
 
 const SearchCjProductsInputSchema = z.object({
   query: z.string().describe('The search query for products.'),
@@ -75,10 +76,7 @@ const searchCjProductsFlow = ai.defineFlow(
     outputSchema: SearchCjProductsOutputSchema,
   },
   async (input) => {
-    const apiKey = process.env.CJ_DROPSHIPPING_API_KEY;
-    if (!apiKey) {
-      throw new Error("CJ Dropshipping API key is not configured in .env file.");
-    }
+    const accessToken = await getAccessToken();
     
     const requestBody: any = {
         productName: input.query,
@@ -94,7 +92,7 @@ const searchCjProductsFlow = ai.defineFlow(
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'Cj-Access-Token': apiKey,
+            'Cj-Access-Token': accessToken,
         },
         body: JSON.stringify(requestBody)
     });

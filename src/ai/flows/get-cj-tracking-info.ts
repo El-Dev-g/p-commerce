@@ -11,6 +11,7 @@
 
 import { ai } from '@/ai/genkit';
 import { z } from 'genkit';
+import { getAccessToken } from '@/lib/cj-token-service';
 
 const GetCjTrackingInfoInputSchema = z.object({
   trackNumber: z.string().describe('The tracking number of the shipment.'),
@@ -34,15 +35,12 @@ const getCjTrackingInfoFlow = ai.defineFlow(
     outputSchema: GetCjTrackingInfoOutputSchema,
   },
   async (input) => {
-    const apiKey = process.env.CJ_DROPSHIPPING_API_KEY;
-    if (!apiKey) {
-      throw new Error("CJ Dropshipping API key is not configured in .env file.");
-    }
+    const accessToken = await getAccessToken();
     
     const response = await fetch(`https://developers.cjdropshipping.com/api2.0/v1/logistic/trackInfo?trackNumber=${input.trackNumber}`, {
         method: 'GET',
         headers: {
-            'Cj-Access-Token': apiKey,
+            'Cj-Access-Token': accessToken,
         },
     });
 

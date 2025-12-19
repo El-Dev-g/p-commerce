@@ -11,6 +11,7 @@
 
 import { ai } from '@/ai/genkit';
 import { z } from 'genkit';
+import { getAccessToken } from '@/lib/cj-token-service';
 
 const GetCjOrderDetailInputSchema = z.object({
   orderId: z.string().describe('The CJ Dropshipping order ID.'),
@@ -36,16 +37,13 @@ const getCjOrderDetailFlow = ai.defineFlow(
     outputSchema: GetCjOrderDetailOutputSchema,
   },
   async (input) => {
-    const apiKey = process.env.CJ_DROPSHIPPING_API_KEY;
-    if (!apiKey) {
-      throw new Error("CJ Dropshipping API key is not configured in .env file.");
-    }
+    const accessToken = await getAccessToken();
     
     const response = await fetch('https://developers.cjdropshipping.com/api2.0/v1/order/getOrderDetail', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'Cj-Access-Token': apiKey,
+            'Cj-Access-Token': accessToken,
         },
         body: JSON.stringify({
             orderId: input.orderId,
