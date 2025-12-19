@@ -15,23 +15,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Sparkles, Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { toast } from "@/hooks/use-toast";
+import { signup } from "../auth/actions";
+import { useSearchParams } from "next/navigation";
 
 export default function SignupPage() {
-    const router = useRouter();
     const [showPassword, setShowPassword] = React.useState(false);
-
-    const handleSignup = (event: React.FormEvent) => {
-        event.preventDefault();
-        // Mock signup logic
-        toast({
-            title: "Account Created",
-        });
-        // In a real app, you'd handle user creation here.
-        // For now, just redirect to the dashboard.
-        setTimeout(() => router.push('/admin/dashboard'), 1000);
-    }
+    const searchParams = useSearchParams();
+    const message = searchParams.get("message");
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-background p-4">
@@ -48,20 +38,25 @@ export default function SignupPage() {
             Enter your information to create an account
           </CardDescription>
         </CardHeader>
-        <form onSubmit={handleSignup}>
+        <form>
             <CardContent className="grid gap-4">
+            {message && (
+                <div className="text-center text-sm text-foreground p-2 bg-muted rounded-md">
+                    {message}
+                </div>
+            )}
             <div className="grid gap-2">
                 <Label htmlFor="first-name">Full Name</Label>
                 <Input id="first-name" placeholder="Max" required />
             </div>
             <div className="grid gap-2">
                 <Label htmlFor="email">Email</Label>
-                <Input id="email" type="email" placeholder="m@example.com" required />
+                <Input id="email" name="email" type="email" placeholder="m@example.com" required />
             </div>
             <div className="grid gap-2">
                 <Label htmlFor="password">Password</Label>
                 <div className="relative">
-                    <Input id="password" type={showPassword ? "text" : "password"} required />
+                    <Input id="password" name="password" type={showPassword ? "text" : "password"} required />
                      <button
                         type="button"
                         onClick={() => setShowPassword(!showPassword)}
@@ -73,7 +68,7 @@ export default function SignupPage() {
             </div>
             </CardContent>
             <CardFooter className="flex flex-col gap-4">
-            <Button type="submit" className="w-full">
+            <Button className="w-full" formAction={signup}>
                 Create an account
             </Button>
             <div className="text-center text-sm">

@@ -14,24 +14,14 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { Sparkles, Eye, EyeOff } from "lucide-react";
-import { toast } from "@/hooks/use-toast";
+import { login } from "../auth/actions";
+import { useSearchParams } from "next/navigation";
 
 export default function LoginPage() {
-  const router = useRouter();
   const [showPassword, setShowPassword] = React.useState(false);
-
-  const handleLogin = (event: React.FormEvent) => {
-    event.preventDefault();
-    // Mock login logic
-    toast({
-      title: "Login Successful",
-    });
-    // In a real app, you'd handle auth here.
-    // For now, just redirect to the dashboard.
-    setTimeout(() => router.push("/admin/dashboard"), 1000);
-  };
+  const searchParams = useSearchParams();
+  const message = searchParams.get("message");
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-background p-4">
@@ -48,11 +38,16 @@ export default function LoginPage() {
             Enter your email below to login to your account.
           </CardDescription>
         </CardHeader>
-        <form onSubmit={handleLogin}>
+        <form>
           <CardContent className="grid gap-4">
+             {message && (
+                <div className="text-center text-sm text-destructive p-2 bg-destructive/10 rounded-md">
+                    {message}
+                </div>
+            )}
             <div className="grid gap-2">
               <Label htmlFor="email">Email</Label>
-              <Input id="email" type="email" placeholder="m@example.com" required />
+              <Input id="email" name="email" type="email" placeholder="m@example.com" required />
             </div>
             <div className="grid gap-2">
                 <div className="flex items-center">
@@ -65,7 +60,7 @@ export default function LoginPage() {
                     </Link>
                 </div>
                 <div className="relative">
-                    <Input id="password" type={showPassword ? "text" : "password"} required />
+                    <Input id="password" name="password" type={showPassword ? "text" : "password"} required />
                     <button
                         type="button"
                         onClick={() => setShowPassword(!showPassword)}
@@ -77,7 +72,7 @@ export default function LoginPage() {
             </div>
           </CardContent>
           <CardFooter className="flex flex-col gap-4">
-            <Button className="w-full" type="submit">Sign in</Button>
+            <Button className="w-full" formAction={login}>Sign in</Button>
              <div className="text-center text-sm">
               Don&apos;t have an account?{' '}
               <Link href="/signup" className="underline">

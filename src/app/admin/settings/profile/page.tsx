@@ -18,6 +18,7 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import { toast } from '@/hooks/use-toast';
+import { signOut } from '@/app/auth/actions';
 
 export default function ProfilePage() {
     const handleDeleteAccount = () => {
@@ -54,7 +55,12 @@ export default function ProfilePage() {
               <Label htmlFor="email">Email</Label>
               <Input id="email" type="email" defaultValue="jane.doe@curatedfinds.com" disabled />
             </div>
-            <Button>Save Changes</Button>
+            <div className="flex items-center gap-4">
+                <Button>Save Changes</Button>
+                <form>
+                    <Button variant="outline" formAction={signOut}>Sign Out</Button>
+                </form>
+            </div>
           </CardContent>
         </Card>
 
