@@ -1,50 +1,175 @@
-import { NextResponse } from 'next/server';
 
+import { NextResponse } from 'next/server';
+import { getCjOrderDetail } from '@/ai/flows/get-cj-order-detail';
+
+const CJ_API_BASE = 'https://developers.cjdropshipping.com/api';
+
+async function getCjClient() {
+    const apiKey = process.env.CJ_DROPSHIPPING_API_KEY;
+    if (!apiKey) {
+      throw new Error("CJ Dropshipping API key is not configured in .env file.");
+    }
+    return {
+        async post(endpoint: string, body: any) {
+            const response = await fetch(`${CJ_API_BASE}${endpoint}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Cj-Access-Token': apiKey,
+                },
+                body: JSON.stringify(body)
+            });
+            if (!response.ok) {
+                const errorBody = await response.text();
+                throw new Error(`CJ API Error for ${endpoint}: ${response.status} - ${errorBody}`);
+            }
+            return response.json();
+        },
+        async delete(endpoint: string, body: any) {
+             const response = await fetch(`${CJ_API_BASE}${endpoint}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Cj-Access-Token': apiKey,
+                },
+                body: JSON.stringify(body)
+            });
+            if (!response.ok) {
+                const errorBody = await response.text();
+                throw new Error(`CJ API Error for ${endpoint}: ${response.status} - ${errorBody}`);
+            }
+            return response.json();
+        }
+    }
+}
+
+
+/**
+ * POST /api/v1/forward-order
+ * Forwards a new order to CJ Dropshipping for fulfillment.
+ */
 export async function POST(request: Request) {
   try {
-    const order = await request.json();
+    const orderData = await request.json();
 
-    // In a real-world scenario, you would add your logic here to forward
-    // the order to your dropshipping supplier.
-    // This could involve:
-    // 1. Calling the supplier's API.
-    // 2. Sending a formatted email.
-    // 3. Adding the order to a shared database or Google Sheet.
+    // Basic validation
+    if (!orderData.shipping || !orderData.products || orderData.products.length === 0) {
+        return NextResponse.json({ message: 'Invalid order data: missing shipping or products.' }, { status: 400 });
+    }
 
-    console.log('--- Order received at /api/v1/forward-order ---');
-    console.log('Forwarding to CJ Dropshipping:');
-    console.log(JSON.stringify(order, null, 2));
-    console.log('-------------------------------------------------');
+    const cjClient = await getCjClient();
 
-    // Return a success response
-    return NextResponse.json({ message: 'Order forwarded successfully' }, { status: 200 });
+    const cjOrderPayload = {
+      ...orderData,
+      fromCountry: "US", // Assuming orders ship from the US warehouse
+      logisticName: "CJPacket", // Default shipping method, can be changed
+    };
+
+    console.log('Forwarding order to CJ Dropshipping with payload:', cjOrderPayload);
+
+    const cjResponse = await cjClient.post('/order/create', cjOrderPayload);
+
+    if (!cjResponse.result || !cjResponse.data) {
+        throw new Error(cjResponse.message || 'Failed to create CJ Dropshipping order.');
+    }
+
+    // Immediately confirm the order for payment (as per CJ docs for dropshippers)
+    const orderIds = cjResponse.data.map((order: any) => order.orderId);
+    const confirmResponse = await cjClient.post('/order/confirmOrder', { orderIdList: orderIds });
+
+    if (!confirmResponse.result) {
+        // If confirmation fails, we should still let the user know the order was created but needs manual payment.
+        console.warn(`CJ Order(s) ${orderIds.join(', ')} created but failed to confirm automatically.`);
+    }
+
+    return NextResponse.json({
+        message: 'Order forwarded to CJ Dropshipping successfully.',
+        cjData: cjResponse.data,
+        confirmationStatus: confirmResponse.result ? 'Confirmed' : 'Confirmation Failed',
+    }, { status: 200 });
 
   } catch (error) {
-    console.error('Failed to process order for forwarding:', error);
-    // Return an error response
-    return NextResponse.json({ message: 'Error forwarding order', error: (error as Error).message }, { status: 500 });
+    const err = error as Error;
+    console.error('Failed to process order for forwarding:', err);
+    return NextResponse.json({ message: 'Error forwarding order', error: err.message }, { status: 500 });
   }
 }
 
+/**
+ * GET /api/v1/forward-order?orderId={cjOrderId}
+ * Retrieves order details from CJ Dropshipping.
+ */
 export async function GET(request: Request) {
-    // Example: GET /api/v1/forward-order?orderId=123
-    // In a real app, you would fetch the status of a forwarded order.
-    const { searchParams } = new URL(request.url)
-    const orderId = searchParams.get('orderId')
-    console.log(`GET request received for forwarding status of order: ${orderId}`);
-    return NextResponse.json({ message: `Status for order ${orderId} would be fetched here.` });
+    try {
+        const { searchParams } = new URL(request.url);
+        const orderId = searchParams.get('orderId');
+        if (!orderId) {
+            return NextResponse.json({ message: 'CJ Order ID is required.' }, { status: 400 });
+        }
+
+        const orderDetails = await getCjOrderDetail({ orderId });
+
+        return NextResponse.json({
+            message: 'Order details fetched successfully.',
+            data: orderDetails,
+        }, { status: 200 });
+
+    } catch (error) {
+        const err = error as Error;
+        console.error('Failed to get CJ order details:', err);
+        return NextResponse.json({ message: 'Error fetching order details', error: err.message }, { status: 500 });
+    }
 }
 
+/**
+ * PUT /api/v1/forward-order
+ * Confirms a CJ Dropshipping order for payment.
+ */
 export async function PUT(request: Request) {
-    // Example: Update the details of an order that has been forwarded.
-    const payload = await request.json();
-    console.log('PUT request received to update a forwarded order:', payload);
-    return NextResponse.json({ message: 'Forwarded order updated successfully (simulated).' });
+    try {
+        const { orderIds } = await request.json(); // Expects a list of CJ order IDs
+        if (!orderIds || !Array.isArray(orderIds) || orderIds.length === 0) {
+            return NextResponse.json({ message: 'orderIds array is required.' }, { status: 400 });
+        }
+        
+        const cjClient = await getCjClient();
+        const confirmResponse = await cjClient.post('/order/confirmOrder', { orderIdList: orderIds });
+
+        if (!confirmResponse.result) {
+            throw new Error(confirmResponse.message || 'Failed to confirm CJ Dropshipping order(s).');
+        }
+
+        return NextResponse.json({ message: 'CJ order(s) confirmed successfully.', data: confirmResponse.data }, { status: 200 });
+
+    } catch (error) {
+        const err = error as Error;
+        console.error('Failed to confirm CJ order:', err);
+        return NextResponse.json({ message: 'Error confirming order', error: err.message }, { status: 500 });
+    }
 }
 
+/**
+ * DELETE /api/v1/forward-order
+ * Cancels an order on CJ Dropshipping.
+ */
 export async function DELETE(request: Request) {
-    // Example: Cancel a forwarded order.
-    const { orderId } = await request.json();
-    console.log(`DELETE request received to cancel forwarded order: ${orderId}`);
-    return NextResponse.json({ message: `Forwarded order ${orderId} cancelled successfully (simulated).` });
+    try {
+        const { orderId } = await request.json(); // Expects a single CJ order ID
+        if (!orderId) {
+            return NextResponse.json({ message: 'orderId is required.' }, { status: 400 });
+        }
+
+        const cjClient = await getCjClient();
+        const deleteResponse = await cjClient.delete('/order/deleteOrder', { orderId: orderId });
+        
+        if (!deleteResponse.result) {
+            throw new Error(deleteResponse.message || 'Failed to delete CJ Dropshipping order.');
+        }
+
+        return NextResponse.json({ message: `Forwarded order ${orderId} cancelled successfully.` }, { status: 200 });
+    } catch (error) {
+        const err = error as Error;
+        console.error('Failed to cancel CJ order:', err);
+        return NextResponse.json({ message: 'Error cancelling order', error: err.message }, { status: 500 });
+    }
 }

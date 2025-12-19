@@ -12,3 +12,4 @@ import '@/ai/flows/analyze-refunds.ts';
 import '@/ai/flows/detect-fraud.ts';
 import '@/ai/flows/generate-newsletter.ts';
 import '@/ai/flows/search-cj-products.ts';
+import '@/ai/flows/get-cj-order-detail.ts';
