@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -12,14 +12,35 @@ import type { SearchCjProductsOutput } from '@/ai/flows/search-cj-products';
 import Image from 'next/image';
 import { Badge } from '@/components/ui/badge';
 import { importProductAction } from './actions';
+import { getCjCategories, type GetCjCategoriesOutput } from '@/ai/flows/get-cj-categories';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 type SearchResult = SearchCjProductsOutput['products'];
+type CjCategory = GetCjCategoriesOutput['categories'][0];
 
 export default function ImportProductsPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearching, setIsSearching] = useState(false);
   const [searchResults, setSearchResults] = useState<SearchResult>([]);
   const [importingIds, setImportingIds] = useState<string[]>([]);
+  const [categories, setCategories] = useState<CjCategory[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState<string>('');
+
+  useEffect(() => {
+    async function fetchCategories() {
+        try {
+            const result = await getCjCategories();
+            setCategories(result.categories);
+        } catch (error) {
+            console.error('Failed to fetch CJ categories:', error);
+            toast({
+                variant: 'destructive',
+                title: 'Could not fetch categories',
+            })
+        }
+    }
+    fetchCategories();
+  }, []);
 
   const handleSearch = async () => {
     if (!searchQuery.trim()) {
@@ -33,8 +54,17 @@ export default function ImportProductsPage() {
     setIsSearching(true);
     setSearchResults([]);
     try {
-      const results = await searchCjProducts({ query: searchQuery });
+      const results = await searchCjProducts({ 
+        query: searchQuery,
+        categoryId: selectedCategory || undefined,
+       });
       setSearchResults(results.products);
+      if (results.products.length === 0) {
+        toast({
+            title: 'No products found',
+            description: 'Your search did not return any products from the supplier.'
+        })
+      }
     } catch (error) {
       console.error(error);
       toast({
@@ -85,15 +115,30 @@ export default function ImportProductsPage() {
           <CardDescription>Find products to import directly into your store.</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="flex gap-2">
+          <div className="flex flex-col md:flex-row gap-2">
             <Input
               placeholder="e.g. 'leather wallet' or 'ceramic mugs'"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && !isSearching && handleSearch()}
               disabled={isSearching}
+              className="flex-1"
             />
-            <Button onClick={handleSearch} disabled={isSearching}>
+            <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+                <SelectTrigger className="w-full md:w-[280px]">
+                    <SelectValue placeholder="All Categories" />
+                </SelectTrigger>
+                <SelectContent>
+                    <SelectItem value="">All Categories</SelectItem>
+                    {categories.map(cat => (
+                        <SelectItem key={cat.categorySecondId} value={cat.categorySecondId}>
+                            {cat.categoryFirstName} &gt; {cat.categorySecondName}
+                        </SelectItem>
+                    ))}
+                </SelectContent>
+            </Select>
+
+            <Button onClick={handleSearch} disabled={isSearching} className="w-full md:w-auto">
               {isSearching ? <Loader2 className="h-4 w-4 animate-spin" /> : <Search className="h-4 w-4" />}
               <span className="sr-only sm:not-sr-only sm:ml-2">Search</span>
             </Button>

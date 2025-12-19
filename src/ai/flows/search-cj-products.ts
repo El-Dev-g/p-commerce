@@ -14,6 +14,7 @@ import { z } from 'genkit';
 
 const SearchCjProductsInputSchema = z.object({
   query: z.string().describe('The search query for products.'),
+  categoryId: z.string().optional().describe('The ID of the category to search within.'),
 });
 export type SearchCjProductsInput = z.infer<typeof SearchCjProductsInputSchema>;
 
@@ -76,6 +77,16 @@ const searchCjProductsFlow = ai.defineFlow(
       throw new Error("CJ Dropshipping API key is not configured in .env file.");
     }
     
+    const requestBody: any = {
+        productName: input.query,
+        pageNum: 1,
+        pageSize: 10,
+    };
+
+    if (input.categoryId) {
+        requestBody.categoryId = input.categoryId;
+    }
+
     // Note: The V2 endpoint is often referenced, but the correct fetch URL uses /api/ not /api2.0/
     const response = await fetch('https://developers.cjdropshipping.com/api/product/list', {
         method: 'POST',
@@ -83,11 +94,7 @@ const searchCjProductsFlow = ai.defineFlow(
             'Content-Type': 'application/json',
             'Cj-Access-Token': apiKey,
         },
-        body: JSON.stringify({
-            productName: input.query,
-            pageNum: 1,
-            pageSize: 10,
-        })
+        body: JSON.stringify(requestBody)
     });
 
     if (!response.ok) {
