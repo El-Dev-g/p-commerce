@@ -1,15 +1,16 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm, useFieldArray, Control } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import type { Product } from '@/lib/types';
-import { categories } from '@/lib/products';
+import { categories, products } from '@/lib/products';
 import { generateProductDescription } from '@/ai/flows/generate-product-descriptions';
 import { generateProductTitles } from '@/ai/flows/generate-product-titles';
+import { updateProductAction } from './actions';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -30,7 +31,7 @@ const variationSchema = z.object({
   priceModifier: z.coerce.number().default(0),
 });
 
-const productSchema = z.object({
+export const productSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters." }),
   nameB: z.string().optional(),
   description: z.string().min(10, { message: "Description must be at least 10 characters." }),
@@ -100,7 +101,7 @@ export function ProductForm({ product }: { product?: Product }) {
   const router = useRouter();
   const [isDescLoading, setIsDescLoading] = useState(false);
   const [isTitleLoading, setIsTitleLoading] = useState(false);
-  const [isSaving, setIsSaving] = useState(false);
+  const [isSaving, startTransition] = useTransition();
   const [keywords, setKeywords] = useState('');
   const [suggestedTitles, setSuggestedTitles] = useState<string[]>([]);
 
@@ -142,6 +143,8 @@ export function ProductForm({ product }: { product?: Product }) {
         keywords: keywords.split(',').map(k => k.trim()),
       });
       form.setValue('description', result.description, { shouldValidate: true });
+      // Trigger validation manually after setting value
+      await form.trigger('description');
     } catch (error) {
       console.error(error);
       toast({
@@ -182,19 +185,38 @@ export function ProductForm({ product }: { product?: Product }) {
   };
 
   const onSubmit = async (data: ProductFormData) => {
-    setIsSaving(true);
-    console.log('Form submitted:', data);
-    // Here you would typically call an API to save the product
-    await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate API call
-    
-    toast({
-      title: 'Product Saved',
-      description: `${data.name} has been successfully saved.`,
+    startTransition(async () => {
+        if (product) {
+            // Update existing product
+            const result = await updateProductAction(product.id, data);
+            if (result.success) {
+                 toast({
+                    title: 'Product Updated',
+                    description: `${data.name} has been successfully updated.`,
+                });
+                router.push('/admin/products');
+            } else {
+                 toast({
+                    variant: 'destructive',
+                    title: 'Update Failed',
+                    description: result.error || 'Could not update the product.',
+                });
+            }
+        } else {
+            // Create new product
+            // This is a mock implementation. In a real app, you'd have a `createProductAction`.
+            console.log('Creating new product:', data);
+            const newProduct = { ...data, id: `prod_${Date.now()}` };
+            products.unshift(newProduct as Product);
+            toast({
+                title: 'Product Created',
+                description: `${data.name} has been successfully created.`,
+            });
+            router.push('/admin/products');
+        }
+        // This is a client-side refresh, revalidatePath in actions handles server data
+        router.refresh();
     });
-    
-    setIsSaving(false);
-    router.push('/admin/products');
-    router.refresh();
   };
 
   return (
@@ -373,7 +395,7 @@ export function ProductForm({ product }: { product?: Product }) {
                 <CardContent>
                     <Button type="submit" disabled={isSaving} className="w-full">
                     {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                    {isSaving ? 'Saving...' : 'Save Product'}
+                    {isSaving ? 'Saving...' : (product ? 'Save Changes' : 'Create Product')}
                     </Button>
                 </CardContent>
             </Card>
@@ -417,7 +439,7 @@ export function ProductForm({ product }: { product?: Product }) {
                       variant="outline"
                       className="w-full"
                       onClick={handleGenerateTitles}
-                      disabled={isTitleLoading || !form.formState.isValid}
+                      disabled={isTitleLoading || !form.getValues('description') || !form.getValues('category')}
                   >
                       {isTitleLoading ? (
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />

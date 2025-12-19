@@ -15,9 +15,9 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Edit, PlusCircle, Trash2, Search, Loader2, Upload } from 'lucide-react';
-import { getProducts, products as allProducts } from '@/lib/products';
+import { products as allProducts } from '@/lib/products';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useTransition } from 'react';
 import type { Product } from '@/lib/types';
 import { useDebounce } from '@/hooks/use-debounce';
 import { searchProducts } from '@/ai/flows/search-products';
@@ -33,6 +33,7 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import { toast } from '@/hooks/use-toast';
+import { deleteProductAction } from './actions';
 
 function ProductTable({ products, onDelete }: { products: Product[], onDelete: (productId: string) => void }) {
   return (
@@ -105,6 +106,7 @@ export default function ProductsPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const debouncedSearchQuery = useDebounce(searchQuery, 300);
   const [isSearching, setIsSearching] = useState(false);
+  const [isPending, startTransition] = useTransition();
 
   useEffect(() => {
     const performSearch = async () => {
@@ -134,12 +136,22 @@ export default function ProductsPage() {
   }, [debouncedSearchQuery]);
 
   const handleDeleteProduct = (productId: string) => {
-    // In a real app, you would make an API call to delete the product
-    // For this prototype, we'll just filter it from the local state
-    setProducts(prev => prev.filter(p => p.id !== productId));
-    toast({
-        title: "Product Deleted",
-        description: "The product has been removed from your store.",
+    startTransition(async () => {
+        const result = await deleteProductAction(productId);
+        if (result.success) {
+            // Re-filter the state to remove the deleted product
+            setProducts(prev => prev.filter(p => p.id !== productId));
+            toast({
+                title: "Product Deleted",
+                description: "The product has been removed from your store.",
+            });
+        } else {
+            toast({
+                variant: 'destructive',
+                title: "Deletion Failed",
+                description: result.error || 'Could not delete the product.',
+            });
+        }
     });
   }
 
