@@ -15,7 +15,6 @@ type Token = {
 let cachedToken: Token | null = null;
 
 const API_BASE_URL = 'https://developers.cjdropshipping.com/api2.0/v1';
-const TOKEN_LIFESPAN_MS = 24 * 60 * 60 * 1000; // 24 hours
 
 /**
  * Fetches a new access token from the CJ Dropshipping API.
@@ -43,15 +42,18 @@ async function fetchNewToken(): Promise<Token> {
   }
 
   const result = await response.json();
-  if (!result.result || !result.data?.accessToken) {
+  if (!result.result || !result.data?.accessToken || !result.data?.expiresIn) {
     throw new Error(
-      result.message || 'Failed to parse access token from CJ API response.'
+      result.message || 'Failed to parse access token or expiresIn from CJ API response.'
     );
   }
+  
+  // Convert 'expiresIn' (in seconds) to a future timestamp in milliseconds
+  const expiresInMs = parseInt(result.data.expiresIn, 10) * 1000;
 
   const newToken: Token = {
     accessToken: result.data.accessToken,
-    expiresAt: Date.now() + TOKEN_LIFESPAN_MS,
+    expiresAt: Date.now() + expiresInMs,
   };
 
   cachedToken = newToken;
@@ -64,7 +66,7 @@ async function fetchNewToken(): Promise<Token> {
  * @returns {Promise<string>} A promise that resolves to a valid access token string.
  */
 export async function getAccessToken(): Promise<string> {
-  // Check if token exists and is not expired (with a 1-minute buffer)
+  // Check if token exists and is not expired (with a 60-second buffer for safety)
   if (cachedToken && cachedToken.expiresAt > Date.now() + 60000) {
     return cachedToken.accessToken;
   }
