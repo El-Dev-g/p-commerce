@@ -2,7 +2,7 @@
 'use server';
 
 /**
- * @fileOverview This file defines a Genkit flow for searching for products from a mock dropshipping supplier.
+ * @fileOverview This file defines a Genkit flow for searching for products from CJ Dropshipping.
  *
  * - searchCjProducts: The main function to search for products.
  * - SearchCjProductsInput: The input type for the searchCjProducts function.
@@ -16,6 +16,23 @@ const SearchCjProductsInputSchema = z.object({
   query: z.string().describe('The search query for products.'),
 });
 export type SearchCjProductsInput = z.infer<typeof SearchCjProductsInputSchema>;
+
+const CjProductSchema = z.object({
+    pid: z.string(),
+    productName: z.string(),
+    description: z.string().optional().default(''),
+    categoryName: z.string(),
+    productImage: z.string().url(),
+    sellPrice: z.number(),
+    productSku: z.string(),
+});
+
+const CjApiResponseSchema = z.object({
+    code: z.number(),
+    message: z.string(),
+    data: z.array(CjProductSchema),
+});
+
 
 const SearchCjProductsOutputSchema = z.object({
   products: z.array(
@@ -46,22 +63,6 @@ export async function searchCjProducts(
   return searchCjProductsFlow(input);
 }
 
-const prompt = ai.definePrompt({
-  name: 'searchCjProductsPrompt',
-  input: { schema: SearchCjProductsInputSchema },
-  output: { schema: SearchCjProductsOutputSchema },
-  prompt: `You are a product sourcing agent for a dropshipping business.
-  A user is searching for products to sell in their store.
-
-  Given the search query "{{query}}", generate a realistic list of 5-7 mock products that would be found on a platform like CJ Dropshipping.
-
-  For each product:
-  - Create a plausible title, description, category, and wholesale price.
-  - Generate a placeholder image URL using "https://picsum.photos/seed/{a-random-word}/400/400".
-  - For some products, include a few variants (e.g., different colors or sizes) with their own SKU, price, and stock levels.
-  - The variant price should be the final price for that variant.
-  `,
-});
 
 const searchCjProductsFlow = ai.defineFlow(
   {
@@ -70,7 +71,53 @@ const searchCjProductsFlow = ai.defineFlow(
     outputSchema: SearchCjProductsOutputSchema,
   },
   async (input) => {
-    const { output } = await prompt(input);
-    return output!;
+    const apiKey = process.env.CJ_DROPSHIPPING_API_KEY;
+    if (!apiKey) {
+      throw new Error("CJ Dropshipping API key is not configured.");
+    }
+    
+    const response = await fetch('https://developers.cjdropshipping.com/api/v1/product/list', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'CJ-Access-Token': apiKey,
+        },
+        body: JSON.stringify({
+            productName: input.query,
+            pageSize: 10,
+        })
+    });
+
+    if (!response.ok) {
+        const errorBody = await response.text();
+        throw new Error(`CJ Dropshipping API request failed: ${response.status} ${response.statusText} - ${errorBody}`);
+    }
+
+    const rawData: unknown = await response.json();
+    const validationResult = CjApiResponseSchema.safeParse(rawData);
+
+    if (!validationResult.success) {
+        console.error("CJ API response validation error:", validationResult.error.flatten());
+        throw new Error("Failed to parse response from CJ Dropshipping API.");
+    }
+
+    const { data: cjProducts } = validationResult.data;
+
+    const products = cjProducts.map(p => ({
+        id: p.pid,
+        title: p.productName,
+        description: p.description || 'No description available.',
+        category: p.categoryName,
+        imageUrl: p.productImage,
+        price: p.sellPrice,
+        variants: [{
+            sku: p.productSku,
+            attributes: [],
+            price: p.sellPrice,
+            stock: 99, // CJ API does not seem to provide stock in list view, defaulting to 99
+        }]
+    }));
+
+    return { products };
   }
 );
