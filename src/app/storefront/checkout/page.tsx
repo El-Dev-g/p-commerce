@@ -39,7 +39,15 @@ export default function CheckoutPage() {
     const orderData = {
         customerName: `${formData.firstName} ${formData.lastName}`,
         customerEmail: formData.email,
+        shippingAddress: {
+            address: formData.address,
+            city: formData.city,
+            zip: formData.zip,
+        },
         cartItems: cartItems.map(item => ({
+            productId: item.product.id,
+            variantId: item.variation?.id,
+            sku: item.variation?.sku,
             productName: item.product.name,
             quantity: item.quantity,
             price: item.product.price + (item.variation?.priceModifier || 0),

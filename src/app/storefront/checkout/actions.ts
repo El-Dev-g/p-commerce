@@ -6,7 +6,15 @@ import { Resend } from 'resend';
 type PlaceOrderInput = {
     customerName: string;
     customerEmail: string;
+    shippingAddress: {
+        address: string;
+        city: string;
+        zip: string;
+    };
     cartItems: {
+        productId: string;
+        variantId?: string;
+        sku?: string;
         productName: string;
         quantity: number;
         price: number;
@@ -132,7 +140,48 @@ export async function placeOrderAction(orderData: PlaceOrderInput) {
 
         console.log(`Order confirmation email sent successfully for order ${orderId}:`, data?.id);
 
-        // In a real app, you would save the order to the database here.
+        // 3. Forward the order to CJ Dropshipping
+        // The API Origin should be dynamically determined based on the environment
+        const apiOrigin = process.env.NODE_ENV === 'development'
+            ? 'http://localhost:9002'
+            : (process.env.NEXT_PUBLIC_API_URL || ''); // You would set this in Vercel/Firebase
+
+        const cjOrderPayload = {
+            shipping: {
+                shippingName: orderData.customerName,
+                country: "US", // Assuming US for now, would be part of address form
+                province: "", // Assuming empty for now
+                city: orderData.shippingAddress.city,
+                shippingAddress: orderData.shippingAddress.address,
+                shippingPostCode: orderData.shippingAddress.zip,
+                shippingPhone: "1234567890", // Placeholder phone number
+            },
+            products: orderData.cartItems.map(item => ({
+                vid: item.sku || item.variantId || item.productId, // Use SKU, fallback to variant/product ID
+                quantity: item.quantity,
+            })),
+        };
+        
+        // We do this without `await` to not block the user's response.
+        // The user gets a success message while we forward the order in the background.
+        fetch(`${apiOrigin}/api/v1/forward-order`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(cjOrderPayload),
+        })
+        .then(async (res) => {
+            if (!res.ok) {
+                const errorData = await res.json();
+                console.error("Failed to forward order to CJ Dropshipping:", errorData.error || res.statusText);
+            } else {
+                const successData = await res.json();
+                console.log("Successfully forwarded order to CJ Dropshipping:", successData.message);
+            }
+        })
+        .catch(err => {
+            console.error("Error calling the order forwarding endpoint:", err);
+        });
+
         
         return { success: true, orderId: orderId };
 
