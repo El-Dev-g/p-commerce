@@ -157,7 +157,7 @@ export default function CreateNewsletterPage() {
                                             a: ({ node, ...props }) => {
                                                 if (props.href && props.href.startsWith('/')) {
                                                     // In a real email, this would be a full URL
-                                                    const baseUrl = "https://your-store.com";
+                                                    const baseUrl = "https://prigidcommerce.shop";
                                                     return <a href={baseUrl + props.href} {...props} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline" />;
                                                 }
                                                 return <a {...props} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline" />;
