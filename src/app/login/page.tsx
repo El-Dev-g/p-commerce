@@ -2,6 +2,7 @@
 'use client';
 
 import * as React from "react";
+import { Suspense } from 'react';
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -14,23 +15,16 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
-import { Sparkles, Eye, EyeOff } from "lucide-react";
+import { Sparkles, Eye, EyeOff, Loader2 } from "lucide-react";
 import { login } from "../auth/actions";
 import { useSearchParams } from "next/navigation";
 
-export default function LoginPage() {
+function LoginForm() {
   const [showPassword, setShowPassword] = React.useState(false);
   const searchParams = useSearchParams();
   const message = searchParams.get("message");
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background p-4">
-       <div className="absolute top-8 flex items-center gap-2">
-          <Sparkles className="h-7 w-7 text-primary" />
-          <span className="font-headline text-2xl font-bold text-primary">
-          p-commerce
-          </span>
-      </div>
       <Card className="w-full max-w-sm">
         <CardHeader>
           <CardTitle className="text-2xl">Login</CardTitle>
@@ -82,6 +76,21 @@ export default function LoginPage() {
           </CardFooter>
         </form>
       </Card>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <div className="flex min-h-screen items-center justify-center bg-background p-4">
+       <div className="absolute top-8 flex items-center gap-2">
+          <Sparkles className="h-7 w-7 text-primary" />
+          <span className="font-headline text-2xl font-bold text-primary">
+          p-commerce
+          </span>
+      </div>
+      <Suspense fallback={<Loader2 className="h-8 w-8 animate-spin" />}>
+        <LoginForm />
+      </Suspense>
     </div>
   );
 }
