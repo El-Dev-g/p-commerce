@@ -20,7 +20,8 @@ export async function login(formData: FormData) {
   })
 
   if (error) {
-    return redirect(`/login?message=${encodeURIComponent(error.message)}`)
+    const errorMessage = `Could not authenticate user: ${error.message}. Ensure your Supabase credentials in the .env file are correct.`;
+    return redirect(`/login?message=${encodeURIComponent(errorMessage)}`)
   }
 
   revalidatePath('/', 'layout')
