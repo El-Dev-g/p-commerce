@@ -286,10 +286,4 @@ export default function StorefrontEditorPage() {
       </div>
     </main>
   );
-
-    
-
-
-
-
-
+}
