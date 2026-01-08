@@ -20,7 +20,7 @@ export async function login(formData: FormData) {
   })
 
   if (error) {
-    return redirect(`/login?message=${encodeURIComponent('Could not authenticate user')}`)
+    return redirect(`/login?message=${encodeURIComponent(error.message)}`)
   }
 
   revalidatePath('/', 'layout')
@@ -43,7 +43,7 @@ export async function signup(formData: FormData) {
   })
 
   if (error) {
-    return redirect(`/signup?message=${encodeURIComponent('Could not authenticate user')}`)
+    return redirect(`/signup?message=${encodeURIComponent(error.message)}`)
   }
 
   revalidatePath('/', 'layout')
@@ -70,7 +70,7 @@ export async function sendPasswordResetEmail(formData: FormData) {
     });
 
     if (error) {
-        return redirect(`/forgot-password?message=${encodeURIComponent('Could not send reset link')}`)
+        return redirect(`/forgot-password?message=${encodeURIComponent(error.message)}`)
     }
 
     return redirect('/forgot-password?message=Password reset link has been sent to your email address')
