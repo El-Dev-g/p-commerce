@@ -1,3 +1,4 @@
+
 import 'dotenv/config';
 import '@/ai/flows/generate-product-titles.ts';
 import '@/ai/flows/get-product-recommendations.ts';
@@ -7,7 +8,7 @@ import '@/ai/flows/search-products.ts';
 import '@/ai/flows/chat.ts';
 import '@/ai/flows/analyze-customer-support.ts';
 import '@/ai/flows/tag-order.ts';
-import '@/aiflows/generate-page-content.ts';
+import '@/ai/flows/generate-page-content.ts';
 import '@/ai/flows/analyze-refunds.ts';
 import '@/ai/flows/detect-fraud.ts';
 import '@/ai/flows/generate-newsletter.ts';
